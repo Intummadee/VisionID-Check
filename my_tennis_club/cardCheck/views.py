@@ -15,6 +15,7 @@ import cv2
 
 
 def testCardCheck(request):
+    print("testCardCheck")
     return HttpResponse("Hello world!")
 
 def cardCheck(request):
@@ -51,10 +52,43 @@ def plot(request):
             break
     cv2.destroyAllWindows()
 
-    #* frame = ภาพสุดท้ายที่ถ่ายกับ Video มาแล้ว 
+
+    # left = 150 
+    # top = 150; 
+    # right = 450 
+    # bottom = 450; 
+
+    # rectangle_frame = cv2.rectangle(frame,(384,0),(510,128),(0,255,0),3)
+
+    # #* frame = ภาพสุดท้ายที่ถ่ายกับ Video มาแล้ว 
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('Gray Frame', gray_frame)
-    cv2.waitKey(1)
+
+
+    # Apply GaussianBlur to reduce noise and help contour detection
+    blurred = cv2.GaussianBlur(gray_frame, (5, 5), 0)
+
+    # Use Canny edge detection
+    edges = cv2.Canny(blurred, 50, 150)
+
+    # Find contours in the edged image
+    contours, _ = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Loop over the contours
+    for contour in contours:
+        # Approximate the contour with a polygon
+        epsilon = 0.04 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        
+        # If the polygon has 4 vertices, it's likely a rectangle
+        if len(approx) == 4:
+            # Draw the rectangle around the contour
+            cv2.drawContours(frame, [approx], -1, (0, 255, 0), 2)
+    
+    # Display the result
+    cv2.imshow("Detected Rectangles", frame)
+    cv2.waitKey(5) & 0xFF
+    cv2.destroyAllWindows()
+
 
     # Convert the frame to base64 encoding
     _, buffer = cv2.imencode('.jpg', frame)
