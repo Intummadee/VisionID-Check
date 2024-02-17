@@ -26,6 +26,9 @@ python -m pip install scipy
 python -m pip install matplotlib
 python -m pip install opencv-python
 python -m pip install opencv-contrib-python
+pip install pytesseract
+
+
 ```
 
 -Option กรณีถูก เตือน ให้อัพเดตเวอร์ชั่น
@@ -44,7 +47,7 @@ create Project
 
 คำสั่งรัน !!!
 ```
-cd my_tennis_club
+cd my_tennis_club (อย่าลืมว่าต้องอยู่ใน my_tennis_club)
 python manage.py runserver
 ```
 
@@ -162,39 +165,25 @@ mkdir templates
 mkdir static\css
 ```
 
--สร้างไฟล์ ```style.css``` ใน static\css
--สร้าง ```HomePage.html``` ใน templates
+---
 
+
+
+<!-- ## Django Channels for WebSockets คือทำให้แสดงแบบ real-time on the webpage
 ```
-from flask import Flask, render_template
-import numpy as np
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    t = np.linspace(0, 1, 100) # ค่าตั้งแต่ 0 ถึง 1
-    plt.plot(t, t**2) # plot กราฟ y=x^2.
-
-    # Convert plot to base64 encoding
-    img = BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()
-
-    return render_template("homePage.html", plot_url=plot_url)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+pip install channels
 ```
 
 
+ใน ```settings.py``` ไปแก้ตามนี้ 
+```
+INSTALLED_APPS = [
+    # ...
+    'channels',
+]
 
-
-รันด้วยคำสั่ง 👉 -->  ```python app.py```
+ASGI_APPLICATION = 'your_project.routing.application'
+``` -->
 
 
  
