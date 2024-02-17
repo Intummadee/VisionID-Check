@@ -26,7 +26,7 @@ python -m pip install scipy
 python -m pip install matplotlib
 python -m pip install opencv-python
 python -m pip install opencv-contrib-python
-pip install pytesseract
+pip install pytesseract pillow
 
 
 ```
