@@ -78,8 +78,8 @@ def VideoCapture(request):
     return JsonResponse({'frame_base64': frame_base64})
 
 
-def MainPage(request):
-
+def MainPage(request): # http://127.0.0.1:8000/MainPage/
+    
     # check_text("../../assets/test02gray.png")
     # check_text("../assets/test01gray.png")
 
@@ -91,7 +91,9 @@ def MainPage(request):
 
 
 def MongoConnect(request):
+    
     conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")

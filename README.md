@@ -27,8 +27,6 @@ python -m pip install matplotlib
 python -m pip install opencv-python
 python -m pip install opencv-contrib-python
 pip install pytesseract
-
-
 ```
 
 -Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
@@ -70,27 +68,6 @@ python -m pip install "pymongo[srv]"
 ```
 pip install pymupdf Pillow
 ```
-
- 
- 
-
- 
-
-
-
----
-
-# ตัวช่วย tesseract 
--สำหรับ ใช้ computer vision OCR ในการตรวจหาข้อความในภาพ
-https://github.com/UB-Mannheim/tesseract/wiki
-
-https://stackoverflow.com/questions/37745519/use-pytesseract-ocr-to-recognize-text-from-an-image
-https://stackoverflow.com/questions/21104664/extract-all-bounding-boxes-using-opencv-python
-
-
-
--How to Install Tesseract OCR on Windows and use it with Python
-https://www.youtube.com/watch?v=GMMZAddRxs8
 
 ---
 
@@ -202,23 +179,18 @@ mkdir static\css
 
 ---
 
+# อ้างอิง
+-สำหรับ ใช้ computer vision OCR ในการตรวจหาข้อความในภาพ
+https://github.com/UB-Mannheim/tesseract/wiki
 
+-MongoDB and Python
+https://www.youtube.com/watch?v=GJCKIGeK3qc
 
-<!-- ## Django Channels for WebSockets คือทำให้แสดงแบบ real-time on the webpage
-```
-pip install channels
-```
+-How to Install Tesseract OCR on Windows and use it with Python
+https://www.youtube.com/watch?v=GMMZAddRxs8
 
+-Stackoverflow
+https://stackoverflow.com/questions/37745519/use-pytesseract-ocr-to-recognize-text-from-an-image
+https://stackoverflow.com/questions/21104664/extract-all-bounding-boxes-using-opencv-python
 
-ใน ```settings.py``` ไปแก้ตามนี้ 
-```
-INSTALLED_APPS = [
-    # ...
-    'channels',
-]
-
-ASGI_APPLICATION = 'your_project.routing.application'
-``` -->
-
-
- 
+---
