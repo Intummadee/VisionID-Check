@@ -10,5 +10,6 @@ urlpatterns = [
     # http://127.0.0.1:8000/cardCheck/ 
     path('cardCheck/', views.cardCheck, name='cardCheck'),
     path('MainPage/', views.MainPage, name='MainPage'),
-    path('VideoCapture/', views.VideoCapture, name="VideoCapture")
+    path('VideoCapture/', views.VideoCapture, name="VideoCapture"),
+    path('upload_and_convert_pdf/', views.upload_and_convert_pdf, name='upload_and_convert_pdf'),  
 ]

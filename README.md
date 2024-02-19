@@ -31,7 +31,7 @@ pip install pytesseract
 
 ```
 
--Option กรณีถูก เตือน ให้อัพเดตเวอร์ชั่น
+-Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
 ```python -m pip install --upgrade pip```
 
 
@@ -56,6 +56,41 @@ python manage.py runserver
 ```
 python manage.py startapp cardCheck
 ```
+
+---
+
+# ใช้งาน MongoDB
+Source : https://www.youtube.com/watch?v=GJCKIGeK3qc
+```JS
+python -m pip install "pymongo[srv]"
+```
+
+
+# Upload file
+```
+pip install pymupdf Pillow
+```
+
+ 
+ 
+
+ 
+
+
+
+---
+
+# ตัวช่วย tesseract 
+-สำหรับ ใช้ computer vision OCR ในการตรวจหาข้อความในภาพ
+https://github.com/UB-Mannheim/tesseract/wiki
+
+https://stackoverflow.com/questions/37745519/use-pytesseract-ocr-to-recognize-text-from-an-image
+https://stackoverflow.com/questions/21104664/extract-all-bounding-boxes-using-opencv-python
+
+
+
+-How to Install Tesseract OCR on Windows and use it with Python
+https://www.youtube.com/watch?v=GMMZAddRxs8
 
 ---
 
