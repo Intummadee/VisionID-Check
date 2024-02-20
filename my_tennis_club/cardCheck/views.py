@@ -93,10 +93,11 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     })
 
 
-
+#! Mongo Tip Here!!!!!!
 def MongoConnect(request):
-    
-    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    # ฟังชันนี้มีเพื่อ เก็บข้อมูลการเชื่อมต่อกับ Mongo ไว้ทั้ง อ่าน อัพเดต ลบ หรือ query 💐
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
         client = pymongo.MongoClient(conn_str)
@@ -126,6 +127,9 @@ def MongoConnect(request):
     # record = myCollection.find_one()
     # print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'This is pymongo demo'}
 
+    #! Reading but Query by student_fistName
+    # record = myCollection.find_one({"student_fistName": firstName}) 
+    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
     #? Updating the record 
     # query = {
@@ -138,6 +142,8 @@ def MongoConnect(request):
     # record = myCollection.find_one()
     # print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
 
+    #? Update but query by student_fistName and set new value especially attendance_status
+    # new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
 
     #* Step 9: Delete the Record
     # query_del = {
@@ -148,11 +154,6 @@ def MongoConnect(request):
     # record = myCollection.find_one()
     # print(record)
 
-
-
-
-    
-    
 
     return ""
 
@@ -177,13 +178,65 @@ def upload_and_convert_pdf(request):
             png_path = os.path.join(fs.location, 'output.png') # ตัวนี้คือกำหนด path ที่จะเซฟ และชื่อ ไฟล์ เพื่อใช้บรรทัดล่าง 
             # print(png_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\output.png
             save_image_as_png(image_paths[0], png_path) # บันทึกรูปภาพแรกจากรายการ image_paths เป็นไฟล์ PNG ที่ตำแหน่งที่กำหนด.
-            check_text(png_path)
+            text = check_text(png_path)
             # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
+
+            conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+            try:
+                client = pymongo.MongoClient(conn_str)
+                print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+            except Exception:
+                print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+
+            # Create a DB
+            myDb = client["pymongo_demo"]
+            # Create a collection
+            myCollection = myDb["demo_collection"]
+            print(client.list_database_names())
+
+
+            #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
+            print("data ที่ได้มาจากการอ่าน ไฟล์ .pdf")
+            words = [word for line in text.splitlines() for word in line.split()]
+            print(words)
+            for i in range(0, len(words), 3):
+                # ใช้เลข 3 เพราะ ตารางไฟล์ที่ upload เข้ามา มี สาม คอลัมคือ รหัสนักศึกษา , ชื่อ , นามสกุล
+                # print(words[i], words[i + 1], words[i + 2]) 
+                # 64070257 Hydro Carbon
+                
+                student_number = {
+                    "id_number" : words[i], # รหัสนักศึกษา
+                    "student_fistName": words[i + 1],
+                    "student_surName" : words[i + 2],
+                    "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+                }
+                print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number)
+                # Insert the document
+                
+                # res = myCollection.insert_one(student_number)
+                # print(res.inserted_id)
+
+
+
+            
+
+
+            # #!TODO Create a document / record
+            # myDoc = {
+            #     "id_number" : "Hello", # รหัสนักศึกษา
+            #     "student_fistName": "This is pymongo demo",
+            #     "student_surName" : "",
+            #     "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+            # }
+            # # Insert the document
+            # res = myCollection.insert_one(myDoc)
+            # print(res.inserted_id)
+
+
+
 
             png_url = fs.url('output.png') # fs.url = สร้าง URL ที่เชื่อมโยงไปยังไฟล์ 'output.png' ใน FileSystemStorag
             # print(png_url) => /media/output.png
-
-
             return JsonResponse({'png_url': png_url})
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -241,9 +294,9 @@ def check_text(image_path):
 
         # Perform text extraction
         data = pytesseract.image_to_string(thresh, lang='eng')
-        # print(data)
+        print(data)
         print("------------ จบการเช็ก ------------")
-        uploadMongoDB(data)
+        checkStudentCome(data)
     
 
     return data
@@ -265,22 +318,43 @@ def check_text_Thai_Language(image_path):
 
     return text
 
-def uploadMongoDB(text):
-
+def checkStudentCome(text):
+    # ถูกเรียกใช้โดย ฟังชัน check_text
+    # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานใน MongoDB ว่า นศ. คนนี้มาแล้ว
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
     
+    lines = text.splitlines()
+    # หากมีบรรทัดที่ 6
+    if len(lines) >= 7:
+        line_6_words = lines[5].split()  # แยกคำในบรรทัดที่ 6 ที่มีชื่อ
+        line_7_words = lines[6].split()  # แยกคำในบรรทัดที่ 7 ที่มีนามสกุล
+        if line_6_words:
+            firstName = line_6_words[-1]
+            print("ชื่อของฉันคือ •ᴗ• :", firstName) # Intummadee
+        if line_7_words:
+            surName = line_7_words[-1]
+            print("นามสกุลของฉันคือ (> <) :", surName) # Maliyam
 
-    words = [word for line in text.splitlines() for word in line.split()]
-    print(words) 
-    # ['SO', 'aSS08', 'alsa', '*', '“™™', '41199', '02091', '02', '6', 'o', 'Vet.', '».', 'buna', 'HULALLEIN', 'Sane', 'Mass', 'Intummadee', 'Last', 'name', 'Maliyam', 'ifietufl', '19', 'W.8).', '2545', '_', 'Date', 'of', 'Birth', '19', 'Nov.', '2002', 'we', 'mn', 'wrNs', '4', 'waif', '5', 'w.umeareh', 'a.warsae', 'oases', 'wl', 'or', '(wiessivan', '‘aeted', '<\\', 'rwananaaat']
 
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
 
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
+    
+    #? Updating the record 
+    new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
+    record = myCollection.find_one({"student_fistName": firstName})
+    print("🍏🍏")
+    print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
+
+   
     
 
-
-
-
-    
 
     return ""
 

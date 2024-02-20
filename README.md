@@ -72,6 +72,10 @@ https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
 
 ---
 
+## Extension แนะนำให้โหลดใน Vs code
+- Better-comments
+
+
 เข้าไปใน views ที่อยู่ใน cardCheck_project
 ```
 from django.shortcuts import render
@@ -177,6 +181,12 @@ python manage.py migrate
 mkdir templates
 mkdir static\css
 ```
+
+---
+
+## ข้อจำกัด
+1. ไฟล์ที่อัพโหลด ต้องเป็น pdf เท่านั้น และ ขนาดตัวอักษรในไฟล์ควรมากกว่า 18
+2. 
 
 ---
 
