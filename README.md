@@ -9,14 +9,6 @@ activate Environment
 --> 👉 ```env\Scripts\activate```
 ถ้ารันได้จะมีคำว่า (env) ต่อหน้า PS ใน terminal
 
-ติดตั้ง Flask 
-```pip install flask```
-
-คำสั่งเช็กว่าติดตั้ง Flask หรือยัง?
-```pip freeze```
--ถ้าติดตั้งแล้ว จะมีเขียนว่า Flask==3.0.2
-
-
 -สร้างไฟล์ app.py
 
 ## ⚡ **Library** 
@@ -68,6 +60,13 @@ python -m pip install "pymongo[srv]"
 ```
 pip install pymupdf Pillow
 ```
+
+---
+
+# Tesseract วิธีทำให้อ่านข้อความภาษาไทย
+
+https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
+ดาวน์โหลด raw file ของเว็บนี้ https://github.com/tesseract-ocr/tessdata_best/blob/main/tha.traineddata ลงในที่ที่เก็บ ```\Tesseract-OCR\tessdata folder```
 
 ---
 

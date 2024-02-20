@@ -79,11 +79,13 @@ def VideoCapture(request):
 
 
 def MainPage(request): # http://127.0.0.1:8000/MainPage/
-    
-    # check_text("../../assets/test02gray.png")
-    # check_text("../assets/test01gray.png")
-
     print("Start HomePage.html 📦📦")
+    
+
+    # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
+    # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
+    # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กภาษาไทย
+
     return render(request, 'MainPage.html', {
         # 'frame_base64': frame_base64,
     })
@@ -91,8 +93,8 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
 
 
 def MongoConnect(request):
-    
-    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
         client = pymongo.MongoClient(conn_str)
@@ -152,18 +154,19 @@ def MongoConnect(request):
 
     return ""
 
-
 def upload_and_convert_pdf(request):
+    print("เข้า upload_and_convert_pdf")
     if request.method == 'POST' and request.FILES['pdf_file']: # ตรวจว่า มีไฟล์ PDF ถูกส่งมา
         # Handle the uploaded PDF file
         uploaded_file = request.FILES['pdf_file'] #  ดึงข้อมูลของไฟล์ PDF ที่ถูกอัปโหลดมา.
         fs = FileSystemStorage() # สร้างอ็อบเจ็กต์ FileSystemStorage ซึ่งเป็นวัตถุที่ช่วยในการจัดการไฟล์ของ Django.
         pdf_filename = fs.save(uploaded_file.name, uploaded_file) # บันทึกไฟล์ PDF ในระบบเก็บข้อมูลของ Django และรับชื่อไฟล์ที่ถูกบันทึก.
-        # print(pdf_filename) => resume_ceOfNrC.pdf
+        # print(pdf_filename) => resume.pdf
 
         # Convert PDF to images 
         #  fs.location หรือ ตำแหน่งที่จะเซฟไฟล์ ถูกกำหนดไว้ใน settings.py ซึ่งตำแหน่งนั้นจะแปรไปตามค่าชื่อ MEDIA_ROOT ที่กำหนดไว้ หรือก็คือ fs.location จะเป็นที่ตั้งนี้
         pdf_path = os.path.join(fs.location, pdf_filename) # สร้างเส้นทางสำหรับไฟล์ PDF.
+        # print("pdf_path = " + pdf_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\test2.pdf เราใส่ pdf ชื่อ test2.pdf มา
         image_paths = convert_pdf_to_images(pdf_path) # แปลงไฟล์ PDF เป็นรูปภาพ และได้รับเส้นทางของรูปภาพ.
         # print(image_paths) =>  ['page_1.png', 'page_2.png'] pdfมีหลายหน้า pathก็มีหลายหน้าตาม แต่เราเซฟภาพแค่รูปแรก
         
@@ -181,8 +184,6 @@ def upload_and_convert_pdf(request):
 
             return JsonResponse({'png_url': png_url})
         return JsonResponse({'error': 'Invalid request'}, status=400)
-
-    
 
 def convert_pdf_to_images(pdf_path):
     images = []
@@ -202,42 +203,61 @@ def save_image_as_png(source_path, destination_path):
     img = Image.open(source_path)
     img.save(destination_path, 'PNG')
 
+def upload_image(request):
+    if request.method == 'POST' and request.FILES.get('image_file'):
+        uploaded_image = request.FILES['image_file']
+        fs = FileSystemStorage()
+        image_filename = fs.save(uploaded_image.name, uploaded_image)
+        # print(image_filename) ==> Database.png ได้ชื่อไฟล์ออกมา
+        image_path = os.path.join(fs.location, image_filename) 
+        # print("image_path = " + image_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\74b05-16299573593572-800.avif
+        if image_path:
+            saveImage_path = os.path.join(fs.location, 'outputImage.png') 
+            save_image_as_png(image_path, saveImage_path)
+            check_text(saveImage_path) # เช็กข้อความในภาพตรงนี้
+            saveImage_url = fs.url('outputImage.png') 
 
+            return JsonResponse({'saveImage_url': saveImage_url})
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def check_text(image_path):
-    print("เข้าการ Check ตัวอักษร 🌏🌏🌏🌏")
+    print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     
     # image_path = '../assets/' + Image_name
-    img = cv2.imread(image_path)
-    im = cv2.imread(image_path)
     image = cv2.imread(image_path)
-    imageTotest = cv2.imread(image_path)
-    grayTotest = cv2.cvtColor(imageTotest, cv2.COLOR_BGR2GRAY)
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
 
-    # print("🌏🌏🌏🌏")
-    if img is not None:
-        # แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+    if image is not None:
         # path ไฟล์ภาพนี้จะเอาไว้ ทดลอง
         #! cv2.imwrite('../assets/testImage_Here.png', img)
 
+        # แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (3,3), 0)
         thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
-
-
-        # cv2.imshow('bgr image', thresh)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
         # Perform text extraction
-        data = pytesseract.image_to_string(thresh, lang='eng', config='--psm 6')
+        data = pytesseract.image_to_string(thresh, lang='eng')
         print(data)
         print("------------ จบการเช็ก ------------")
-                
        
     return data
+
+def check_text_Thai_Language(image_path):
+    print("Check ตัวอักษร Thailand 🇹🇭 🇹🇭 ⋆｡˚ ✈︎ ✈️ ⋆")
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    image = cv2.imread(image_path)
+    # print(image)
+    if image is not None:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray, (3,3), 0)
+        thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+
+        # Perform text extraction
+        text = pytesseract.image_to_string(thresh, lang='tha')  #Specify language to look after!
+        # --psm 6 หมายถึง Sparse text. Tesseract จะพยายามแยกแยะข้อความในภาพที่มีการเว้นระยะทางและข้อความที่มีช่องว่างอยู่รอบ ๆ ข้อความ
+        print(text)
+
+    return text
+

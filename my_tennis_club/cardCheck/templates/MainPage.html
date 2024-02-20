@@ -19,7 +19,9 @@
     <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button>
 
     <!-- Image container to display the captured image -->
-    <div id="imageContainer"></div>
+    <div id="video_imageContainer"></div>
+
+    <br>
 
     <!-- ปุ่ม test สำหรับ testCardCheck ใน views.py -->
     <button type="button" class="btn btn-primary" id="testButton">Test Card Check</button>
@@ -29,14 +31,30 @@
     
     <form id="pdfUploadForm" enctype="multipart/form-data">
         {% csrf_token %}
+        <!-- ตัว token ด้านบนช่วยเรื่อง security,  When the form is submitted, Django checks the CSRF token to ensure it matches the expected value. This helps prevent CSRF attacks. -->
+        <!-- อ่านต่อเพิ่มเติมได้ คลิ๊กที่นี้ => https://docs.djangoproject.com/en/5.0/ref/csrf/ -->
         <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
         <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
     </form>
 
-    <div id="imageContainer"></div>
+    <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
+    <div id="pdfUploadContainer"></div>
     
+
+    <br>
+    <br>
+
+
+    <form id="imageUploadForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image_file" accept="image/*" id="imageFileInput">
+        <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
+    </form>
     
-    <!-- <button type="button" class="btn btn-warning" id="testButton">Upload File</button> -->
+    <!-- แสดงภาพ ที่ upload เข้ามา -->
+    <div id="imageUploadContainer"></div>
+    
+   
 
     <script>
         //? $ เป็นการย่อของ jQuery ซึ่งเป็นไลบรารี JavaScript ที่ทำให้การจัดการ DOM
@@ -61,7 +79,7 @@
                         imgElement.attr("src", "data:image/jpeg;base64," + frameBase64);
 
                         // Append the image element to the image container
-                        $("#imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
+                        $("#video_imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
                     },
                     error: function(error) {
                         console.log("Error:", error);
@@ -88,7 +106,7 @@
 
             //  ทำการอัปโหลดไฟล์ PDF โดยใช้ pathคือ /upload_and_convert_pdf/ เมื่อกด ปุ่มที่มี id="#pdfUploadButton"
             $("#pdfUploadButton").click(function() {
-            var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
+                var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
                 $.ajax({
                     url: "/upload_and_convert_pdf/",
                     type: "POST",
@@ -105,7 +123,7 @@
                             imgElement.attr("src", response.png_url);
 
                             // แทรกภาพลงใน container
-                            $("#imageContainer").empty().append(imgElement);
+                            $("#pdfUploadContainer").empty().append(imgElement);
 
                             // แสดง alert ว่าเสร็จสิ้น
                             alert("PDF uploaded and converted successfully! PNG saved at " + response.png_url);
@@ -116,6 +134,44 @@
 
                     },
                     error: function(error) {
+                        console.log("Error:", error);
+                    }
+                });
+            });
+            
+
+            $("#imageUploadButton").click(function() {
+                var formData = new FormData($("#imageUploadForm")[0]);
+                $.ajax({
+                    url: "/upload_image/",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Handle the success response
+                        console.log(response);
+                        if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
+                            // สร้าง element สำหรับภาพ
+                            var imgElement = $("<img>");
+                            imgElement.attr("src", response.saveImage_url);
+                            imgElement.css({
+                                'width': '300px',
+                                'height': '200px'
+                            });
+
+                            // แทรกภาพลงใน container
+                            $("#imageUploadContainer").empty().append(imgElement);
+
+                            // แสดง alert ว่าเสร็จสิ้น
+                            alert("successfully! Image " + response.png_url);
+                        } else {
+                            // กรณี error
+                            alert("Error: " + response.error);
+                        }
+                    },
+                    error: function(error) {
+                        // Handle the error response
                         console.log("Error:", error);
                     }
                 });
