@@ -85,7 +85,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     
 
     # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
-    check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
+    # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
     # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กภาษาไทย
 
     return render(request, 'MainPage.html', {
@@ -96,7 +96,8 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
 #! Mongo Tip Here!!!!!!
 def MongoConnect(request):
     # ฟังชันนี้มีเพื่อ เก็บข้อมูลการเชื่อมต่อกับ Mongo ไว้ทั้ง อ่าน อัพเดต ลบ หรือ query 💐
-    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
         client = pymongo.MongoClient(conn_str)
@@ -174,64 +175,78 @@ def upload_and_convert_pdf(request):
         
         # Save the first image as a PNG file
         if image_paths:
-            png_path = os.path.join(fs.location, 'output.png') # ตัวนี้คือกำหนด path ที่จะเซฟ และชื่อ ไฟล์ เพื่อใช้บรรทัดล่าง 
-            # print(png_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\output.png
-            save_image_as_png(image_paths[0], png_path) # บันทึกรูปภาพแรกจากรายการ image_paths เป็นไฟล์ PNG ที่ตำแหน่งที่กำหนด.
-            text = check_text(png_path)
-            # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
 
-            conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
-            try:
-                client = pymongo.MongoClient(conn_str)
-                print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
-            except Exception:
-                print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
-
-            # Create a DB
-            myDb = client["pymongo_demo"]
-            # Create a collection
-            myCollection = myDb["demo_collection"]
-            print(client.list_database_names())
-
-
-            #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
-            print("data ที่ได้มาจากการอ่าน ไฟล์ .pdf")
-            words = [word for line in text.splitlines() for word in line.split()]
-            print(words)
-            for i in range(0, len(words), 3):
-                # ใช้เลข 3 เพราะ ตารางไฟล์ที่ upload เข้ามา มี สาม คอลัมคือ รหัสนักศึกษา , ชื่อ , นามสกุล
-                # print(words[i], words[i + 1], words[i + 2]) 
-                # 64070257 Hydro Carbon
-                
-                student_number = {
-                    "id_number" : words[i], # รหัสนักศึกษา
-                    "student_fistName": words[i + 1],
-                    "student_surName" : words[i + 2],
-                    "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
-                }
-                print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number)
-                # Insert the document
-                
-                # res = myCollection.insert_one(student_number)
-                # print(res.inserted_id)
-
-
-
+            first_page_image_path = image_paths[0]
+            png_path = os.path.join(fs.location, 'output.png') 
+            save_image_as_png(first_page_image_path, png_path)
+            # check_text(first_page_image_path)
             
+            for i, page_image_path in enumerate(image_paths):
+                page_png_path = os.path.join(fs.location, f'page_{i + 1}.png')
+                save_image_as_png(page_image_path, page_png_path)
+                text = check_text(page_png_path)
+                # print("text " , text)
+
+                lines = text.splitlines()
+                for line in lines:
+                    parts = line.split(' ', 1)
+                    if len(parts) == 2:
+                        number_part, text_part = parts
+                        text_part = text_part.replace('-', '').replace('=', '').strip()
+                        subparts = text_part.split(' ', 1)
+                        if len(subparts) == 2:
+                            first_part, second_part = subparts
+                            if '—' in second_part:
+                                second_part = second_part.split('—', 1)[1].strip()
+                            print(number_part, "ชื่อ = ", first_part, "นามสกุล = ", second_part)
+                    student_number = {
+                        "id_number" : number_part, # รหัสนักศึกษา
+                        "student_fistName": first_part,
+                        "student_surName" : second_part,
+                        "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+                    }
+                    # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
+
+            # png_path = os.path.join(fs.location, 'output.png') # ตัวนี้คือกำหนด path ที่จะเซฟ และชื่อ ไฟล์ เพื่อใช้บรรทัดล่าง 
+            # # print(png_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\output.png
+            # save_image_as_png(image_paths[0], png_path) # บันทึกรูปภาพแรกจากรายการ image_paths เป็นไฟล์ PNG ที่ตำแหน่งที่กำหนด.
+            # text = check_text(png_path)
+            # # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
 
 
-            # #!TODO Create a document / record
-            # myDoc = {
-            #     "id_number" : "Hello", # รหัสนักศึกษา
-            #     "student_fistName": "This is pymongo demo",
-            #     "student_surName" : "",
-            #     "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
-            # }
-            # # Insert the document
-            # res = myCollection.insert_one(myDoc)
-            # print(res.inserted_id)
 
 
+
+            # conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+            # try:
+            #     client = pymongo.MongoClient(conn_str)
+            #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+            # except Exception:
+            #     print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+
+            # # Create a DB
+            # myDb = client["pymongo_demo"]
+            # # Create a collection
+            # myCollection = myDb["demo_collection"]
+            # print(client.list_database_names())
+
+
+            # #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
+            # print("data ที่ได้มาจากการอ่าน ไฟล์ .pdf")
+            # words = [word for line in text.splitlines() for word in line.split()]
+            # print(words)
+            # for i in range(0, len(words), 3):
+            #     # ใช้เลข 3 เพราะ ตารางไฟล์ที่ upload เข้ามา มี สาม คอลัมคือ รหัสนักศึกษา , ชื่อ , นามสกุล
+            #     # print(words[i], words[i + 1], words[i + 2]) 
+            #     # 64070257 Hydro Carbon
+                
+            #     student_number = {
+            #         "id_number" : words[i], # รหัสนักศึกษา
+            #         "student_fistName": words[i + 1],
+            #         "student_surName" : words[i + 2],
+            #         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+            #     }
+            #     print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number)
 
 
             png_url = fs.url('output.png') # fs.url = สร้าง URL ที่เชื่อมโยงไปยังไฟล์ 'output.png' ใน FileSystemStorag
@@ -293,9 +308,9 @@ def check_text(image_path):
 
         # Perform text extraction
         data = pytesseract.image_to_string(thresh, lang='eng')
-        print(data)
+        # print(data)
         print("------------ จบการเช็ก ------------")
-        checkStudentCome(data)
+        # checkStudentCome(data)
     
 
     return data
@@ -318,9 +333,9 @@ def check_text_Thai_Language(image_path):
     return text
 
 def checkStudentCome(text):
-    # ถูกเรียกใช้โดย ฟังชัน check_text
+    # ฟังชันนี้จะถูกเรียกใช้โดย ฟังชัน check_text
     # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานใน MongoDB ว่า นศ. คนนี้มาแล้ว
-    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
     
     lines = text.splitlines()
@@ -348,7 +363,7 @@ def checkStudentCome(text):
     #? Updating the record 
     new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
     record = myCollection.find_one({"student_fistName": firstName})
-    print("🍏🍏")
+    print("🍏🍏 record ที่อัพเดตแล้ว")
     print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
 
    
