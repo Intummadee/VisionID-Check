@@ -96,7 +96,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
 #! Mongo Tip Here!!!!!!
 def MongoConnect(request):
     # ฟังชันนี้มีเพื่อ เก็บข้อมูลการเชื่อมต่อกับ Mongo ไว้ทั้ง อ่าน อัพเดต ลบ หรือ query 💐
-    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
@@ -207,6 +207,8 @@ def upload_and_convert_pdf(request):
                     }
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
 
+
+
             # png_path = os.path.join(fs.location, 'output.png') # ตัวนี้คือกำหนด path ที่จะเซฟ และชื่อ ไฟล์ เพื่อใช้บรรทัดล่าง 
             # # print(png_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\output.png
             # save_image_as_png(image_paths[0], png_path) # บันทึกรูปภาพแรกจากรายการ image_paths เป็นไฟล์ PNG ที่ตำแหน่งที่กำหนด.
@@ -217,7 +219,7 @@ def upload_and_convert_pdf(request):
 
 
 
-            # conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+            # conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
             # try:
             #     client = pymongo.MongoClient(conn_str)
             #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -335,7 +337,7 @@ def check_text_Thai_Language(image_path):
 def checkStudentCome(text):
     # ฟังชันนี้จะถูกเรียกใช้โดย ฟังชัน check_text
     # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานใน MongoDB ว่า นศ. คนนี้มาแล้ว
-    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
     
     lines = text.splitlines()
