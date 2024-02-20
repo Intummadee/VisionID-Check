@@ -50,6 +50,8 @@ python manage.py startapp cardCheck
 ---
 
 # ใช้งาน MongoDB
+https://account.mongodb.com/account/login?n=https%3A%2F%2Fcloud.mongodb.com%2Fv2%2F65d359c147d94142e1d9fb54&nextHash=%23metrics%2FreplicaSet%2F65d35a0f89492b3df0336104%2Fexplorer%2Fpymongo_demo%2Fdemo_collection%2Ffind&signedOut=true
+
 Source : https://www.youtube.com/watch?v=GJCKIGeK3qc
 ```JS
 python -m pip install "pymongo[srv]"

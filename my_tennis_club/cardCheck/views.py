@@ -29,7 +29,9 @@ from django.core.files.storage import FileSystemStorage
 import os
 import fitz
  
-
+# สำหรับไว้ตรวจหา เอาเฉพาะชื่อและนามสกุล ออกจากรูปภาพที่อัพโลหด
+import re
+import linecache 
  
 
 def testCardCheck(request):
@@ -83,7 +85,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     
 
     # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
-    # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
+    check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
     # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กภาษาไทย
 
     return render(request, 'MainPage.html', {
@@ -93,8 +95,8 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
 
 
 def MongoConnect(request):
-    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
-    # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    
+    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
         client = pymongo.MongoClient(conn_str)
@@ -239,9 +241,11 @@ def check_text(image_path):
 
         # Perform text extraction
         data = pytesseract.image_to_string(thresh, lang='eng')
-        print(data)
+        # print(data)
         print("------------ จบการเช็ก ------------")
-       
+        uploadMongoDB(data)
+    
+
     return data
 
 def check_text_Thai_Language(image_path):
@@ -260,4 +264,23 @@ def check_text_Thai_Language(image_path):
         print(text)
 
     return text
+
+def uploadMongoDB(text):
+
+    print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
+    
+
+    words = [word for line in text.splitlines() for word in line.split()]
+    print(words) 
+    # ['SO', 'aSS08', 'alsa', '*', '“™™', '41199', '02091', '02', '6', 'o', 'Vet.', '».', 'buna', 'HULALLEIN', 'Sane', 'Mass', 'Intummadee', 'Last', 'name', 'Maliyam', 'ifietufl', '19', 'W.8).', '2545', '_', 'Date', 'of', 'Birth', '19', 'Nov.', '2002', 'we', 'mn', 'wrNs', '4', 'waif', '5', 'w.umeareh', 'a.warsae', 'oases', 'wl', 'or', '(wiessivan', '‘aeted', '<\\', 'rwananaaat']
+
+
+    
+
+
+
+
+    
+
+    return ""
 
