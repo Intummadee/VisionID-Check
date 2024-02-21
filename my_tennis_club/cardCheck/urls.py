@@ -13,4 +13,5 @@ urlpatterns = [
     path('VideoCapture/', views.VideoCapture, name="VideoCapture"),
     path('upload_and_convert_pdf/', views.upload_and_convert_pdf, name='upload_and_convert_pdf'),  
     path('upload_image/', views.upload_image, name='upload_image'),
+    path('createImageTable/', views.createImageTable, name='createImageTable'),
 ]

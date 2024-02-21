@@ -53,7 +53,11 @@
     
     <!-- แสดงภาพ ที่ upload เข้ามา -->
     <div id="imageUploadContainer"></div>
-    
+
+    <br>
+    <br>
+
+    <button type="button" class="btn btn-dark" id="createImageTable">สร้างตาราง</button>
    
 
     <script>
@@ -63,6 +67,19 @@
         $(document).ready(function() {
             console.log("โหลดหน้า Homepage.html 📦📦");
             // เมื่อปุ่ม VideoCapture ถูกคลิก
+            $("#createImageTable").click(function() {
+                console.log("alert(response);");
+                $.ajax({
+                    url: "/createImageTable/",
+                    type: "GET",
+                    success: function(response){
+                        alert(response);
+                    },
+                    error: function(error){
+                        console.log("Error:", error);
+                    }
+                });
+            });
             $("#VideoCapture").click(function() {
                 // ทำ AJAX request ไปยัง URL /VideoCapture/
                 $.ajax({
@@ -117,13 +134,22 @@
                         console.log(response); 
                         // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
                         // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
-                        if (response.png_url) { // ได้  png_url: "/media/output.png"
+                        if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
                             // สร้าง element สำหรับภาพ
-                            var imgElement = $("<img>");
-                            imgElement.attr("src", response.png_url);
 
-                            // แทรกภาพลงใน container
-                            $("#pdfUploadContainer").empty().append(imgElement);
+                            // เคลียร์ container เก่า
+                            $("#pdfUploadContainer").empty();
+
+                            // ลูปผ่านทุก URL ใน array
+                            for (var i = 0; i < response.page_png_path_url.length; i++) {
+                                // สร้าง element <img> สำหรับแต่ละ URL
+                                var imgElement = $("<img>");
+                                imgElement.attr("src", response.page_png_path_url[i]);
+
+                                // แทรกภาพลงใน container
+                                $("#pdfUploadContainer").append(imgElement);
+                            }
+                            
 
                             // แสดง alert ว่าเสร็จสิ้น
                             alert("PDF uploaded and converted successfully! PNG saved at " + response.png_url);

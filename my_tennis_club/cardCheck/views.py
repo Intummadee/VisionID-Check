@@ -33,6 +33,7 @@ import fitz
 import re
 import linecache 
  
+# 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
 def testCardCheck(request):
     print("testCardCheck")
@@ -93,11 +94,106 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     })
 
 
+ 
+def createImageTable(request):
+    #  ฟังชันนี้จะ อ่าน รายชื่อในฐานข้อมูล แล้วมาแสดงเป็นรูปภาพให้ผู้ใช้โหลดได้
+    
+    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
+    
+    # ขนาดจริงของกระดาษ A4 (210 x 297 มม.)
+    # a4_width, a4_height = 210, 297
+    a4_width, a4_height = 700, 800
+
+    # สร้างภาพพื้นหลังสีขาวขนาด A4
+    image_a4 = np.ones((a4_height, a4_width, 3), dtype=np.uint8) * 255
+
+    # กำหนดขนาดของตาราง #! ถ้าจะเปลี่ยนจำนวนพวกนี้ ต้องระวังเรื่องการเขียนตัวอักษร เพราะบางตัวเลข เราใส่มือไป 
+    num_rows = 31
+    num_cols = 4
+    # กำหนดตาราง ดังนี้ num_rows = 20 and num_cols = 4  คำตอบ ==>  cell_width_distance = 52  , cell_height_distance = 14
+    cell_width_distance = image_a4.shape[1] // num_cols + 8 # .shape[1] = ความกว้าง หารด้วย จำนวนคอลัมทั้งหมด
+    cell_height_distance = image_a4.shape[0] // num_rows # .shape[0] = ความสูง หารด้วย จำนวนแถวทั้งหมด
+    # image_a4.shape[1] = 210 , image_a4.shape[0] = 297
+
+    #! Reading the document
+    cursor = myCollection.find()
+        
+    for row in range(num_rows + 1):
+        y = row * cell_height_distance # เรามีความห่างของแต่ละแถว เท่ากับ cell_height_distance ทำให้ถ้าอยากได้แถวที่ สาม ก็เอาเลข 3 ไปคูณ กับระยะห่างระหว่างแถว ก็จะได้ แถวสามออกมา
+        # print("row : ", row , "cell_height_distance : ", cell_height_distance , "y 🪁🪁: " , y)
+        # row :  0 cell_height_distance :  14 y 🪁🪁:  0
+        # row :  1 cell_height_distance :  14 y 🪁🪁:  14
+        cv2.line(image_a4, (0, y), (image_a4.shape[1], y), (0, 0, 0), 1)
+
+        # เขียนข้อความลงในทุกคอลัมน์ของแถว
+        # range(start, stop) ถ้าเป็น range(num_cols + 1) หมายถึง startเริ่มต้นเป็น 0 เลย เหมือนเขียนแค่ stop อย่างเดียว
+        if(row != 0): #เราจะไม่เขียนลง แถวแรก เพราะแถวแรกจะใส่หัวเรื่องแทน
+            # for col in range(num_cols): # จำนวนคอลัม = 4 
+            #     x = col * cell_width_distance 
+                
+            try:
+                record = cursor.next()
+                record_id_number = record['id_number']
+                record_student_fistName = record['student_fistName']
+                record_student_surName = record['student_surName']
+                record_attendance_status = record['attendance_status']
+                # print("🌊🌊 " , record_id_number)
+            
+
+                # วาดข้อความลงบนภาพ
+                cv2.putText(image_a4, record_id_number, (0+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1, ) #* เริ่มที่ (x,y) = (0, y+15) เพราะ เราไม่เขียนลงแถวแรกเลยเลือก y = y +15 ส่วน x = 0 เพราะอันนี้คือรหัสนักศึกษาซึ่งเป็น คอลัมแรกในตาราง ข้อความนี้เลยต้องชิดซ้ายของภาพ
+                cv2.putText(image_a4, record_student_fistName, (cell_width_distance+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1,)
+                cv2.putText(image_a4, record_student_surName, (cell_width_distance*2+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, )
+                #TODO cv2.putText(image_a4, record_attendance_status, (cell_width_distance*3+10, y+cell_height_distance+1), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, )
+                if(record_attendance_status == 0): # 0 = ไม่ได้เข้าสอบ , 1 = เข้าสอบ   #? เครื่องหมายอยากให้ ความกว้าง = 15 , ความสูง = 10
+                    # วาดเครื่องหมายกากบาท - ขาดสอบ ❌
+                    cv2.line(image_a4, (cell_width_distance*3+10,  y+cell_height_distance-5), (cell_width_distance*3+20, y+cell_height_distance-15), (0, 0, 255), 1, cv2.LINE_AA) 
+                    cv2.line(image_a4, (cell_width_distance*3+10,  y+cell_height_distance-15), (cell_width_distance*3+20, y+cell_height_distance-5), (0, 0, 255), 1, cv2.LINE_AA)
+                else:
+                    # วาดเครื่องหมายถูก - เข้าสอบ ✅
+                    cv2.line(image_a4, (cell_width_distance*3+10,  y+cell_height_distance-5), (cell_width_distance*3+20, y+cell_height_distance-15), (0, 255, 0), 1, cv2.LINE_AA)
+                    cv2.line(image_a4, (cell_width_distance*3+10,  y+cell_height_distance-5), (cell_width_distance*3+7, y+cell_height_distance-8), (0, 255, 0), 1, cv2.LINE_AA)
+            except StopIteration:
+                # มันจะเกินมา เพราะจากตาราง เลยต้องมี การดัก ตัวนี้ไว้ , StopIteration แสดงว่า Cursor ไม่มีข้อมูลเพิ่มเติม
+                break
+
+    title = ["id_number", "firstname" , "surname", "attendance"]
+    for col in range(num_cols):
+        x = col * cell_width_distance
+        # print("col : ", col , "cell_width_distance : ", cell_width_distance , "x 🍜🍜: " , x)
+        # col :  0 cell_width_distance :  52 x 🍜🍜:  0  
+        # col :  1 cell_width_distance :  52 x 🍜🍜:  52 #*สังเกตได้ว่า ทั้งสอง คอลัม  x จะห่างเท่ากับ 52 or cell_width_distance
+        cv2.line(image_a4, (x, 0), (x, image_a4.shape[0]), (0, 0, 0), 1)
+
+         
+        #? คำที่ใช้ในแถวแรกอยู่ตรงนี้
+        cv2.putText(image_a4, title[col], (x + 5, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+ 
+
+    # ปรับขนาดภาพให้เท่ากับกระดาษ A4
+    # scaled_image = cv2.resize(image_a4, (800, 900))  # 800 x 1131 คือขนาดที่เหมาะสมต่อการแสดงผล
+    scaled_image = cv2.resize(image_a4, (a4_width, a4_height))  # 800 x 1131 คือขนาดที่เหมาะสมต่อการแสดงผล
+
+    # แสดงภาพ
+    cv2.imshow('A4 Size Image', scaled_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    return HttpResponse("Hello world!")
+
+
+
 #! Mongo Tip Here!!!!!!
 def MongoConnect(request):
     # ฟังชันนี้มีเพื่อ เก็บข้อมูลการเชื่อมต่อกับ Mongo ไว้ทั้ง อ่าน อัพเดต ลบ หรือ query 💐
-    conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
-    # conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
     try:
         client = pymongo.MongoClient(conn_str)
@@ -123,9 +219,14 @@ def MongoConnect(request):
     # print(res.inserted_id)
 
 
-    #! Reading the document
+    #! Reading the document อ่านแค่ rocord เดียว
     # record = myCollection.find_one()
     # print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'This is pymongo demo'}
+
+    #! Reading the document อ่าน all record
+    # cursor = myCollection.find()
+    # for record in cursor:
+    #     print(record)
 
     #! Reading but Query by student_fistName
     # record = myCollection.find_one({"student_fistName": firstName}) 
@@ -157,6 +258,7 @@ def MongoConnect(request):
 
     return ""
 
+#* PDF
 def upload_and_convert_pdf(request):
     print("เข้า upload_and_convert_pdf")
     if request.method == 'POST' and request.FILES['pdf_file']: # ตรวจว่า มีไฟล์ PDF ถูกส่งมา
@@ -180,23 +282,47 @@ def upload_and_convert_pdf(request):
             png_path = os.path.join(fs.location, 'output.png') 
             save_image_as_png(first_page_image_path, png_path)
             # check_text(first_page_image_path)
-            
+
+            page_png_path_url = [] # ตัวแปรนี้ไว้เก็บ path ของ image เพื่อส่งไปยัง frontend ให้ฝั่ง frontend แสดงภาพตามจำนวนหน้า pdf 
+
             for i, page_image_path in enumerate(image_paths):
+                # print(page_image_path) # เก็บชื่อ ไฟลฺ image เอาไว้  , .pdf มีสองหน้าจะ print ออกมาสองรอบ  page_1.png และ  page_2.png
                 page_png_path = os.path.join(fs.location, f'page_{i + 1}.png')
-                save_image_as_png(page_image_path, page_png_path)
+                # page_png_path = print path ออกมา สองรอบ ตามจำนวนหน้าในไฟล์ .pdf เช่น C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\page_2.png  และ   C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\page_1.png
+                save_image_as_png(page_image_path, page_png_path) # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
+
+                page_png_path_url.append(fs.url(page_image_path))
+
+                #* ตรงนี้เช็ก text แล้ว
                 text = check_text(page_png_path)
                 # print("text " , text)
 
+                conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+                # try:
+                #     client = pymongo.MongoClient(conn_str)
+                #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+                # except Exception:
+                #     print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+
+                # # Create a DB
+                # myDb = client["pymongo_demo"]
+                # # Create a collection
+                # myCollection = myDb["demo_collection"]
+                # print(client.list_database_names())
+
+
+                print(text)
+                #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
                 lines = text.splitlines()
                 for line in lines:
                     parts = line.split(' ', 1)
                     if len(parts) == 2:
                         number_part, text_part = parts
-                        text_part = text_part.replace('-', '').replace('=', '').strip()
+                        text_part = text_part.replace('-', '').replace('=', '').strip() 
                         subparts = text_part.split(' ', 1)
                         if len(subparts) == 2:
                             first_part, second_part = subparts
-                            if '—' in second_part:
+                            if '—' in second_part: # แก้ส่วน second ที่บางชื่อจะเป็นแบบนี้ => 64070001 ชื่อ =  HarmonyHub นามสกุล =  — Tranquilwood (ในนามสกุลหรือส่วน second_part มี — ติดอยู่ เลยจำเป็นต้องมีเงื่อนไข เพื่อลบอันนี้ออก)
                                 second_part = second_part.split('—', 1)[1].strip()
                             print(number_part, "ชื่อ = ", first_part, "นามสกุล = ", second_part)
                     student_number = {
@@ -205,55 +331,14 @@ def upload_and_convert_pdf(request):
                         "student_surName" : second_part,
                         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
                     }
+                    #TODO Insert the document
+                    # res = myCollection.insert_one(student_number)
+                    # print(res.inserted_id)
+
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
-
-
-
-            # png_path = os.path.join(fs.location, 'output.png') # ตัวนี้คือกำหนด path ที่จะเซฟ และชื่อ ไฟล์ เพื่อใช้บรรทัดล่าง 
-            # # print(png_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\output.png
-            # save_image_as_png(image_paths[0], png_path) # บันทึกรูปภาพแรกจากรายการ image_paths เป็นไฟล์ PNG ที่ตำแหน่งที่กำหนด.
-            # text = check_text(png_path)
-            # # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
-
-
-
-
-
-            # conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
-            # try:
-            #     client = pymongo.MongoClient(conn_str)
-            #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
-            # except Exception:
-            #     print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
-
-            # # Create a DB
-            # myDb = client["pymongo_demo"]
-            # # Create a collection
-            # myCollection = myDb["demo_collection"]
-            # print(client.list_database_names())
-
-
-            # #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
-            # print("data ที่ได้มาจากการอ่าน ไฟล์ .pdf")
-            # words = [word for line in text.splitlines() for word in line.split()]
-            # print(words)
-            # for i in range(0, len(words), 3):
-            #     # ใช้เลข 3 เพราะ ตารางไฟล์ที่ upload เข้ามา มี สาม คอลัมคือ รหัสนักศึกษา , ชื่อ , นามสกุล
-            #     # print(words[i], words[i + 1], words[i + 2]) 
-            #     # 64070257 Hydro Carbon
-                
-            #     student_number = {
-            #         "id_number" : words[i], # รหัสนักศึกษา
-            #         "student_fistName": words[i + 1],
-            #         "student_surName" : words[i + 2],
-            #         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
-            #     }
-            #     print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number)
-
-
-            png_url = fs.url('output.png') # fs.url = สร้าง URL ที่เชื่อมโยงไปยังไฟล์ 'output.png' ใน FileSystemStorag
-            # print(png_url) => /media/output.png
-            return JsonResponse({'png_url': png_url})
+                    # print(student_number)
+            
+            return JsonResponse({'page_png_path_url': page_png_path_url}) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def convert_pdf_to_images(pdf_path):
@@ -274,6 +359,8 @@ def save_image_as_png(source_path, destination_path):
     img = Image.open(source_path)
     img.save(destination_path, 'PNG')
 
+
+#* ภาพ Image
 def upload_image(request):
     if request.method == 'POST' and request.FILES.get('image_file'):
         uploaded_image = request.FILES['image_file']
@@ -285,9 +372,18 @@ def upload_image(request):
         if image_path:
             saveImage_path = os.path.join(fs.location, 'outputImage.png') 
             save_image_as_png(image_path, saveImage_path)
-            check_text(saveImage_path) # เช็กข้อความในภาพตรงนี้
-            saveImage_url = fs.url('outputImage.png') 
+            text = check_text(saveImage_path) # เช็กข้อความในภาพตรงนี้
 
+            #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ pdf ไม่ได้เพราะ pdf จะมีโครงสร้าง มาให้เลย แต่ image ไม่มี⁡
+            # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
+            
+            print(text)
+            
+
+
+
+
+            saveImage_url = fs.url('outputImage.png') 
             return JsonResponse({'saveImage_url': saveImage_url})
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -310,10 +406,8 @@ def check_text(image_path):
 
         # Perform text extraction
         data = pytesseract.image_to_string(thresh, lang='eng')
-        # print(data)
-        print("------------ จบการเช็ก ------------")
-        # checkStudentCome(data)
-    
+        print(data)
+        print("------------ จบการเช็ก ------------")    
 
     return data
 
@@ -337,7 +431,7 @@ def check_text_Thai_Language(image_path):
 def checkStudentCome(text):
     # ฟังชันนี้จะถูกเรียกใช้โดย ฟังชัน check_text
     # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานใน MongoDB ว่า นศ. คนนี้มาแล้ว
-    conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:<passwordInMyDiscord>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
     
     lines = text.splitlines()

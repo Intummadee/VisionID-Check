@@ -72,8 +72,10 @@ https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
 
 ---
 
-## Extension แนะนำให้โหลดใน Vs code
+## Extension แนะนำให้โหลดใน Vs code สำหรับอ่าน comment 
 - Better-comments
+- Comment Styler
+
 
 
 เข้าไปใน views ที่อยู่ใน cardCheck_project
