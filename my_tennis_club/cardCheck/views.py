@@ -29,10 +29,11 @@ from django.core.files.storage import FileSystemStorage
 import os
 import fitz
  
-# สำหรับไว้ตรวจหา เอาเฉพาะชื่อและนามสกุล ออกจากรูปภาพที่อัพโลหด
+
+# ใช้สำหรับ ดึงชื่อ หรือ นามสกุล
 import re
-import linecache 
- 
+
+
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
 def testCardCheck(request):
@@ -71,7 +72,7 @@ def VideoCapture(request):
 
     # save ภาพ 
     cv2.imwrite('../assets/testImage.png', frame)
-    check_text('../assets/test01gray.png')
+    # check_text('../assets/test01gray.png')
 
     # Convert the frame to a base64 string
     _, buffer = cv2.imencode('.jpg', frame)
@@ -98,7 +99,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
 def createImageTable(request):
     #  ฟังชันนี้จะ อ่าน รายชื่อในฐานข้อมูล แล้วมาแสดงเป็นรูปภาพให้ผู้ใช้โหลดได้
     
-    conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+    conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -377,10 +378,10 @@ def upload_image(request):
             #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ pdf ไม่ได้เพราะ pdf จะมีโครงสร้าง มาให้เลย แต่ image ไม่มี⁡
             # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
             
-            print(text)
-            
+            is_person_name(text)
 
 
+        
 
 
             saveImage_url = fs.url('outputImage.png') 
@@ -462,9 +463,86 @@ def checkStudentCome(text):
     print("🍏🍏 record ที่อัพเดตแล้ว")
     print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
 
-   
-    
+ 
 
 
     return ""
 
+
+
+
+def is_person_name(text):
+    # ฟังนี้ใช้ตรวจหาชื่อคนจาก ข้อความยาวๆ ให้ออกมาเป็น array ที่เก็บคำที่คาดว่าน่าจะเป็นชื่อคน หรือ นามสกุล
+    print("🐯 ตรวจหาชื่อคน 🐯")
+
+    
+    
+    # ใช้ Regular Expression เพื่อแบ่งข้อความเป็นคำ จาก text ที่เป็น  <class 'str'> จะกลายเป็น <class 'list'>
+    words = re.findall(r'\b\w+\b', text)
+    print("words : ", words)
+
+
+    filter_words = []
+    for word in words:
+        if word == "Date":
+            break
+        filter_words.append(word)
+    
+    print("filter_words : ",filter_words)
+    words = filter_words 
+            
+
+    # สร้าง list สำหรับเก็บชื่อและนามสกุล
+    spilt_word_toFind_Name = []
+     
+
+    # ตรวจสอบว่าแต่ละคำเป็นชื่อหรือนามสกุล
+    for word in words:
+        # ตรวจสอบคำที่เป็นชื่อ
+        if word.istitle():  # คำที่มีตัวพิมพ์ใหญ่แรกของคำเท่านั้นถือว่าเป็นชื่อ
+            spilt_word_toFind_Name.append(word)
+        # ตรวจสอบคำที่เป็นนามสกุล
+        if word.isupper():  # คำที่มีทุกตัวอักษรเป็นตัวพิมพ์ใหญ่ถือว่าเป็นนามสกุล
+            spilt_word_toFind_Name.append(word)
+    
+
+    maybe_real_firstNameAndsurName = [] # เก็บคำที่มีโอกาสสูงมากว่าจะเป็น ชื่อ หรือ นามสกุล ทำเพื่อจะเอาไว้ให้เข้าตรวจสอบก่อน
+    
+    
+    # ถ้ามีคำว่า Name Miss Lastname สามคำนี้คือชัวร์มาก ว่าต่อจากนี้จะเป็น ชื่อ และ นามสกุล
+    
+    # ค้นหาว่าคำตามนี้ไหม #? Miss , Lastname ถ้าใช่ ให้เก็บ คำตัวถัดไปด้วย เพราะ ในบัตรปชช. จะเป็นข้อความต่อไปนี้ Miss แล้วตามด้วยชื่อ แสดงว่าหลัง miss ก็คือชื่อ
+    for i in range(len(words) - 1):  # เพื่อป้องกัน Index Error, ลูปถึงตัวก่อนสุดท้าย
+        if words[i] in ["Miss", "Lastname"]:
+            maybe_real_firstNameAndsurName.append(words[i + 1])
+                
+
+    # ค้นหาว่าคำตามนี้ไหม #? Name , Last  
+    for i in range(len(words) - 1):  # เพื่อป้องกัน Index Error, ลูปถึงตัวก่อนสุดท้าย
+        if words[i] in ["Name", "Last"]:
+            maybe_real_firstNameAndsurName.append(words[i + 2])
+             
+     
+    print("🎴🎴 => ก่อนเอาตัวอักษรตัวเดี่ยวออก ", spilt_word_toFind_Name) # ['Thai', 'National', 'ID', 'Card', 'Identification', 'Number', 'Qua', 'Name', 'Miss', 'Sirlkorn', 'Lastname', 'Na', 'Ubon', 'NLA']
+  
+    #  ลบ คำที่เป็นแค่ พยัญชนะ ตัวเดียวออกจาก array
+    deleteAlpha_words = [word for word in words if len(word) > 1 or word.isalpha()]
+    print(deleteAlpha_words) # ['9192410919914', 'Thai', 'National', 'ID', 'Card', 'amkrtwakemu', '2097', '02090', '36', 'Identification', 'Number', 'damauasfeana', 'a', 'asnd', 'Qua', 'Name', 'Miss', 'Sirlkorn', 'Lastname', 'Na', 'Ubon', 'iaiuf', '30', 'NLA', '2546']
+
+
+    new_spilt_word_toFind_Name = [] # ['Identificatien', 'Nurabes', 'BUNNA', 'Name', 'Miss', 'Lastname', 'Maliyam', 'Bate', 'Riri', 'Nov', 'Nov', 'Tad', 'TBAB', 'Pave', 'Expery', 'intummadee', 'Maliyam', 'intummadee']
+    for word in spilt_word_toFind_Name:
+        if len(word) > 2 and word not in ["Miss", "Name", "Last" , "Lastname", "Identificatien" , "National", "Card", "Thai", "Number" , "Identification"]:
+            new_spilt_word_toFind_Name.append(word)
+        
+    print("🏀")
+    print(new_spilt_word_toFind_Name)
+
+
+
+
+    # print(re.findall(r"[A-Z][a-z]+,?\s+(?:[A-Z][a-z]*\.?\s*)?[A-Z][a-z]+", words))  
+
+
+
+    return ""
