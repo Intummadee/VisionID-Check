@@ -79,6 +79,12 @@ https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
 
 ---
 
+# ฝั่งFrontEnd
+-https://github.com/atisawd/boxicons
+-https://boxicons.com/
+
+---
+
 ## Extension แนะนำให้โหลดใน Vs code สำหรับอ่าน comment 
 - Better-comments
 - Comment Styler
