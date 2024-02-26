@@ -49,7 +49,7 @@ import shutil
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
-conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
 
 
