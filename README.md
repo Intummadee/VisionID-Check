@@ -25,7 +25,7 @@ python -m pip install matplotlib
 python -m pip install opencv-python
 python -m pip install opencv-contrib-python
 pip install pytesseract
-
+pip install reportlab
 ```
 
 -Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
@@ -174,10 +174,12 @@ class cardCheck(models.Model):
 ```python manage.py makemigrations cardCheck```
 มีภาพใน assets ชื่อ img-1
 
-รันคำสั่ง 
+## รันคำสั่ง 💥
 ```
 python manage.py migrate
 ```
+## Path ที่ถูกใช้ในเว็บ 🌈
+```http://127.0.0.1:8000/MainPage```
 
 
 ดูเรื่องคำสั่ง Insert ข้อมูล ได้ต่อที่ --> https://www.w3schools.com/django/django_insert_data.php
@@ -213,5 +215,17 @@ https://www.youtube.com/watch?v=GMMZAddRxs8
 -Stackoverflow
 https://stackoverflow.com/questions/37745519/use-pytesseract-ocr-to-recognize-text-from-an-image
 https://stackoverflow.com/questions/21104664/extract-all-bounding-boxes-using-opencv-python
+
+
+Python – Extract names from string with python Regex
+-https://itecnote.com/tecnote/python-extract-names-from-string-with-python-regex/
+
+
+Python | Similarity metrics of strings
+-https://www.geeksforgeeks.org/python-similarity-metrics-of-strings/
+
+
+using SequenceMatcher.ratio()
+-https://www.geeksforgeeks.org/python-similarity-metrics-of-strings/
 
 ---

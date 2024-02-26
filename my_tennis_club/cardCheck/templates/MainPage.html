@@ -53,6 +53,7 @@
     
     <!-- แสดงภาพ ที่ upload เข้ามา -->
     <div id="imageUploadContainer"></div>
+    
 
     <br>
     <br>
@@ -73,7 +74,23 @@
                     url: "/createImageTable/",
                     type: "GET",
                     success: function(response){
-                        alert(response);
+                        console.log(response);
+
+                        // Access the PDF link and image links from the JSON response
+                        var pdfLink = response.pdf_link;
+                        var imageLinks = response.image_links;
+
+                        // Display the PDF link
+                        var pdfLinkElement = $("<p>").html("Download PDF: <a href='" + pdfLink + "' download>PDF Link</a>");
+                        $("#pdfUploadContainer").empty().append(pdfLinkElement);
+
+                        // Display the image links
+                        var imageLinksList = $("<ul>");
+                        for (var i = 0; i < imageLinks.length; i++) {
+                            var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='" + imageLinks[i] + "' download>Image " + (i + 1) + " Link</a>");
+                            imageLinksList.append(listItem);
+                        }
+                        $("#pdfUploadContainer").append(imageLinksList);
                     },
                     error: function(error){
                         console.log("Error:", error);
@@ -191,14 +208,37 @@
 
                             // แสดง alert ว่าเสร็จสิ้น
                             alert("successfully! Image " + response.png_url);
-                        } else {
+                        } 
+                        else {
                             // กรณี error
                             alert("Error: " + response.error);
+                        }
+                        if (response.firstName) {
+                            let yourname = " ชื่อ : " + response.firstName + " นามสกุล : " +response.surName;
+                            var divElement = $("<div>").text(yourname);
+                            $("#imageUploadContainer").append(divElement);
+                        }
+                        if (response.newPhoto) {
+                            var divElement_newPhoto = $("<div>").text("ไม่สามารถตรวจจับชื่อจากภาพได้ ช่วยถ่ายรูปใหม่ด้วยค่ะ");
+                            $("#imageUploadContainer").append(divElement_newPhoto);
+                        }
+                        if (response.errorPDF) {
+                            var divElement_loadPDF = $("<div>").text("*กรุณาอัพโหลด PDF ก่อน จะ อัพโหลดรูปด้วยค่ะ");
+                            divElement_loadPDF.css({
+                                "color": "red"
+                            })
+                            $("#imageUploadContainer").empty().append(divElement_loadPDF);
                         }
                     },
                     error: function(error) {
                         // Handle the error response
                         console.log("Error:", error);
+                        // กรณี error ที่เกิดขึ้นในการทำ AJAX request
+                        var pdfLinkElement = $("<p>").html("*กรุณาอัพโหลดภาพก่อนค่ะ");
+                        pdfLinkElement.css({
+                            "color": "red"
+                        })
+                        $("#imageUploadContainer").empty().append(pdfLinkElement);
                     }
                 });
             });
