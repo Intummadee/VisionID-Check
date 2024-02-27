@@ -85,6 +85,8 @@ https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
 
 -https://boxicons.com/
 
+-https://css-loaders.com/progress/
+
 ---
 
 ## Extension แนะนำให้โหลดใน Vs code สำหรับอ่าน comment 
