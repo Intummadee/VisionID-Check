@@ -271,7 +271,7 @@
     <!-- Header Section -->
     <header>
         <!-- Navbar -->
-        <a href="#" class="logo"><span>F</span><span>ame</span></a>
+        <a href="#" class="logo"><span>Card Check</span></a>
         <ul class="navbar">
             <li><a href="#" class="active">Home</a></li>
             <li><a href="#">About</a></li>
@@ -313,7 +313,7 @@
         </div>
 
         <div class="home-img">
-            <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B9%80%E0%B8%A5%E0%B9%87%E0%B8%81.jpg?raw=true" >
+            <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B9%80%E0%B8%A5%E0%B9%87%E0%B8%81-removebg.png?raw=true" >
         </div>
 
     </section>
@@ -326,6 +326,10 @@
             <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
             <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
             <a href="#"><box-icon name='linkedin-square' type='logo' ></box-icon></a>
+        </div>
+         <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
+        <div id="pdfUploadContainer">
+            
         </div>
     </div>
 
@@ -346,6 +350,9 @@
 
     <br>
 
+
+
+
     <!-- ปุ่ม test สำหรับ testCardCheck ใน views.py -->
     <!-- <button type="button" class="btn btn-primary" id="testButton">Test Card Check</button> -->
 
@@ -361,7 +368,7 @@
     </form> -->
 
     <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
-    <div id="pdfUploadContainer"></div>
+    <!-- <div id="pdfUploadContainer"></div> -->
     
 
     <br>
@@ -396,26 +403,32 @@
                 $.ajax({
                     url: "/createImageTable/",
                     type: "GET",
-                    success: function(response){
+                    success: function(response) {
                         console.log(response);
 
                         // Access the PDF link and image links from the JSON response
-                        var pdfLink = response.pdf_link;
+                        var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
                         var imageLinks = response.image_links;
 
-                        // Display the PDF link
-                        var pdfLinkElement = $("<p>").html("Download PDF: <a href='" + pdfLink + "' download>PDF Link</a>");
+                        // Assuming 'my_tennis_club' is the root directory served by your web server
+                        var pdfRelativePath = '/listStudent/myListStudent.pdf';
+
+                        // Construct the full URL
+                        var pdfLinkElement = $("<p>").html("Download PDF: <a href='/media/myListStudent.pdf' download>PDF Link</a>");
                         $("#pdfUploadContainer").empty().append(pdfLinkElement);
 
                         // Display the image links
                         var imageLinksList = $("<ul>");
                         for (var i = 0; i < imageLinks.length; i++) {
-                            var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='" + imageLinks[i] + "' download>Image " + (i + 1) + " Link</a>");
+                            // Extract the filename from the full path
+                            var filename = imageLinks[i].split('\\').pop();
+
+                            var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
                             imageLinksList.append(listItem);
                         }
                         $("#pdfUploadContainer").append(imageLinksList);
                     },
-                    error: function(error){
+                    error: function(error) {
                         console.log("Error:", error);
                     }
                 });

@@ -46,8 +46,12 @@ from reportlab.lib.pagesizes import letter
 # สำหรับย้ายไฟล์เฉยๆ
 import shutil
 
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
+
 
 conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
@@ -246,17 +250,27 @@ def createImageTable(request):
 
 
         # ย้ายไฟล์ PDF ไปยังโฟลเดอร์ listStudent
-        output_pdf_path = os.path.join('listStudent', pdf_filename)
+        output_pdf_path = os.path.join('media', pdf_filename)
         shutil.move(pdf_filename, output_pdf_path)
 
+
+        full_path = os.path.join(current_directory, "media")
+        directory_PDF_ListStudent = os.path.join(full_path, "myListStudent.pdf") # C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
+
+
+        
+
+
         # สร้างลิงก์ไปยังไฟล์ PDF และรายการลิงก์สำหรับไฟล์รูปภาพ
-        pdf_link = output_pdf_path  # ไฟล์ PDF ที่สร้าง
-        image_links = image_toPDF  # รายการลิงก์สำหรับไฟล์รูปภาพ
+        pdf_link = directory_PDF_ListStudent  # ไฟล์ PDF ที่สร้าง ==>  C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
+        image_links = image_toPDF  # รายการลิงก์สำหรับไฟล์รูปภาพ ==> ['C:\\Users\\User\\Documents\\Git_ComVi\\CardCheck\\my_tennis_club\\media\\image_0.png', 'C:\\Users\\User\\Documents\\Git_ComVi\\CardCheck\\my_tennis_club\\media\\image_1.png']
+        print("🧸🧸 " , pdf_link)
+
 
     # สร้าง JSON response ที่มีข้อมูลเพื่อแสดงผลที่ frontend
     response_data = {
         'pdf_link': pdf_link,
-        'image_links': image_links,
+        'image_links': image_links, 
     }
 
     return JsonResponse(response_data)
@@ -827,3 +841,6 @@ def add_image_to_pdf(pdf_filename, images):
         c.showPage()
 
     c.save()
+
+
+
