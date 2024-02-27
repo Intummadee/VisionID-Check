@@ -90,12 +90,9 @@
 
         .navbar a:hover{
             /* transform: scale(2); */
-            color: aqua;
+            color: var(--main-color);
         }
 
-        .navbar a.active{
-            color: var(--main-color);   
-        }
 
         .menu-btn{
             background: linear-gradient(130.08deg , #383528, 0%, #191919 , 100%);
@@ -118,18 +115,21 @@
             padding: 0 15%;
         }
         .home{
-            position: absolute;
+            /* position: absolute; */
             width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 30px;
+            
         }
+        
+        
 
         .home-img{
-            width: 730px;
-            height: 730px;
+            width: 100%;
+            height: 100%;
         }
         .home-img img{
             width: 100%;
@@ -192,11 +192,11 @@
         }
 
         .share{
-            position: absolute;
+            /* position: relative;
             bottom: 3rem;
-            left: 15%;
-            display: flex;
-            align-items: center;
+            left: 15%; */
+            /* display: flex;
+            align-items: center; */
         }
 
         .share p {
@@ -206,7 +206,7 @@
 
         }
 
-        .social i{
+        /* .social i{
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -224,7 +224,7 @@
 
         .social i:hover{
             transform: translateY(-10px);
-        }
+        } */
 
         @media (max-width : 1850px) {
             header{
@@ -269,124 +269,108 @@
 
 
     <!-- Header Section -->
-    <header>
+    <nav class="navbar navbar-expand-lg d-flex justify-content-between my-3">
         <!-- Navbar -->
-        <a href="#" class="logo"><span>Card Check</span></a>
+        <a href="#" class="logo fs-2" style="padding-left: 3%;"><span>Card Check</span></a>
         <ul class="navbar">
-            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
 
-        <div class="menu-btn">
+        <div style="padding-right: 3%;">
             <!-- <span>INTRO</span> -->
-            <div class="bx bx-menu" id="menu-icon">
-
-
-            </div>
-        </div>
-
-    </header>
-
-    <!-- Home section -->
-    <section class="home">
-        <div class="home-text">
-            <span>Software Developer</span>
-            <h1>IT KMITL</h1>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum est excepturi aliquid atque praesentium cupiditate eum corrupti, quae voluptatibus mollitia et libero laudantium iure perspiciatis iste quidem ipsa impedit quas.</p>
-            <div class="main-btn">
-
-                <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button>
-                <form id="pdfUploadForm" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
-                    <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
-                </form>
-                <br>
-                <form id="imageUploadForm" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="file" name="image_file" accept="image/*" id="imageFileInput">
-                    <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
-                </form>
+            <div class="btn-group">
+                <button style="background-color: var(--bg-color); border-color: var(--text-color);" type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Action
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Separated link</a>
+                </div>
+              </div>
 
             </div>
         </div>
 
-        <div class="home-img">
-            <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/test1.png?raw=true" >
-        </div>
+    </nav>
 
-    </section>
+    <div class="container my-5">
+        <div class="row">
+            <!-- <section class="home" style="margin-top: 1%;"> -->
+                <div class="col-8">
 
-    <div class="share">
-        <p>Download Attendance_Student  :</p>
-        <div class="social">
-            <button type="button" class="btn btn-dark" id="createImageTable">สร้างตาราง</button>
-            <a href="#"><box-icon name='envelope'></box-icon></a>
-            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
-            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
-            <a href="#"><box-icon name='linkedin-square' type='logo' ></box-icon></a>
-        </div>
-         <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
-        <div id="pdfUploadContainer">
+                    <div class="home-text">
+                        <div>
+                            <span>Software Developer</span>
+                            <h1>IT KMITL</h1>
+                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum est excepturi aliquid atque praesentium cupiditate eum corrupti, quae voluptatibus mollitia et libero laudantium iure perspiciatis iste quidem ipsa impedit quas.</p>
+                            <div style="margin-bottom: 3%;" id="video_imageContainer"></div>
             
+                        </div>
+            
+            
+            
+                        <div class="main-btn" >
+            
+                            <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button>
+                            <form id="pdfUploadForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
+                                <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
+                            </form>
+                            <br>
+                            <form id="imageUploadForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="image_file" accept="image/*" id="imageFileInput">
+                                <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
+                            </form>
+                            <!-- แสดงภาพ ที่ upload เข้ามา -->
+                            <div id="imageUploadContainer"></div>
+            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="home-img" >
+                        <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/rmBG.png?raw=true" class="rounded" style="margin-top: 10%;" >
+                    </div>
+
+                </div>
+            <!-- </section> -->
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="share" style="margin-top: 3%;">
+                    
+                        <p>Download Attendance_Student  : <button type="button" class="btn btn-dark mx-3" id="createImageTable">สร้างตาราง</button></p>
+                        
+                        <!-- <div class="social">
+                            <a href="#"><box-icon name='envelope'></box-icon></a>
+                            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
+                            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
+                        </div> -->
+                        <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
+                        <div id="pdfUploadContainer" style="margin-left: 20px;">
+                            
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+    
    
 
-
-
-    <!-- <h1>Hello World!</h1>
-    <p>Welcome to my first Django project!</p>
-
-    <p>Back to <a href="/testCardCheck">Members</a></p>
-
-    <p>https://www.w3schools.com/django/django_master_template.php</p>
-    <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button> -->
-
-    <!-- Image container to display the captured image -->
-    <div id="video_imageContainer"></div>
-
-    <br>
-
-
-
-
-    <!-- ปุ่ม test สำหรับ testCardCheck ใน views.py -->
-    <!-- <button type="button" class="btn btn-primary" id="testButton">Test Card Check</button> -->
-
-    <br>
-    <br>
-    
-    <!-- ตัว token ด้านบนช่วยเรื่อง security,  When the form is submitted, Django checks the CSRF token to ensure it matches the expected value. This helps prevent CSRF attacks. -->
-    <!-- อ่านต่อเพิ่มเติมได้ คลิ๊กที่นี้ => https://docs.djangoproject.com/en/5.0/ref/csrf/ -->
-    <!-- <form id="pdfUploadForm" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
-        <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
-    </form> -->
-
-    <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
-    <!-- <div id="pdfUploadContainer"></div> -->
     
 
     <br>
-    <br>
 
 
-    <!-- <form id="imageUploadForm" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="image_file" accept="image/*" id="imageFileInput">
-        <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
-    </form> -->
-    
-    <!-- แสดงภาพ ที่ upload เข้ามา -->
-    <div id="imageUploadContainer"></div>
-    
 
-    <br>
-    <br>
 
     <!-- <button type="button" class="btn btn-dark" id="createImageTable">สร้างตาราง</button> -->
    
@@ -400,11 +384,13 @@
             // เมื่อปุ่ม VideoCapture ถูกคลิก
             $("#createImageTable").click(function() {
                 console.log("alert(response);");
+                $("#pdfUploadContainer").html("<p>Processing...</p>");
                 $.ajax({
                     url: "/createImageTable/",
                     type: "GET",
                     success: function(response) {
                         console.log(response);
+                        $("#pdfUploadContainer").empty()
 
                         // Access the PDF link and image links from the JSON response
                         var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
@@ -440,16 +426,19 @@
                     type: "GET",
                     dataType: "json",  // Specify that you expect a JSON response
                     success: function(response) {
-                        console.log(response);
                         // Access the base64 string from the JSON response
-                        var frameBase64 = response.frame_base64;
+                        if (response.frame_base64) {
+                            console.log(response);
+                            var frameBase64 = response.frame_base64;
+    
+                            // Create an image element and set its source to the base64 string
+                            var imgElement = $("<img>"); // สร้าง element <img> ใหม่ , ถ้าไม่ใช่ $ จะเป็น jQuery(document.createElement("img"))
+                            imgElement.attr("src", "data:image/jpeg;base64," + frameBase64);
+    
+                            // Append the image element to the image container
+                            $("#video_imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
 
-                        // Create an image element and set its source to the base64 string
-                        var imgElement = $("<img>"); // สร้าง element <img> ใหม่ , ถ้าไม่ใช่ $ จะเป็น jQuery(document.createElement("img"))
-                        imgElement.attr("src", "data:image/jpeg;base64," + frameBase64);
-
-                        // Append the image element to the image container
-                        $("#video_imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
+                        }
                     },
                     error: function(error) {
                         console.log("Error:", error);
@@ -476,6 +465,7 @@
 
             //  ทำการอัปโหลดไฟล์ PDF โดยใช้ pathคือ /upload_and_convert_pdf/ เมื่อกด ปุ่มที่มี id="#pdfUploadButton"
             $("#pdfUploadButton").click(function() {
+                $("#pdfUploadButton").html("<p>Processing...</p>");
                 var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
                 $.ajax({
                     url: "/upload_and_convert_pdf/",
@@ -484,7 +474,8 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        console.log(response); 
+                        console.log(response);
+                        $("#pdfUploadButton").empty()
                         // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
                         // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
                         if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
@@ -520,6 +511,7 @@
             
 
             $("#imageUploadButton").click(function() {
+                $("#imageUploadContainer").html("<p>Processing...</p>");
                 var formData = new FormData($("#imageUploadForm")[0]);
                 $.ajax({
                     url: "/upload_image/",
@@ -529,6 +521,7 @@
                     contentType: false,
                     success: function(response) {
                         // Handle the success response
+                        $("#imageUploadContainer").empty()
                         console.log(response);
                         if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
                             // สร้าง element สำหรับภาพ

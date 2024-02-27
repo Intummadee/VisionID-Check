@@ -66,59 +66,27 @@ def cardCheck(request):
     # return HttpResponse(template.render())
     return HttpResponse("Hello world!")
 
-def VideoCapture(request):
-    print("VideoCapture click 🌿🌿" )
-    cap = cv2.VideoCapture(0)
-    while(True):
-        # Take each frame
-        _, frame = cap.read()
-        
-
-        height, width, channels = frame.shape # height = 480 , width =  640
-        # Draw a rectangle - top-left at (50,50), bottom-right at (200,200) , (0, 255, 0) = color in BGR format
-        # cv2.rectangle(frame, (50, 50), (width-50, height-50), (0, 255, 0), 2)
-
-        # Display the resulting frame
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(5) & 0xFF == 27: # กด esc เพื่อ stop video
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
-
-    
-
-    #! frame = ภาพสุดท้ายที่ถ่ายกับ Video มาแล้ว  แปลงภาพเป็นภาพขาวดำ
-
-    # save ภาพ 
-    cv2.imwrite('../assets/testImage.png', frame)
-    check_text('../assets/testImage.png')
-
-    # Convert the frame to a base64 string
-    _, buffer = cv2.imencode('.jpg', frame)
-    frame_base64 = base64.b64encode(buffer).decode('utf-8')
-
-    # Return the base64 string as part of the JSON response
-    return JsonResponse({'frame_base64': frame_base64})
-
 
 # ⁡⁣⁣⁢---- 𝗠𝗮𝗶𝗻 𝗛𝗲𝗿𝗲⁡ ----
 def MainPage(request): # http://127.0.0.1:8000/MainPage/
     print("Start HomePage.html 📦📦")
 
+    # คอมเมนด้านล่าง เอาไว้เช็ก method check_text
+    # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
+
+    # คอมเมนด้านล่างไว้สำหรับเรียกใช้งาน ฟังชัน  clearRecord คือการลบทุกรายชื่อในฐานข้อมูล
+    # clearRecord()
+
+
+    # รูปจากคอมเมนด้านล่าง ที่ชื่อ testImage เป็นรูปถ่ายจาก วิดิโอ สร้างมาเพื่อเช็กเฉยๆ
     # check_text('../assets/testImage.png')
 
-    # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
-    # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup
-    # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กภาษาไทย
+
+    # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup , อันนี้แล้วแต่ จะสร้าง หรือไม่สร้างก็ได้ แต่นี่สร้างเพื่อใส่รูปภาพที่เอาขึ้นกิตไม่ได้ เช่น พวก ปชช. 
+    # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กเวอร์ขั่นภาษาไทย
 
 
-
-
-    return render(request, 'MainPage.html', {
-        # 'frame_base64': frame_base64,
-    })
+    return render(request, 'MainPage.html', {})
 
 
 # ⁡⁣⁢⁣สร้างตาราง⁡
@@ -528,7 +496,7 @@ def check_text(image_path):
     print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     
-    # image_path = '../assets/' + Image_name
+    
     image = cv2.imread(image_path)
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
 
@@ -819,6 +787,9 @@ def chageStatusAttendance(firstName , surName , isCome):
         new_record = myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 0}})
 
 
+
+
+
 def clearRecord():
     # ฟังชันนี้มีไว้เพื่อ clear รายชื่อทั้งหมดออกจากฐานข้อมูล
     try:
@@ -841,6 +812,137 @@ def add_image_to_pdf(pdf_filename, images):
         c.showPage()
 
     c.save()
+
+
+
+
+
+# ตัวแปรกับฟังชันด้านล่าง ไว้ใช้สำหรับ การใช้เมาส์คลิ๊กไปที่ video
+ix, iy = -1, -1
+mode_Click = False
+width, height = 640, 480  # กำหนดค่าเริ่มต้นหรือค่าที่ต้องการให้ width และ height
+def click_photograph(event, x, y, flags, param):
+    global ix, iy, drawing, mode_Click
+
+    if event == cv2.EVENT_LBUTTONDOWN:
+        if width-140 <= x <= width-10 and height-50 <= y <= height-10:
+            # print("Capture Photo ♛♛")
+            mode_Click = True
+
+
+
+
+
+
+    
+
+def VideoCapture(request):
+# ฟังชันนี้คือ ฟันชันถ่ายวิดิโอ ที่จะมีปุ่มกดถ่ายภาพ อยู่ใน fram video ให้เอาเมาส์ไปคลิ๊ก ส่วนวิธีปิด video คือกด esc
+    global mode_Click  # Declare mode_Click as a global variable
+
+    print("VideoCapture click 🌿🌿" )
+    cap = cv2.VideoCapture(0)
+    cv2.namedWindow("CardCheck")
+    cv2.setMouseCallback("CardCheck", click_photograph)
+    # กำหนดขนาดหน้าต่าง video
+    
+    firstName = "FirstName: "
+    surName = "SurName: "
+    statusCheck = ""
+    color = (255, 0, 0)
+
+    while(True):
+        # Take each frame
+        _, frame = cap.read()
+
+        # Flip the frame (ซ้ายขวา) ไม่เอาแล้วเพราะถ้า flip ภาพปชช.ก็จะกลับซ้ายขวาตาม ทำให้ จับ text ไม่ได้
+        # frame = cv2.flip(frame, 1)
+        
+
+        height, width, channels = frame.shape # height = 480 , width =  640
+        # Draw a rectangle - top-left at (50,50), bottom-right at (200,200) , (0, 255, 0) = color in BGR format
+        # cv2.rectangle(frame, (50, 50), (width-50, height-50), (0, 255, 0), 2)
+
+        # ⁡⁣⁢⁢​‌‌‍สร้างปุ่มถ่ายภาพ
+        # Draw a rectangle กว้าง 130 สูง 40
+        cv2.rectangle(frame, (width-140, height-50), (width-10, height-10), (255, 255, 255), -1)
+        cv2.putText(frame, "Capture Photo", (width-120, height-25), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+        cv2.putText(frame, f"{statusCheck}", (10, height-35), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+        cv2.putText(frame, f"{firstName} {surName}", (10, height-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, ), 1)
+
+
+        # Display the resulting frame
+        cv2.imshow('CardCheck', frame)
+
+        # ถ้าเป็น true คือ คลิ๊กที่ปุ่ม capture Photo
+        if mode_Click == True:
+            print("จับภาพ ༼ つ ◕_◕ ༽つ🍰🍔🍕")
+            
+            cv2.imwrite('../assets/testImage.png', frame)
+            
+            text = check_text("../assets/testImage.png") # เช็กข้อความในภาพตรงนี้
+            text = is_person_name(text)
+            response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
+            data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
+            # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
+            print(data_dict)
+            
+
+            #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
+            if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
+                # chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                # cv2.putText(frame, "YourName : " + data_dict.get("firstName") + " " + data_dict.get("surName"), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
+                print("จับภาพ ทำไมมอะะ")
+                firstName = firstName + data_dict.get("firstName")
+                surName = surName + data_dict.get("surName")
+                statusCheck = "Pass"
+                color = (0, 255 , 0)
+
+                # return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+            elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
+                # ค่าที่ได้ = {'notSureIs': 'takeNewPhoto'}
+                print("ไม่เจออะ เหี้ยไรวะ เพราะอะไระ")
+                statusCheck = "Please take a new photo."
+                color = (0, 0 , 255)
+
+                
+            else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
+                # chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                # cv2.putText(frame, "YourName : " + data_dict.get("firstName") + " " + data_dict.get("surName"), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
+                print("จับภาพ ชัวร์แค่อย่างใดอย่างหนึ่ง เซ็งเบื่อชิบ")
+                firstName = firstName + data_dict.get("firstName")
+                surName = surName + data_dict.get("surName")
+                statusCheck = "Pass"
+                color = (0, 255 , 0)
+
+                # return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+            mode_Click = False
+
+
+
+
+        if cv2.waitKey(5) & 0xFF == 27: # กด esc เพื่อ stop video
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
+
+    
+
+    #! frame = ภาพสุดท้ายที่ถ่ายกับ Video มาแล้ว  แปลงภาพเป็นภาพขาวดำ
+
+    # save ภาพ 
+    # cv2.imwrite('../assets/testImage.png', frame)
+    # check_text('../assets/testImage.png')
+
+    # Convert the frame to a base64 string
+    # _, buffer = cv2.imencode('.jpg', frame)
+    # frame_base64 = base64.b64encode(buffer).decode('utf-8')
+
+    # Return the base64 string as part of the JSON response
+    # return JsonResponse({'frame_base64': frame_base64})
+
 
 
 
