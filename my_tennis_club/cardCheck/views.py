@@ -890,32 +890,30 @@ def VideoCapture(request):
 
             #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
             if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
-                # chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-                # cv2.putText(frame, "YourName : " + data_dict.get("firstName") + " " + data_dict.get("surName"), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
-                print("จับภาพ ทำไมมอะะ")
+                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                print(" # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ ")
                 firstName = firstName + data_dict.get("firstName")
                 surName = surName + data_dict.get("surName")
                 statusCheck = "Pass"
                 color = (0, 255 , 0)
 
-                # return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+                
             elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
                 # ค่าที่ได้ = {'notSureIs': 'takeNewPhoto'}
-                print("ไม่เจออะ เหี้ยไรวะ เพราะอะไระ")
+                print(" # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่ ")
                 statusCheck = "Please take a new photo."
                 color = (0, 0 , 255)
 
                 
             else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
-                # chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-                # cv2.putText(frame, "YourName : " + data_dict.get("firstName") + " " + data_dict.get("surName"), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1)
-                print("จับภาพ ชัวร์แค่อย่างใดอย่างหนึ่ง เซ็งเบื่อชิบ")
+                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                print("# เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ")
                 firstName = firstName + data_dict.get("firstName")
                 surName = surName + data_dict.get("surName")
                 statusCheck = "Pass"
                 color = (0, 255 , 0)
 
-                # return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+                
             mode_Click = False
 
 
