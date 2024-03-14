@@ -40,6 +40,7 @@
             --main-color: #ffae00;
             --big-font: 7rem;
             --p-font: 1.1rem;
+            --width-img-text: 100%;
         }
 
         body {
@@ -131,11 +132,32 @@
             width: 100%;
             height: 100%;
         }
-        .home-img img{
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
 
+        .home-img img {
+            /* position: absolute;
+            z-index: 1000; */
+            /* right: 10px; */
+            /* top:60%; */
+            margin-top: 30%;
+            width: var(--width-img-text);
+            /* height: 750px; */
+            object-fit: contain;
+        }
+
+        .home-img .textSom {
+            /* position: relative; */
+            display: flex;
+            justify-content:center; 
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            /* background-color: red; */
+            width: var(--width-img-text);
+        }
+
+        .home-img img{
+            /* width: 100%;
+            height: 100%; */
         }
         .home-text span{
             padding: 5px 25px;
@@ -205,6 +227,10 @@
             margin-right: 25px;
 
         }
+
+       
+
+        
 
         /* .social i{
             display: inline-flex;
@@ -293,23 +319,45 @@
                 </div>
               </div>
 
+
+
+
+
+
+             
+            
+
+
+
             </div>
         </div>
 
     </nav>
 
-    <div class="container my-5">
+    <div class="container my-12">
         <div class="row">
             <!-- <section class="home" style="margin-top: 1%;"> -->
                 <div class="col-8">
 
                     <div class="home-text">
                         <div>
-                            <span>Software Developer</span>
-                            <h1>IT KMITL</h1>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum est excepturi aliquid atque praesentium cupiditate eum corrupti, quae voluptatibus mollitia et libero laudantium iure perspiciatis iste quidem ipsa impedit quas.</p>
+                            <span>Dangolnwza</span>
+                            <div style="font-size: 70px;">Attendance Check</div>
+                            <p>เนื่องจากปัจจุบัน การเช็คชื่อเข้าสอบของคณะไอทีเป็นแบบให้ผู้คุมสอบเดินตรวจและให้นักศึกษาเซ็นต์ชื่อเข้าสอบ ซึ่งหากมีนักศึกษาจำนวนมากก็จะทำให้เกิดปัญหาเช่น รบกวนสมาธิผู้สอบ เปลืองกระดาษในการพิมใบรายชื่อ เพิ่มภาระผู้คุมสอบ แล้วถ้านักศึกษาเข้าห้องสอบไม่ตรงเวลาผู้คุมสอบก็จะต้องเดินเอาใบรายชื่อไปให้ ทางเราจึงได้จัดทำระบบแสดงรายชื่อของนักศึกษาและบันทึกสถานะการเข้าสอบได้</p>
                             <div style="margin-bottom: 3%;" id="video_imageContainer"></div>
-            
+
+
+                            <!-- upload_excel.html -->
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="excel_file" id="excelFile">
+                                <button type="button" id="uploadExcelButton">Upload Excel File</button>
+                            </form>
+
+                            
+                            <!-- error.html -->
+                            <!-- <p>{{ message }}</p> -->
+
                         </div>
             
             
@@ -336,7 +384,9 @@
                 </div>
                 <div class="col-4">
                     <div class="home-img" >
-                        <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/rmBG.png?raw=true" class="rounded" style="margin-top: 10%;" >
+                        <!-- <img src="https://github.com/Intummadee/CardCheck/blob/main/assets/rmBG.png?raw=true" class="rounded" style="margin-top: 10%;" > -->
+                        <img src="https://media.discordapp.net/attachments/1201060283607687219/1217858313321058364/Dangolnwza_Presentation2.png?ex=66058df0&is=65f318f0&hm=802aba40c86123d5ab6706d49b12196fa66953215731d6d64bc18b9152850661&=&format=webp&quality=lossless&width=487&height=380" class="rounded" >
+                        <div class="textSom" >Special Thanks To : ผศ.ดร. สมเกียรติ วังศิริพิทักษ์</div>
                     </div>
 
                 </div>
@@ -568,6 +618,27 @@
                             "color": "red"
                         })
                         $("#imageUploadContainer").empty().append(pdfLinkElement);
+                    }
+                });
+            });
+            
+            $('#uploadExcelButton').click(function() {
+                var formData = new FormData($('#uploadForm')[0]);
+                $.ajax({
+                    url: '{% url "upload_excel" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Handle success response
+                        console.log(response);
+                        // alert('อัพโหลดรายชื่อ Success')
+                        alertify.success('Success อัพโหลดรายชื่อ');
+                    },
+                    error: function(error) {
+                        // Handle error response
+                        console.log(error);
                     }
                 });
             });

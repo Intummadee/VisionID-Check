@@ -46,14 +46,24 @@ from reportlab.lib.pagesizes import letter
 # สำหรับย้ายไฟล์เฉยๆ
 import shutil
 
+# ใช้อ่าน Excel
+from django.shortcuts import render
+import pandas as pd
+from django.http import JsonResponse
+
+
+
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
+
+
 
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
 
-conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+# conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
 
 
 
@@ -74,7 +84,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     # คอมเมนด้านล่าง เอาไว้เช็ก method check_text
     # check_text("../assets/img-1.png") # path นี้ไว้เช็ก image ที่เอาขึ้น github
 
-    # คอมเมนด้านล่างไว้สำหรับเรียกใช้งาน ฟังชัน  clearRecord คือการลบทุกรายชื่อในฐานข้อมูล
+    #? คอมเมนด้านล่างไว้สำหรับเรียกใช้งาน ฟังชัน  clearRecord คือการลบทุกรายชื่อในฐานข้อมูล
     # clearRecord()
 
 
@@ -439,30 +449,36 @@ def save_image_as_png(source_path, destination_path):
 
 #* ภาพ 𝗜𝗺𝗮𝗴𝗲
 def upload_image(request):
+    # หลังจาก Load Image แล้วจะเข้า path นี้
 
-    try:
-        client = pymongo.MongoClient(conn_str)
-        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
-    except Exception:
-        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
-    myDb = client["pymongo_demo"]
-    myCollection = myDb["demo_collection"]
-    record_count = myCollection.count_documents({})
+    # try:
+    #     client = pymongo.MongoClient(conn_str)
+    #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    # except Exception:
+    #     print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    # myDb = client["pymongo_demo"]
+    # myCollection = myDb["demo_collection"]
+    # print(client.list_database_names())
+    # record_count = myCollection.count_documents({})
+    # print(record_count)   
+    record_count = 1;
 
     # ถ้าเท่ากับ 0 คือ ในฐานข้อมูลยังไม่มีรายชื่อใดๆ ซึ่ง เราต้องอัพโหลดก่อน ถึงจะเข้า การอัพโหลดรูปได้
-    if record_count == 0:
-        return JsonResponse({'errorPDF': True})
+    # if record_count == 0:
+    #     return JsonResponse({'errorPDF': True})
 
     if request.method == 'POST' and request.FILES.get('image_file'):
         uploaded_image = request.FILES['image_file']
         fs = FileSystemStorage()
         image_filename = fs.save(uploaded_image.name, uploaded_image)
-        # print(image_filename) ==> Database.png ได้ชื่อไฟล์ออกมา
+        print(image_filename) # ==> Database.png ได้ชื่อไฟล์ออกมา
         image_path = os.path.join(fs.location, image_filename) 
-        # print("image_path = " + image_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\74b05-16299573593572-800.avif
+        print("image_path = " + image_path) # => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\74b05-16299573593572-800.avif
         if image_path:
             saveImage_path = os.path.join(fs.location, 'outputImage.png') 
             save_image_as_png(image_path, saveImage_path)
+            print("saveImage_path = " + saveImage_path)
+            print(cv2.imread(saveImage_path))
             text = check_text(saveImage_path) # เช็กข้อความในภาพตรงนี้
             saveImage_url = fs.url('outputImage.png')  # เซฟภาพลงใน outputImage.png
 
@@ -495,9 +511,10 @@ def upload_image(request):
 def check_text(image_path):
     print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    
+    #  image_path = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png
     
     image = cv2.imread(image_path)
+    print("image in check text : ", image)
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
 
     if image is not None:
@@ -518,8 +535,10 @@ def check_text(image_path):
         # cv2.destroyAllWindows()
 
         # Perform text extraction
-        data = pytesseract.image_to_string(thresh, lang='eng')
-        print(data)
+        data = ""
+        print("เทสๆๆๆ")
+        print(pytesseract.image_to_string(thresh, lang='eng'))
+        # print(data)
         print("------------ จบการเช็ก ------------")    
 
     return data
@@ -831,9 +850,6 @@ def click_photograph(event, x, y, flags, param):
 
 
 
-
-
-
     
 
 def VideoCapture(request):
@@ -944,3 +960,53 @@ def VideoCapture(request):
 
 
 
+def upload_excel(request):
+# ฟังชันนี้คือ user อัพโหลดไฟล์ excel จากหน้าบ้าน แล้วจะมาเข้าฟังชันนี้เพื่อ เก็บรายชื่อจาก excel เข้า MongoDB
+    if request.method == 'POST':
+        excel_file = request.FILES.get('excel_file')
+        if excel_file and excel_file.name.endswith('.xlsx'):
+            
+            data = pd.read_excel(excel_file) # Read data from Excel file into a DataFrame using pandas
+
+
+            # ! เชื่อม DB
+            try:
+                client = pymongo.MongoClient(conn_str)
+                print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+            except Exception:
+                print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+            myDb = client["pymongo_demo"]
+            myCollection = myDb["demo_collection"]
+            
+            
+            # สร้างลิสต์เพื่อเก็บข้อมูลแต่ละคอลัมน์ แล้วแยกชื่อ รหัส นามสกุลออกจากกัน
+            column1 = data.iloc[:, 0].tolist()  # Extracting data from the first column
+            column2 = data.iloc[:, 1].tolist()  # Extracting data from the second column
+            column3 = data.iloc[:, 2].tolist()  # Extracting data from the third column
+            
+            # แยกข้อมูลในแต่ละบรรทัดและจัดเก็บลงในลิสต์ของแต่ละคอลัมน์
+            for i in range(len(column1)):
+                student_number = {
+                    "id_number" : column1[i], # รหัสนักศึกษา
+                    "student_fistName": column2[i],
+                    "student_surName" : column3[i],
+                    "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+                }
+# student_number เช่น {'id_number': 64070257, 'student_fistName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+                # TODO Insert the document
+                res = myCollection.insert_one(student_number)                            
+             
+
+        
+
+
+            
+
+
+
+
+            return JsonResponse({'message': 'File uploaded successfully'})
+        else:
+            return JsonResponse({'error': 'Invalid file format. Please upload an Excel file.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)

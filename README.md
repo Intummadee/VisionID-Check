@@ -27,6 +27,9 @@ python -m pip install opencv-python
 python -m pip install opencv-contrib-python
 pip install pytesseract
 pip install reportlab
+python -m pip install pandas
+python -mpip install openpyxl
+
 ```
 
 -Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
@@ -44,11 +47,16 @@ create Project
 ```django-admin startproject my_tennis_club```
 
 คำสั่งรัน !!!
-```
+```js
+env\Scripts\activate
 cd my_tennis_club (อย่าลืมว่าต้องอยู่ใน my_tennis_club)
 python manage.py runserver
 ```
 
+
+```
+เปิด Path นี้ --> http://127.0.0.1:8000/MainPage/
+```
 
 สร้าง App 
 ```
