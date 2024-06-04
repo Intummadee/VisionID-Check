@@ -9,10 +9,11 @@ urlpatterns = [
     # views.cardCheck คือ  function ที่จะถูกเรียกใช้เมื่อมีการเรียก URL '/cardCheck/'. ctrl + คลิ๊ก เข้าไปดูได้
     # http://127.0.0.1:8000/cardCheck/ 
     path('cardCheck/', views.cardCheck, name='cardCheck'),
-    path('MainPage/', views.MainPage, name='MainPage'),
+    # path('MainPage/', views.MainPage, name='MainPage'),
     path('VideoCapture/', views.VideoCapture, name="VideoCapture"),
     path('upload_and_convert_pdf/', views.upload_and_convert_pdf, name='upload_and_convert_pdf'),  
     path('upload_image/', views.upload_image, name='upload_image'),
     path('createImageTable/', views.createImageTable, name='createImageTable'),
     path('upload/', views.upload_excel, name='upload_excel'),
+    path('', views.MainPage, name='MainPage'),
 ]

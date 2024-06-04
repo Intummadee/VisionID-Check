@@ -77,6 +77,11 @@ def cardCheck(request):
     return HttpResponse("Hello world!")
 
 
+def HomeFirst(request):
+    print("Start HomePage.html 📦📦");
+    return HttpResponse("Hello world!")
+
+
 # ⁡⁣⁣⁢---- 𝗠𝗮𝗶𝗻 𝗛𝗲𝗿𝗲⁡ ----
 def MainPage(request): # http://127.0.0.1:8000/MainPage/
     print("Start HomePage.html 📦📦")
