@@ -172,8 +172,8 @@ def createImageTable(request):
                 #     x = col * cell_width_distance 
                     
                 try:
-                    record = cursor.next()
-                    record_id_number = record['id_number']
+                    record = cursor.next() # record {'_id': ObjectId('65f3821a6db989ce8e93d03c'), 'id_number': 64070004, 'student_fistName': 'BlissfulWords', 'student_surName': 'Zenhaven', 'attendance_status': 0}
+                    record_id_number = str(record['id_number']) # ใส่ string ให้แน่ใจ เพราะฟังชัน cv2.putText รับแค่ string
                     record_student_fistName = record['student_fistName']
                     record_student_surName = record['student_surName']
                     record_attendance_status = record['attendance_status']
