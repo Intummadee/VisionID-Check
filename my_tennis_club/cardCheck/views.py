@@ -120,6 +120,9 @@ def createImageTable(request):
     # ในภาพ (image_a4) มี 31 รายชื่อฮ๊าฟฟู๊วววว
     record_count = myCollection.count_documents({})
     
+    if (record_count == 0):
+        print("ยังไม่มีรายชื่อ")
+        return JsonResponse({'NothaveList': True})
 
     #! Reading all field
     cursor = myCollection.find()
