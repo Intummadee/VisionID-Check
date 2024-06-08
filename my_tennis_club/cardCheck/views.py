@@ -68,19 +68,19 @@ conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?r
 
 
 def testCardCheck(request):
-    print("testCardCheck 🍛🍛🍛🍛")
+    print("testCardCheck 🥊🥊🥊🥊🥊")
 
     # Load the image
-    image = cv2.imread("../../example_image/image_รายชื่อ.png")
-    
-    # Display the image
-    cv2.imshow("Image", image)
-    
-    # Wait for the user to press a key
-    cv2.waitKey(0)
-    
-    # Close all windows
-    cv2.destroyAllWindows()
+    image = cv2.imread("./conan.jpeg");
+    cv2.imshow("Image", image);
+    cv2.waitKey(0);
+    cv2.destroyAllWindows();
+
+
+    image = cv2.imread("../media/testการอ่านข้อความ.png");
+    cv2.imshow("Image", image);
+    cv2.waitKey(0);
+    cv2.destroyAllWindows();
 
     # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
 
