@@ -364,6 +364,8 @@
                                     <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
                                     <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
                                 </form>
+                                <div id="pdfUploadProcess" style="margin-left: 20px;"></div>
+                                
                                 <br>
                             </div>
                             
@@ -574,7 +576,7 @@
                         type: "GET",
                         success: function(response) {
                             // แสดงข้อความที่ได้รับจาก server
-                            alert("ลบแล้ว");
+                            alert("ลบสำเร็จ");
                         },
                         error: function(error) {
                             alert("เกิดข้อผิดพลาดขึ้น : ", error);
@@ -587,7 +589,7 @@
 
             //  ทำการอัปโหลดไฟล์ PDF โดยใช้ pathคือ /upload_and_convert_pdf/ เมื่อกด ปุ่มที่มี id="#pdfUploadButton"
             $("#pdfUploadButton").click(function() {
-                $("#pdfUploadButton").html("<p>Processing...</p>");
+                $("#pdfUploadProcess").html("<p>Processing...</p>");
                 var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
                 $.ajax({
                     url: "/upload_and_convert_pdf/",
@@ -596,8 +598,8 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        console.log(response);
-                        $("#pdfUploadButton").empty()
+                        $("#pdfUploadProcess").empty()
+
                         // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
                         // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
                         if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
@@ -618,14 +620,15 @@
                             
 
                             // แสดง alert ว่าเสร็จสิ้น
-                            alert("PDF uploaded and converted successfully! PNG saved at " + response.png_url);
+                            alert("อัพโหลดรายชื่อสำเร็จ");
                         } else {
                             // กรณี error
-                            alert("Error: " + response.error);
+                            alert("เกิดข้อผิดพลาดเกี่ยวกับการอัพโหลด PDF : " + response.error);
                         }
-
+                        
                     },
                     error: function(error) {
+                        $("#pdfUploadProcess").empty()
                         console.log("Error:", error);
                     }
                 });
