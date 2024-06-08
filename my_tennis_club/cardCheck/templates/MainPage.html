@@ -285,6 +285,11 @@
 
         }
 
+        label {
+            padding-right: 10px; /* กำหนดระยะห่างทางซ้ายของข้อความ */
+            /* display: inline-block; เพื่อให้ padding-left ทำงาน */
+        }
+
 
 
     </style>
@@ -336,8 +341,55 @@
 
                             <br>
                             <h4>วิธีใช้งาน</h4>
-                            <p>1. Choose File แล้ว Upload ไฟล์นามสกุล Excel จากนั้นเลือก Upload Excel File เพื่ออัพโหลดรายชื่อนักศึกษาทั้งหมด </p>
-                            <p>2. Upload Excel File </p>
+
+                            
+
+
+                            <p>1. กด Choose File แล้วเลือก ไฟล์นามสกุล Excel หรือ ไฟล์นามสกุล PDF จากนั้นเลือก Upload Excel File หรือ Upload PDF เพื่ออัพโหลดรายชื่อนักศึกษาทั้งหมด</p>
+
+                            <div style="padding-left: 20px;">
+
+                                <!-- upload_excel.html ✅ -->
+                                <form id="uploadForm" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <label for="excelUpload">1.1</label>
+                                    <input type="file" name="excel_file" id="excelFile">
+                                    <button type="button" class="btn btn-warning"  id="uploadExcelButton">Upload Excel File</button>
+                                </form>
+                                <br>
+                                
+                                <form id="pdfUploadForm" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <label for="pdfUpload">1.2</label>
+                                    <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
+                                    <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
+                                </form>
+                                <br>
+                            </div>
+                            
+
+
+                            <p>2. เช็กบัตรปชช.ของนักศึกษา ได้ 2 ทางคือ ใช้วิดิโอจับภาพ หรือ อัพโหลดรูปภาพ</p>
+                            <div style="padding-left: 20px; display: block; ">
+                                    <p>2.1 <button style="margin-left: 10px;" type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button></p>
+                                    
+                                    <!-- แสดงภาพ ที่ ถ่ายได้  -->
+                                    <div style="margin-bottom: 3%;" id="video_imageContainer"></div>
+                                    <br>
+
+
+                                    
+                                    <form id="imageUploadForm" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <label for="imageFileInput">2.2</label>
+                                        <input type="file" name="image_file" accept="image/*" id="imageFileInput">
+                                        <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
+                                    </form>
+                                    <!-- แสดงภาพ ที่ upload เข้ามา -->
+                                    <div id="imageUploadContainer"></div>
+
+
+                                </div>
 
                             <br>
 
@@ -347,22 +399,12 @@
                             4. บัตรที่ความเงา อย่าง บัตรประชาชน ไม่ควรถ่ายให้ติดเงามากเกินไป เพราะโปรแกรมจะไม่จับข้อความตรงที่มีเงา -->
 
 
-                            <div style="margin-bottom: 3%;" id="video_imageContainer"></div>
+                            
                             
 
 
-                            <!-- upload_excel.html ✅ -->
-                            <form id="uploadForm" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="excel_file" id="excelFile">
-                                <button type="button" class="btn btn-warning"  id="uploadExcelButton">Upload Excel File</button>
-                            </form>
-                            <br>
-                            <form id="pdfUploadForm" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
-                                <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
-                            </form>
+                            
+                            
                             
                             <br>
                             <button type="button" id="clearRecord" class="btn btn-secondary">ลบข้อมูลรายชื่อทั้งหมด</button>
@@ -376,16 +418,8 @@
             
             
                         <div class="main-btn" >
-                            <br>
-                            <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button>
-                            <br>
-                            <form id="imageUploadForm" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="image_file" accept="image/*" id="imageFileInput">
-                                <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
-                            </form>
-                            <!-- แสดงภาพ ที่ upload เข้ามา -->
-                            <div id="imageUploadContainer"></div>
+                            
+                            
             
                         </div>
                     </div>
@@ -537,7 +571,7 @@
                     type: "GET",
                     success: function(response) {
                         // แสดงข้อความที่ได้รับจาก server
-                        alert(ลบแล้ว);
+                        alert("ลบแล้ว");
                     },
                     error: function(error) {
                         console.log("Error:", error);

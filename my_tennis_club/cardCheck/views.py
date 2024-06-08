@@ -891,8 +891,9 @@ def chageStatusAttendance(firstName , surName , isCome):
 
 
 
-def clearRecord():
-    # ฟังชันนี้มีไว้เพื่อ clear รายชื่อทั้งหมดออกจากฐานข้อมูล
+def clearRecord(request):
+    # ฟังชันนี้มีไว้เพื่อ drop รายชื่อทั้งหมดออกจากฐานข้อมูล
+    print("clearRecorddddddddddddddddddddddddd")
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -902,7 +903,7 @@ def clearRecord():
     myCollection = myDb["demo_collection"]
     result = myCollection.delete_many({})
 
-    return ""
+    return HttpResponse("Hi")
 
 def add_image_to_pdf(pdf_filename, images):
     # เป็นฟังชันสำหรับ สร้าง pdf จากรูปภาพ
