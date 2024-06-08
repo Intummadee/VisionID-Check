@@ -419,11 +419,9 @@ def upload_and_convert_pdf(request):
 
                 #* ตรงนี้เช็ก text แล้ว
                 text = check_text(page_image_path)
-                print(text)
-
 
                 #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
-                lines = text.splitlines()
+                lines = text.splitlines() #  แยกข้อความ text ออกเป็นลิสต์ของบรรทัด แต่ละบรรทัดจะเป็นสตริงแยกต่างหากในลิสต์ lines
                 for line in lines:
                     parts = line.split(' ', 1)
                     if len(parts) == 2:
@@ -442,9 +440,9 @@ def upload_and_convert_pdf(request):
                         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
                     }
                 
-                    #TODO Insert the document
-                    # res = myCollection.insert_one(student_number)
-                    # print(res.inserted_id)
+                    #TODO Insert the document อย่าลืมเอาคอมเมนต์ออกเพื่อ insert ลง ฐานข้อมูลเด้อ!!
+                    res = myCollection.insert_one(student_number)
+                    print(res.inserted_id)
 
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
                     # print(student_number)
@@ -534,10 +532,12 @@ def upload_image(request):
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def check_text(image_name):
+    # ได้แก้ให้ image_name คือต้องเป็นชื่อไฟล์ที่อยู่ใน media 
+    # ฟังชันนี้ใช้หาตัวอักษรในภาพออกมา โดยตัวอักษรเป็นอังกฤษเท่านั้น ถ้าเป็นภาษาไทยจะอยู่ด้านล่าง("check_text_Thai_Language") ทำไว้เผื่อ แต่ไม่ได้ใช้
+
     print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     
-
     print("image_name 🍜 : ", image_name)
     image = cv2.imread("./media/" + image_name)
     print("image in check text ✅ : ", image) # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
@@ -562,12 +562,10 @@ def check_text(image_name):
         # cv2.destroyAllWindows()
 
         # Perform text extraction
-        data = ""
-        print("เทสๆๆๆ")
-        print(pytesseract.image_to_string(thresh, lang='eng'))
-        # print(data)
+        # print(pytesseract.image_to_string(thresh, lang='eng'))
+        data = pytesseract.image_to_string(thresh, lang='eng')
+        print("🚀🚀🚀" , data)
         print("------------ จบการเช็ก ------------")    
-
     return data
 
 def check_text_Thai_Language(image_path):
