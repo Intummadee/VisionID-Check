@@ -566,17 +566,21 @@
             });
             $("#clearRecord").click(function() {
                 // ทำ AJAX request ไปยัง URL /testCardCheck/
-                $.ajax({
-                    url: "/clearRecord/",
-                    type: "GET",
-                    success: function(response) {
-                        // แสดงข้อความที่ได้รับจาก server
-                        alert("ลบแล้ว");
-                    },
-                    error: function(error) {
-                        console.log("Error:", error);
-                    }
-                });
+                let text = "ยืนยันที่จะลบข้อมูลรายชื่อทั้งหมดหรือไม่?";
+                if (confirm(text) == true) {
+                    $.ajax({
+                        url: "/clearRecord/",
+                        type: "GET",
+                        success: function(response) {
+                            // แสดงข้อความที่ได้รับจาก server
+                            alert("ลบแล้ว");
+                        },
+                        error: function(error) {
+                            alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                        }
+                    });
+                } 
+                
             });
 
 

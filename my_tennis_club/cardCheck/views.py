@@ -893,7 +893,7 @@ def chageStatusAttendance(firstName , surName , isCome):
 
 def clearRecord(request):
     # ฟังชันนี้มีไว้เพื่อ drop รายชื่อทั้งหมดออกจากฐานข้อมูล
-    print("clearRecorddddddddddddddddddddddddd")
+    print("clearRecorddddddddddddddddddddddddd 🏳‍🌈")
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
