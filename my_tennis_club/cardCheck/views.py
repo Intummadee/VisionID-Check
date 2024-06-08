@@ -69,64 +69,18 @@ conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?r
 
 def testCardCheck(request):
     print("testCardCheck 🥊🥊🥊🥊🥊")
+    # สร้างมาเพราะเคยเจอบัคตาม assets/bugs/image1 = เหตุเกิดเพราะ path หรือ ชื่อ image ไม่ถูก
 
     # Load the image
     # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
-    image = cv2.imread("conan.jpeg");
-    print("image : ", image); # If output is matrix then image read is successful.
+    
+    image = cv2.imread("./media/outputImage.png"); # . คือ path => C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club
+    print("image : ", image); # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
     cv2.imshow("Image", image);
     cv2.waitKey(0);
     cv2.destroyAllWindows();
 
-
-
-
-    # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
-
-    # # ตรวจสอบการมีอยู่ของไฟล์
-    # if not os.path.exists(image_path):
-    #     print(f"File not found: {image_path}")
-    # else:
-    #     print("File exists. Attempting to read...")
-
-    #     # ตรวจสอบการเข้าถึงไฟล์
-    #     try:
-    #         with open(image_path, 'rb') as f:
-    #             print("File can be opened with open()")
-    #     except Exception as e:
-    #         print(f"Cannot open file with open(): {e}")
-    #         return HttpResponse("Failed to open file")
-
-    #     # ลองใช้การอ่านไฟล์ภาพด้วย PIL
-    #     try:
-    #         img = Image.open(image_path)
-    #         img.show()
-    #         print("Image loaded successfully with PIL.")
-    #     except Exception as e:
-    #         print(f"Failed to load image using PIL: {e}")
-    #         return HttpResponse("Failed to load image with PIL")
-
-    #     # ลองใช้การอ่านไฟล์ภาพด้วย OpenCV
-    #     try:
-    #         image = cv2.imread(image_path)
-    #         if image is None:
-    #             print(f"Failed to load image using OpenCV from {image_path}")
-    #             return HttpResponse("Failed to load image with OpenCV")
-    #         else:
-    #             print("Image loaded successfully")
-    #             # Display the image
-    #             cv2.imshow("Image", image)
-
-    #             # Wait for the user to press a key
-    #             cv2.waitKey(0)
-
-    #             # Close all windows
-    #             cv2.destroyAllWindows()
-    #     except Exception as e:
-    #         print(f"Exception during cv2.imread: {e}")
-    #         return HttpResponse("Exception during image loading with OpenCV")
-
-    return HttpResponse("Hello world!")
+    return HttpResponse("Success!")
 
 def cardCheck(request):
     # template = loader.get_template('HomePage.html')
@@ -413,7 +367,7 @@ def MongoConnect(request):
 
 #* 𝗣𝗗𝗙
 def upload_and_convert_pdf(request):
-    print("เข้า upload_and_convert_pdf")
+    print("เข้า upload_and_convert_pdf 🌐🌐🌐🌐🌐")
     if request.method == 'POST' and request.FILES['pdf_file']: # ตรวจว่า มีไฟล์ PDF ถูกส่งมา
         # Handle the uploaded PDF file
         uploaded_file = request.FILES['pdf_file'] #  ดึงข้อมูลของไฟล์ PDF ที่ถูกอัปโหลดมา.
@@ -424,7 +378,7 @@ def upload_and_convert_pdf(request):
         # Convert PDF to images 
         #  fs.location หรือ ตำแหน่งที่จะเซฟไฟล์ ถูกกำหนดไว้ใน settings.py ซึ่งตำแหน่งนั้นจะแปรไปตามค่าชื่อ MEDIA_ROOT ที่กำหนดไว้ หรือก็คือ fs.location จะเป็นที่ตั้งนี้
         pdf_path = os.path.join(fs.location, pdf_filename) # สร้างเส้นทางสำหรับไฟล์ PDF.
-        # print("pdf_path = " + pdf_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\test2.pdf เราใส่ pdf ชื่อ test2.pdf มา
+        # print("pdf_path = " + pdf_path) => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\test2.pdf (ปล.test2คือ เราใส่ pdf ชื่อ test2.pdf มา) 
         image_paths = convert_pdf_to_images(pdf_path) # แปลงไฟล์ PDF เป็นรูปภาพ และได้รับเส้นทางของรูปภาพ.
         # print(image_paths) =>  ['page_1.png', 'page_2.png'] pdfมีหลายหน้า pathก็มีหลายหน้าตาม แต่เราเซฟภาพแค่รูปแรก
         
@@ -437,13 +391,12 @@ def upload_and_convert_pdf(request):
         myDb = client["pymongo_demo"]
         myCollection = myDb["demo_collection"]
 
-        # Save the first image as a PNG file
+
+        # Save the first image as a PNG file (เราเซฟ pdf ไว้ที่ media แต่ Opencv อ่านได้แค่ภาพ เราเลยแปลงจาก pdf เป็น ภาพ ซึ่ง image_path ในที่นี้ก็เป็นตัวแปรของภาพที่ถูกแปลงมาจาก pdf โดยฟังชันแปลงอยู่ด้านบนชื่อ "convert_pdf_to_images" )
         if image_paths:
-
-
-            first_page_image_path = image_paths[0]
-            png_path = os.path.join(fs.location, 'output.png') 
-            save_image_as_png(first_page_image_path, png_path)
+            # first_page_image_path = image_paths[0] # page_1.png
+            # png_path = os.path.join(fs.location, 'output.png') #C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\output.png
+            # save_image_as_png(first_page_image_path, png_path) # save_image_as_png(source_path, destination_path) -> เปิด source_path แล้วเซฟเป็นรูป png ตำแหน่งของ ตัวแปร png_path
             # check_text(first_page_image_path)
 
             page_png_path_url = [] # ตัวแปรนี้ไว้เก็บ path ของ image เพื่อส่งไปยัง frontend ให้ฝั่ง frontend แสดงภาพตามจำนวนหน้า pdf 
@@ -453,15 +406,22 @@ def upload_and_convert_pdf(request):
                 page_png_path = os.path.join(fs.location, f'page_{i + 1}.png')
                 # page_png_path = print path ออกมา สองรอบ ตามจำนวนหน้าในไฟล์ .pdf เช่น C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\page_2.png  และ   C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\page_1.png
                 save_image_as_png(page_image_path, page_png_path) # ถ้า pdf ที่ส่งมามีหลายหน้า ก็มาวนลูปเซฟภาพตาม pdf ตรงนี้ 🚀
+                
+
+                #  page_image_path = page_1.png (เป็นชื่อภาพ)
+                #  fs.location = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media
+                #  page_png_path = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\page_1.png
 
                 page_png_path_url.append(fs.url(page_image_path))
+                #  สร้าง URL สำหรับเข้าถึงไฟล์ 
+                # image_url = fs.url(page_image_path)
+                # print(image_url) = /media/page_1.png
 
                 #* ตรงนี้เช็ก text แล้ว
-                text = check_text(page_png_path)
-        
-
-
+                text = check_text(page_image_path)
                 print(text)
+
+
                 #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
                 lines = text.splitlines()
                 for line in lines:
@@ -573,30 +533,16 @@ def upload_image(request):
             
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def check_text(image_path):
+def check_text(image_name):
     print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    #  image_path = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png
-
-
     
 
-    image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
-    image = cv2.imread(image_path)
-    # Display the image
-    cv2.imshow("Image", image)
-    
-    # Wait for the user to press a key
-    cv2.waitKey(0)
-    
-    # Close all windows
-    cv2.destroyAllWindows()
+    print("image_name 🍜 : ", image_name)
+    image = cv2.imread("./media/" + image_name)
+    print("image in check text ✅ : ", image) # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
 
-    print("image_path 🍜 : ",image_path)
-    image = cv2.imread(image_path)
-    print("image in check text ✅ : ", image)
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
-
     if image is not None:
         # path ไฟล์ภาพนี้จะเอาไว้ ทดลอง
         #! cv2.imwrite('../assets/testImage_Here.png', img)
