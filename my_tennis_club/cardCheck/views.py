@@ -71,16 +71,15 @@ def testCardCheck(request):
     print("testCardCheck 🥊🥊🥊🥊🥊")
 
     # Load the image
-    image = cv2.imread("./conan.jpeg");
+    # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
+    image = cv2.imread("conan.jpeg");
+    print("image : ", image); # If output is matrix then image read is successful.
     cv2.imshow("Image", image);
     cv2.waitKey(0);
     cv2.destroyAllWindows();
 
 
-    image = cv2.imread("../media/testการอ่านข้อความ.png");
-    cv2.imshow("Image", image);
-    cv2.waitKey(0);
-    cv2.destroyAllWindows();
+
 
     # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
 
