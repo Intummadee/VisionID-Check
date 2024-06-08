@@ -68,7 +68,65 @@ conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?r
 
 
 def testCardCheck(request):
-    print("testCardCheck")
+    print("testCardCheck 🍛🍛🍛🍛")
+
+    # Load the image
+    image = cv2.imread("../../example_image/image_รายชื่อ.png")
+    
+    # Display the image
+    cv2.imshow("Image", image)
+    
+    # Wait for the user to press a key
+    cv2.waitKey(0)
+    
+    # Close all windows
+    cv2.destroyAllWindows()
+
+    # image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
+
+    # # ตรวจสอบการมีอยู่ของไฟล์
+    # if not os.path.exists(image_path):
+    #     print(f"File not found: {image_path}")
+    # else:
+    #     print("File exists. Attempting to read...")
+
+    #     # ตรวจสอบการเข้าถึงไฟล์
+    #     try:
+    #         with open(image_path, 'rb') as f:
+    #             print("File can be opened with open()")
+    #     except Exception as e:
+    #         print(f"Cannot open file with open(): {e}")
+    #         return HttpResponse("Failed to open file")
+
+    #     # ลองใช้การอ่านไฟล์ภาพด้วย PIL
+    #     try:
+    #         img = Image.open(image_path)
+    #         img.show()
+    #         print("Image loaded successfully with PIL.")
+    #     except Exception as e:
+    #         print(f"Failed to load image using PIL: {e}")
+    #         return HttpResponse("Failed to load image with PIL")
+
+    #     # ลองใช้การอ่านไฟล์ภาพด้วย OpenCV
+    #     try:
+    #         image = cv2.imread(image_path)
+    #         if image is None:
+    #             print(f"Failed to load image using OpenCV from {image_path}")
+    #             return HttpResponse("Failed to load image with OpenCV")
+    #         else:
+    #             print("Image loaded successfully")
+    #             # Display the image
+    #             cv2.imshow("Image", image)
+
+    #             # Wait for the user to press a key
+    #             cv2.waitKey(0)
+
+    #             # Close all windows
+    #             cv2.destroyAllWindows()
+    #     except Exception as e:
+    #         print(f"Exception during cv2.imread: {e}")
+    #         return HttpResponse("Exception during image loading with OpenCV")
+
     return HttpResponse("Hello world!")
 
 def cardCheck(request):
@@ -520,15 +578,31 @@ def check_text(image_path):
     print("Check ตัวอักษร English 🌏🌏🌏🌏")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     #  image_path = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png
+
+
     
+
+    image_path = r"C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\outputImage.png"
     image = cv2.imread(image_path)
-    print("image in check text : ", image)
+    # Display the image
+    cv2.imshow("Image", image)
+    
+    # Wait for the user to press a key
+    cv2.waitKey(0)
+    
+    # Close all windows
+    cv2.destroyAllWindows()
+
+    print("image_path 🍜 : ",image_path)
+    image = cv2.imread(image_path)
+    print("image in check text ✅ : ", image)
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
 
     if image is not None:
         # path ไฟล์ภาพนี้จะเอาไว้ ทดลอง
         #! cv2.imwrite('../assets/testImage_Here.png', img)
 
+        
         # แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (3,3), 0)

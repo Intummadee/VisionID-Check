@@ -186,9 +186,9 @@
         }
         .btn{
             display: inline-block;
-            padding: 14px 34px;
-            background: var(--main-color);
-            color: 2px solid var(--main-color) ;
+            padding: 10px 34px;
+            /* background: var(--main-color);
+            color: 2px solid var(--main-color); */
             font-size: 16px;
             font-weight: 600;
             border-radius: 8px;
@@ -198,7 +198,8 @@
         .btn:hover{
             transform: translateY(-5px);
             background: transparent;
-            color: var(--main-color);
+            /* color: var(--main-color); */
+            color: white;
 
         }
         .two {
@@ -313,7 +314,6 @@
            
 
 
-             
             
 
 
@@ -351,13 +351,22 @@
                             
 
 
-                            <!-- upload_excel.html -->
+                            <!-- upload_excel.html ✅ -->
                             <form id="uploadForm" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <input type="file" name="excel_file" id="excelFile">
-                                <button type="button" id="uploadExcelButton">Upload Excel File</button>
+                                <button type="button" class="btn btn-warning"  id="uploadExcelButton">Upload Excel File</button>
                             </form>
-
+                            <br>
+                            <form id="pdfUploadForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
+                                <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
+                            </form>
+                            
+                            <br>
+                            <button type="button" id="clearRecord" class="btn btn-secondary">ลบข้อมูลรายชื่อทั้งหมด</button>
+                            
                             
                             <!-- error.html -->
                             <!-- <p>{{ message }}</p> -->
@@ -367,13 +376,8 @@
             
             
                         <div class="main-btn" >
-            
+                            <br>
                             <button type="button" class="btn btn-primary" id="VideoCapture">Video Plot</button>
-                            <form id="pdfUploadForm" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
-                                <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
-                            </form>
                             <br>
                             <form id="imageUploadForm" enctype="multipart/form-data">
                                 {% csrf_token %}
@@ -403,6 +407,7 @@
                 <div class="share" style="margin-top: 3%;">
                     
                         <p>Download Attendance_Student  : <button type="button" class="btn btn-dark mx-3" id="createImageTable">สร้างตาราง</button></p>
+                        <p>Download Attendance_Student  : <button type="button" class="btn btn-dark mx-3" id="testCardCheck">testCardCheck</button></p>
                         
                         <!-- <div class="social">
                             <a href="#"><box-icon name='envelope'></box-icon></a>
@@ -511,7 +516,7 @@
             });
 
             // เมื่อปุ่ม testButton ถูกคลิก
-            $("#testButton").click(function() {
+            $("#testCardCheck").click(function() {
                 // ทำ AJAX request ไปยัง URL /testCardCheck/
                 $.ajax({
                     url: "/testCardCheck/",
@@ -519,6 +524,20 @@
                     success: function(response) {
                         // แสดงข้อความที่ได้รับจาก server
                         alert(response);
+                    },
+                    error: function(error) {
+                        console.log("Error:", error);
+                    }
+                });
+            });
+            $("#clearRecord").click(function() {
+                // ทำ AJAX request ไปยัง URL /testCardCheck/
+                $.ajax({
+                    url: "/clearRecord/",
+                    type: "GET",
+                    success: function(response) {
+                        // แสดงข้อความที่ได้รับจาก server
+                        alert(ลบแล้ว);
                     },
                     error: function(error) {
                         console.log("Error:", error);
