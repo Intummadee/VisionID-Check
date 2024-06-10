@@ -1070,3 +1070,8 @@ def checkStatus(request):
     
 
     return JsonResponse({'allStudent': record_count, 'come': count_come,"notCome": record_count-count_come  })
+
+
+def search(request):
+    
+    return JsonResponse({'allStudent': ""})

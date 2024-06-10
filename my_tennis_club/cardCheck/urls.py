@@ -17,5 +17,6 @@ urlpatterns = [
     path('createImageTable/', views.createImageTable, name='createImageTable'),
     path('upload/', views.upload_excel, name='upload_excel'),
     path('checkStatus/', views.checkStatus, name='checkStatus'),
+    path('search/', views.search, name='search'),
     path('', views.MainPage, name='MainPage'),
 ]

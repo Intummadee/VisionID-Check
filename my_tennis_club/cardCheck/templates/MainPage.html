@@ -301,6 +301,12 @@
         }
 
 
+        #text_allStudent , #text_come , #text_notCome {
+            border: none;
+            box-shadow: none;
+        };
+
+
 
     </style>
 
@@ -416,25 +422,31 @@
 
                             <!-- ปุ่มเช็กสถานะ -->
                             <div>
-                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button> <span id="text_checkStatus">จำนวนนักศึกษาทั้งหมด 0 คน มาแล้ว 1 คน ยังไม่มา 2 คน</span></p>
+                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button>จำนวนนักศึกษาทั้งหมด : <span id="text_allStudent">0</span> มาแล้ว : <span id="text_come">0</span>  ยังไม่มา : <span id="text_notCome">0</span> คน</p>
                             </div>
                             <!-- ช่องกรอกค้นหา รหัสนศ. -->
                             <div class="input-group" >
-                                <input type="search" class="form-control rounded" placeholder="ค้นหารหัสนักศึกษา" aria-label="Search" aria-describedby="search-addon" />
+                                <input type="search" id="studentIdInput" class="form-control rounded" placeholder="ค้นหารหัสนักศึกษา" aria-label="Search" aria-describedby="search-addon" />
                                 <div id="search" data-mdb-ripple-init>search</div>
-                              </div>
-                            
-                            <hr>
+                            </div>
+                            <div id="message_search" style="margin-top: 10px;">*ไม่พบรหัสนักศึกษาหมายเลขนี้</div>
+                            <br>
+                            <table class="table table-bordered table-dark table-hover">
+                                <tbody>
+                                    <!-- <tr>
+                                        <th scope="row">1</th>
+                                        <td>Mark</td>
+                                        <td>Otto</td>
+                                        <td>@mdo</td>
+                                      </tr> -->
+                                </tbody>
+                            </table>
                             
                             <button type="button" id="clearRecord" class="btn btn-danger">ลบข้อมูลรายชื่อทั้งหมด</button>
-                            
-                            <!-- error.html -->
-                            <!-- <p>{{ message }}</p> -->
-
                         </div>
             
             
-            
+                        <hr>
                         <div class="main-btn" >
                             
                             
@@ -592,6 +604,9 @@
                         type: "GET",
                         success: function(response) {
                             // แสดงข้อความที่ได้รับจาก server
+                            $('#text_allStudent').text("0");
+                            $('#text_come').text("0");
+                            $('#text_notCome').text("0");
                             alert("ลบสำเร็จ");
                         },
                         error: function(error) {
@@ -734,9 +749,9 @@
                 });
             });
 
-            var allStudent = 0;
-            var come = 0;
-            var notCome = 0;
+            // var allStudent = 0;
+            // var come = 0;
+            // var notCome = 0;
             $('#checkStatus').click(function(){
                 console.log("checkStatus");
                 $.ajax({
@@ -748,13 +763,45 @@
                         allStudent = response.allStudent+"";
                         come = response.come+"";
                         notCome = response.notCome+"";
-                        document.getElementById("text_checkStatus").innerHTML = "จำนวนนักศึกษาทั้งหมด "+ allStudent +" คน มาแล้ว "+ come +" คน ยังไม่มา "+ notCome +" คน";
+                        // document.getElementById("text_checkStatus").innerHTML = "จำนวนนักศึกษาทั้งหมด "+ allStudent +" คน มาแล้ว "+ come +" คน ยังไม่มา "+ notCome +" คน";
+                        $('#text_allStudent').text(allStudent);
+                        $('#text_come').text(come);
+                        $('#text_notCome').text(notCome);
                     },
                     error: function(error) {
                         console.log(error);
                         alert("เกิดข้อผิดพลาดขึ้น :", error);
                     }
                 });
+            });
+            $("#search").click(function() {
+                
+                var studentId = $("#studentIdInput").val(); 
+                console.log("Searching for student ID:", studentId); // studentId เป็นค่า string 
+                let isnum = /^\d+$/.test(val);
+
+                if (/^\d+$/.test(studentId)) {
+                    // $.ajax({
+                    //     url: "/search/",
+                    //     type: "GET",
+                    //     success: function(response) {
+                    //         // แสดงข้อความที่ได้รับจาก server
+                    //         alert("ลบสำเร็จ");
+                    //     },
+                    //     error: function(error) {
+                    //         alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                    //     }
+                    // });
+                }
+                else{
+                    var divElement_message_search = $("<div>").text("*กรุณากรอกรหัสนักศึกษาเท่านั้น");
+                        divElement_message_search.css({
+                        "color": "red"
+                    })
+                }
+                // ไม่พบรหัสนักศึกษาหมายเลขนี้
+
+                
             });
 
         });
