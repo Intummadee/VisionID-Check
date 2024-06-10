@@ -1071,7 +1071,7 @@ def checkStatus(request):
 
 
 def search(request):
-    student_id = int(request.GET.get('studentId', None)) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
+    student_id = request.GET.get('studentId', None) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -1089,8 +1089,6 @@ def search(request):
     cursor = myCollection.find()
     for record in cursor:
         if(record.get("id_number") == student_id):
-            # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
-            # print("student_id ",student_id);
             response_data = {
                 'id_number': record.get('id_number'),
                 'student_fistName': record.get('student_fistName'),
@@ -1099,6 +1097,12 @@ def search(request):
             }
             return JsonResponse(response_data)
 
-
+    # record = myCollection.find_one({"id_number": student_id}) 
+    # response_data = {
+    #     'id_number': record.get('id_number'),
+    #     'student_fistName': record.get('student_fistName'),
+    #     'student_surName': record.get('student_surName'),
+    #     'attendance_status': record.get('attendance_status')
+    # }
 
     return JsonResponse({'error': "notFound"})

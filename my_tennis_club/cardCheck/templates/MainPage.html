@@ -749,17 +749,15 @@
                 });
             });
 
-            // var allStudent = 0;
-            // var come = 0;
-            // var notCome = 0;
+        
             $('#checkStatus').click(function(){
-                console.log("checkStatus");
+                // console.log("checkStatus");
                 $.ajax({
                     url: "/checkStatus/",
                     type: "GET",
                     success: function(response) {
                         // แสดงข้อความที่ได้รับจาก server
-                        console.log(response);
+                        // console.log(response); # {allStudent: 22, come: 0, notCome: 22}
                         allStudent = response.allStudent+"";
                         come = response.come+"";
                         notCome = response.notCome+"";
@@ -779,7 +777,7 @@
                 var studentId = $("#studentIdInput").val(); 
                 
                 if (/^\d+$/.test(studentId) && studentId != "") {
-                    console.log("Searching for student ID:", studentId); // studentId เป็นค่า string
+                    // console.log("Searching for student ID:", studentId); // studentId เป็นค่า string
                     $("#message_search").empty()
                     
                     $.ajax({
@@ -802,13 +800,14 @@
                                 $("#message_search").empty().append(divElement_message_search);
                             }
                             else {
-                                console.log(response);
                                 $("#message_search").empty()
-                                $("<tbody>").html(`
-                                    <th>${response.id_number}</th>
-                                    <td>${response.student_fistName}</td>
-                                    <td>${response.student_surName}</td>
-                                    <td>${response.attendance_status}</td>
+                                $("tbody").append(`
+                                    <tr>
+                                        <td>${response.id_number}</td>
+                                        <td>${response.student_fistName}</td>
+                                        <td>${response.student_surName}</td>
+                                        <td>${response.attendance_status}</td>
+                                    </tr>
                                 `);
                             }
                         },
