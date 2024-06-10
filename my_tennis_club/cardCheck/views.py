@@ -85,7 +85,7 @@ def testCardCheck(request):
 def cardCheck(request):
     # template = loader.get_template('HomePage.html')
     # return HttpResponse(template.render())
-    return HttpResponse("Hello world!")
+    return HttpResponse("Hello world! cardCheck")
 
 
 def HomeFirst(request):
@@ -446,9 +446,12 @@ def upload_and_convert_pdf(request):
 
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
                     # print(student_number)
+            
+            record_count = myCollection.count_documents({})
+            print("record_count : ",record_count)
+            
 
-
-            return JsonResponse({'page_png_path_url': page_png_path_url}) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
+            return JsonResponse({'page_png_path_url': page_png_path_url , 'allStudent': record_count, 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def convert_pdf_to_images(pdf_path):
@@ -1036,3 +1039,34 @@ def upload_excel(request):
             return JsonResponse({'error': 'Invalid file format. Please upload an Excel file.'}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+def checkStatus(request):
+
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+
+
+    # Create a DB
+    myDb = client["pymongo_demo"]
+    # Create a collection
+    myCollection = myDb["demo_collection"]
+    
+
+    record_count = myCollection.count_documents({})
+    print(record_count)
+
+    count_come = 0;
+    cursor = myCollection.find()
+    for record in cursor:
+        if(record.get("attendance_status") == 1):
+            count_come+=1;
+        # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
+
+
+    
+
+    return JsonResponse({'allStudent': record_count, 'come': count_come,"notCome": record_count-count_come  })

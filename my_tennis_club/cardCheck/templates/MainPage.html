@@ -290,6 +290,16 @@
             /* display: inline-block; เพื่อให้ padding-left ทำงาน */
         }
 
+        #search{
+            cursor: pointer;
+            /* border: 1px solid var(--main-color); */
+            background-color: var(--main-color);
+            color: black;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px;
+        }
+
 
 
     </style>
@@ -404,13 +414,19 @@
                             
                             
 
-
+                            <!-- ปุ่มเช็กสถานะ -->
+                            <div>
+                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button> <span id="text_checkStatus">จำนวนนักศึกษาทั้งหมด 0 คน มาแล้ว 1 คน ยังไม่มา 2 คน</span></p>
+                            </div>
+                            <!-- ช่องกรอกค้นหา รหัสนศ. -->
+                            <div class="input-group" >
+                                <input type="search" class="form-control rounded" placeholder="ค้นหารหัสนักศึกษา" aria-label="Search" aria-describedby="search-addon" />
+                                <div id="search" data-mdb-ripple-init>search</div>
+                              </div>
                             
+                            <hr>
                             
-                            
-                            <br>
-                            <button type="button" id="clearRecord" class="btn btn-secondary">ลบข้อมูลรายชื่อทั้งหมด</button>
-                            
+                            <button type="button" id="clearRecord" class="btn btn-danger">ลบข้อมูลรายชื่อทั้งหมด</button>
                             
                             <!-- error.html -->
                             <!-- <p>{{ message }}</p> -->
@@ -718,6 +734,28 @@
                 });
             });
 
+            var allStudent = 0;
+            var come = 0;
+            var notCome = 0;
+            $('#checkStatus').click(function(){
+                console.log("checkStatus");
+                $.ajax({
+                    url: "/checkStatus/",
+                    type: "GET",
+                    success: function(response) {
+                        // แสดงข้อความที่ได้รับจาก server
+                        console.log(response);
+                        allStudent = response.allStudent+"";
+                        come = response.come+"";
+                        notCome = response.notCome+"";
+                        document.getElementById("text_checkStatus").innerHTML = "จำนวนนักศึกษาทั้งหมด "+ allStudent +" คน มาแล้ว "+ come +" คน ยังไม่มา "+ notCome +" คน";
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        alert("เกิดข้อผิดพลาดขึ้น :", error);
+                    }
+                });
+            });
 
         });
     </script>
