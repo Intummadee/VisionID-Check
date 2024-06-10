@@ -429,7 +429,7 @@
                                 <input type="search" id="studentIdInput" class="form-control rounded" placeholder="ค้นหารหัสนักศึกษา" aria-label="Search" aria-describedby="search-addon" />
                                 <div id="search" data-mdb-ripple-init>search</div>
                             </div>
-                            <div id="message_search" style="margin-top: 10px;">*ไม่พบรหัสนักศึกษาหมายเลขนี้</div>
+                            <div id="message_search" style="margin-top: 10px;"></div>
                             <br>
                             <table class="table table-bordered table-dark table-hover">
                                 <tbody>
@@ -777,27 +777,52 @@
             $("#search").click(function() {
                 
                 var studentId = $("#studentIdInput").val(); 
-                console.log("Searching for student ID:", studentId); // studentId เป็นค่า string 
-                let isnum = /^\d+$/.test(val);
-
-                if (/^\d+$/.test(studentId)) {
-                    // $.ajax({
-                    //     url: "/search/",
-                    //     type: "GET",
-                    //     success: function(response) {
-                    //         // แสดงข้อความที่ได้รับจาก server
-                    //         alert("ลบสำเร็จ");
-                    //     },
-                    //     error: function(error) {
-                    //         alert("เกิดข้อผิดพลาดขึ้น : ", error);
-                    //     }
-                    // });
+                
+                if (/^\d+$/.test(studentId) && studentId != "") {
+                    console.log("Searching for student ID:", studentId); // studentId เป็นค่า string
+                    $("#message_search").empty()
+                    
+                    $.ajax({
+                        url: "/search/",
+                        type: "GET",
+                        data: { studentId: studentId },
+                        success: function(response) {
+                            if (response.error == "notFound") {
+                                var divElement_message_search = $("<div>").text("*ไม่เจอรหัสนักศึกษาดังกล่าว");
+                                    divElement_message_search.css({
+                                    "color": "#ffae00"
+                                })
+                                $("#message_search").empty().append(divElement_message_search);
+                            } 
+                            else if (response.error == "countZero"){
+                                var divElement_message_search = $("<div>").text("*กรุณาเพิ่มรายชื่อนักศึกษาก่อน (จากวิธีใช้งานในขั้นตอนที่ 1)");
+                                    divElement_message_search.css({
+                                    "color": "red"
+                                })
+                                $("#message_search").empty().append(divElement_message_search);
+                            }
+                            else {
+                                console.log(response);
+                                $("#message_search").empty()
+                                $("<tbody>").html(`
+                                    <th>${response.id_number}</th>
+                                    <td>${response.student_fistName}</td>
+                                    <td>${response.student_surName}</td>
+                                    <td>${response.attendance_status}</td>
+                                `);
+                            }
+                        },
+                        error: function(error) {
+                            alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                        }
+                    });
                 }
                 else{
                     var divElement_message_search = $("<div>").text("*กรุณากรอกรหัสนักศึกษาเท่านั้น");
                         divElement_message_search.css({
                         "color": "red"
                     })
+                    $("#message_search").empty().append(divElement_message_search);
                 }
                 // ไม่พบรหัสนักศึกษาหมายเลขนี้
 

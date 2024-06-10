@@ -1067,11 +1067,38 @@ def checkStatus(request):
         # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
 
 
-    
-
     return JsonResponse({'allStudent': record_count, 'come': count_come,"notCome": record_count-count_come  })
 
 
 def search(request):
+    student_id = int(request.GET.get('studentId', None)) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
     
-    return JsonResponse({'allStudent': ""})
+    # เช็กตรวจดูว่าในฐานข้อมูลมี รายชื่อ นศ.ให้ค้นหาไหม
+    record_count = myCollection.count_documents({})
+    if(record_count == 0):
+        return JsonResponse({'error': "countZero"})
+
+
+    cursor = myCollection.find()
+    for record in cursor:
+        if(record.get("id_number") == student_id):
+            # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
+            # print("student_id ",student_id);
+            response_data = {
+                'id_number': record.get('id_number'),
+                'student_fistName': record.get('student_fistName'),
+                'student_surName': record.get('student_surName'),
+                'attendance_status': record.get('attendance_status')
+            }
+            return JsonResponse(response_data)
+
+
+
+    return JsonResponse({'error': "notFound"})
