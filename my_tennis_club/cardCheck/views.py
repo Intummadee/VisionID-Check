@@ -1086,23 +1086,18 @@ def search(request):
         return JsonResponse({'error': "countZero"})
 
 
-    cursor = myCollection.find()
-    for record in cursor:
-        if(record.get("id_number") == student_id):
-            response_data = {
-                'id_number': record.get('id_number'),
-                'student_fistName': record.get('student_fistName'),
-                'student_surName': record.get('student_surName'),
-                'attendance_status': record.get('attendance_status')
-            }
-            return JsonResponse(response_data)
+    record = myCollection.find_one({"id_number": student_id}) 
+    if (record != None):
+        response_data = {
+            'id_number': record.get('id_number'),
+            'student_fistName': record.get('student_fistName'),
+            'student_surName': record.get('student_surName'),
+            'attendance_status': record.get('attendance_status')
+        }
+        return JsonResponse(response_data)
+    
 
-    # record = myCollection.find_one({"id_number": student_id}) 
-    # response_data = {
-    #     'id_number': record.get('id_number'),
-    #     'student_fistName': record.get('student_fistName'),
-    #     'student_surName': record.get('student_surName'),
-    #     'attendance_status': record.get('attendance_status')
-    # }
 
+
+    
     return JsonResponse({'error': "notFound"})
