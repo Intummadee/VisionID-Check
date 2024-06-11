@@ -1122,7 +1122,7 @@ def edit_status(request):
         new_attendance_status = 0
     else:
         new_attendance_status = 1
-    
 
-    new_record = myCollection.update_one({"id_number": student_id}, {"$set": {"attendance_status": new_attendance_status}})
-    return HttpResponse(new_record)
+
+    myCollection.update_one({"id_number": student_id}, {"$set": {"attendance_status": new_attendance_status}})
+    return HttpResponse(new_attendance_status)

@@ -425,7 +425,9 @@
 
                             <!-- ปุ่มเช็กสถานะ -->
                             <div>
-                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button>จำนวนนักศึกษาทั้งหมด : <span id="text_allStudent">0</span> มาแล้ว : <span id="text_come">0</span>  ยังไม่มา : <span id="text_notCome">0</span> คน</p>
+                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button>จำนวนนักศึกษาทั้งหมด : <span id="text_allStudent">0</span> 
+                                    มาแล้ว : <span id="text_come">0</span>  
+                                    ยังไม่มา : <span id="text_notCome">0</span> คน</p>
                             </div>
                             <!-- ช่องกรอกค้นหา รหัสนศ. -->
                             <div class="input-group" >
@@ -661,7 +663,7 @@
                             // แสดงข้อความที่ได้รับจาก server
                             console.log(response);
                             alert("แก้สำเร็จ")
-                            if (response.attendance_status == "1"){
+                            if (response == "1"){
                                 attendance_status = "มา"
                                 }
                             else{
