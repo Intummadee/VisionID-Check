@@ -496,37 +496,36 @@ def upload_image(request):
     if request.method == 'POST' and request.FILES.get('image_file'):
         uploaded_image = request.FILES['image_file']
         fs = FileSystemStorage()
-        image_filename = fs.save(uploaded_image.name, uploaded_image)
-        print(image_filename) # ==> Database.png ได้ชื่อไฟล์ออกมา
-        image_path = os.path.join(fs.location, image_filename) 
-        print("image_path = " + image_path) # => C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\media\74b05-16299573593572-800.avif
-        if image_path:
-            saveImage_path = os.path.join(fs.location, 'outputImage.png') 
-            save_image_as_png(image_path, saveImage_path)
-            print("saveImage_path = " + saveImage_path)
-            print(cv2.imread(saveImage_path))
-            text = check_text(saveImage_path) # เช็กข้อความในภาพตรงนี้
-            saveImage_url = fs.url('outputImage.png')  # เซฟภาพลงใน outputImage.png
+        
+        
 
-            #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ 𝗽𝗱𝗳 ไม่ได้เพราะ 𝗽𝗱𝗳 จะมีโครงสร้าง มาให้เลย แต่ 𝗶𝗺𝗮𝗴𝗲 ไม่มี⁡
-            # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
-            
-            text = is_person_name(text)
-            response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
-            data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
-            # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
+        
+        saveImage_path = os.path.join(fs.location, 'outputImage.png') 
+        save_image_as_png(uploaded_image, saveImage_path)
+        # print("saveImage_path = " + saveImage_path)
+        # print(cv2.imread(saveImage_path))
+        text = check_text("outputImage.png") # เช็กข้อความในภาพตรงนี้
+        saveImage_url = fs.url('outputImage.png')  # เซฟภาพลงใน outputImage.png
 
-            
+        #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ 𝗽𝗱𝗳 ไม่ได้เพราะ 𝗽𝗱𝗳 จะมีโครงสร้าง มาให้เลย แต่ 𝗶𝗺𝗮𝗴𝗲 ไม่มี⁡
+        # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
+        
+        text = is_person_name(text)
+        response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
+        data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
+        # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
 
-            #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
-            if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
-                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-                return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
-            elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
-                return JsonResponse({'saveImage_url': saveImage_url, 'newPhoto' : True})
-            else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
-                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-                return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+        
+
+        #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
+        if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
+            chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+        elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
+            return JsonResponse({'saveImage_url': saveImage_url, 'newPhoto' : True})
+        else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
+            chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
 
 
     
@@ -795,7 +794,7 @@ def is_person_name(text):
 
     print("🔥 ชื่อของผมก็คือ : ", firstName , "นามสกุลคือ : ", surName)
     
-   
+    
 
     # มีส่วนที่ไม่แน่ใจ แค่ ชื่อ หรือ นามสกุล
     if len(check_again) != 0: 
@@ -808,6 +807,9 @@ def is_person_name(text):
     
     if firstName != "" and surName != "" and len(check_again) == 0:
         # มั่นใจมากๆๆ เพราะได้ทั้งชื่อ และ นามสกุล
+        record = myCollection.find_one({"student_fistName": firstName}) 
+        # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+
         return JsonResponse({'notSureIs': "Imsure", 'firstName': firstName , 'surName' : surName})
 
     # เราไม่มั่นใจสักตัว ไม่ได้ทั้งชื่อและนามสกุล เลยจะบอกให้ ผู้ใช้ ถ่ายภาพใหม่ 
@@ -1095,9 +1097,32 @@ def search(request):
             'attendance_status': record.get('attendance_status')
         }
         return JsonResponse(response_data)
-    
-
-
-
-    
     return JsonResponse({'error': "notFound"})
+
+def edit_status(request):
+    # ฟังชันนี้ไว้แก้สถานะให้นักศึกษาคนนี้เป็น มาเข้าสอบ จากการกดไอคอนแก้ไข หลังจาก search หานศ.จากรหัสนศ.
+    
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
+
+    student_id = request.GET.get('studentId', None) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
+    # print("student_id : " , student_id)
+
+    record = myCollection.find_one({"id_number": student_id}) 
+    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+
+    new_attendance_status = 0
+    # print("record_get",record.get("attendance_status"))
+    if(record.get("attendance_status") == 1):
+        new_attendance_status = 0
+    else:
+        new_attendance_status = 1
+    
+
+    new_record = myCollection.update_one({"id_number": student_id}, {"$set": {"attendance_status": new_attendance_status}})
+    return HttpResponse(new_record)
