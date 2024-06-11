@@ -307,6 +307,7 @@
         #text_allStudent , #text_come , #text_notCome {
             border: none;
             box-shadow: none;
+            color: var(--main-color);
         }
 
         
@@ -425,10 +426,14 @@
 
                             <!-- ปุ่มเช็กสถานะ -->
                             <div>
-                                <p ><button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button>จำนวนนักศึกษาทั้งหมด : <span id="text_allStudent">0</span> 
-                                    มาแล้ว : <span id="text_come">0</span>  
-                                    ยังไม่มา : <span id="text_notCome">0</span> คน</p>
+                                <h5 >
+                                    <button type="button" id="checkStatus" class="btn btn-secondary" style="margin-right: 10px;">เช็กสถานะนักศึกษา</button>
+                                    จำนวนนักศึกษาทั้งหมด : <span id="text_allStudent">0</span>คน
+                                    <h5>มาแล้ว : <span id="text_come">0</span>คน</h5>  
+                                    <h5>ยังไม่มา : <span id="text_notCome">0</span> คน</h5>
+                                </h5>
                             </div>
+                            <br>
                             <!-- ช่องกรอกค้นหา รหัสนศ. -->
                             <div class="input-group" >
                                 <input type="search" id="studentIdInput" class="form-control rounded" placeholder="ค้นหารหัสนักศึกษา" aria-label="Search" aria-describedby="search-addon" />
@@ -644,7 +649,6 @@
             });
 
             $("tbody").on("click", "#edit_status", function() {
-                console.log("edit_status");
                 let text = "ต้องการแก้ไขสถานะการมาเข้าสอบหรือไม่?";
                 var studentId = $("#studentIdInput").val();
 
@@ -661,8 +665,7 @@
                         data: { studentId: studentId },
                         success: function(response) {
                             // แสดงข้อความที่ได้รับจาก server
-                            console.log(response);
-                            alert("แก้สำเร็จ")
+                            alert("แก้ไขสำเร็จ")
                             if (response == "1"){
                                 attendance_status = "มา"
                                 }
