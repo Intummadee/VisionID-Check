@@ -519,13 +519,16 @@ def upload_image(request):
 
         #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
         if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
-            chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+
+
+            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName"), "id_number" : id_number})
         elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
             return JsonResponse({'saveImage_url': saveImage_url, 'newPhoto' : True})
         else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
-            chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName")})
+            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName"), "id_number" : id_number})
 
 
     
@@ -830,10 +833,13 @@ def chageStatusAttendance(firstName , surName , isCome):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
 
+
     if isCome == True:
-        new_record = myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 1}})
-    elif isCome == False:
-        new_record = myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 0}})
+        myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 1}})
+        record = myCollection.find_one({"student_fistName": firstName, "student_surName": surName}) 
+        return record.get("id_number")
+    # elif isCome == False:
+    #     myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 0}})
 
 
 
@@ -992,7 +998,7 @@ def VideoCapture(request):
 
 
 def upload_excel(request):
-# ฟังชันนี้คือ user อัพโหลดไฟล์ excel จากหน้าบ้าน แล้วจะมาเข้าฟังชันนี้เพื่อ เก็บรายชื่อจาก excel เข้า MongoDB
+    # ฟังชันนี้คือ user อัพโหลดไฟล์ excel จากหน้าบ้าน แล้วจะมาเข้าฟังชันนี้เพื่อ เก็บรายชื่อจาก excel เข้า MongoDB
     if request.method == 'POST':
         excel_file = request.FILES.get('excel_file')
         if excel_file and excel_file.name.endswith('.xlsx'):
@@ -1044,7 +1050,7 @@ def upload_excel(request):
 
 
 def checkStatus(request):
-
+    # ฟังชันนี้คือ เช็กสถานะนักศึกษา ว่ามีนศ.ทั้งหมดกี่คน ใครมาแล้วบ้าง ใครยังไม่มา
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -1073,6 +1079,7 @@ def checkStatus(request):
 
 
 def search(request):
+    # ฟังชันนี้มีเพื่อ ดูข้อมูลของนศ.ตามรหัสนักศึกษาที่ป้อนเข้ามาใน request.GET
     student_id = request.GET.get('studentId', None) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
     try:
         client = pymongo.MongoClient(conn_str)

@@ -445,7 +445,7 @@
                                 <table class="table table-bordered table-dark " >
                                     <!-- table-hover -->
                                     <tbody>
-                                        <!-- <tr>
+                                        <!-- <tr> ไม่ลบ สามารถเอาไว้ดูโครงสร้างได้
                                             <th scope="row">64070257</th>
                                             <td>Intummadee</td>
                                             <td>Maliyam</td>
@@ -460,12 +460,7 @@
                                         </tr> -->
                                     </tbody>
                                 </table>
-                                <!-- <div id="edit_status" style="background-color: plum;">
-                                    <svg style="cursor: pointer; " style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                    </svg>
-                                </div> -->
+                                
                                 
                                 
                             </div>
@@ -502,13 +497,9 @@
                 <div class="share" style="margin-top: 3%;">
                     
                         <p>Download Attendance_Student  : <button type="button" class="btn btn-dark mx-3" id="createImageTable">สร้างตาราง</button></p>
-                        <p>ทดสอบการแสดงผลภาพด้วย OpenCV  : <button type="button" class="btn btn-dark mx-3" id="testCardCheck">testCardCheck</button></p>
+                        <!-- <p>ทดสอบการแสดงผลภาพด้วย OpenCV  : <button type="button" class="btn btn-dark mx-3" id="testCardCheck">testCardCheck</button></p> -->
                         
-                        <!-- <div class="social">
-                            <a href="#"><box-icon name='envelope'></box-icon></a>
-                            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
-                            <a href="#"><box-icon name='github' type='logo' ></box-icon></a>
-                        </div> -->
+                       
                         <!-- แสดงภาพ pdf ที่ upload เข้ามา -->
                         <div id="pdfUploadContainer" style="margin-left: 20px;">
                             
@@ -770,7 +761,7 @@
                             alert("Error: " + response.error);
                         }
                         if (response.firstName) {
-                            let yourname = " ชื่อ : " + response.firstName + " นามสกุล : " +response.surName;
+                            let yourname = "รหัส : " + response.id_number  +" ชื่อ : " + response.firstName + " นามสกุล : " + response.surName ;
                             var divElement = $("<div>").text(yourname);
                             $("#imageUploadContainer").append(divElement);
                         }
@@ -887,7 +878,7 @@
                                         <td>${response.id_number}</td>
                                         <td>${response.student_fistName}</td>
                                         <td>${response.student_surName}</td>
-                                        <td id="edit_status">${attendance_status} <svg style="cursor: pointer; margin-left: 10px"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <td id="edit_status"  style="cursor: pointer;">${attendance_status} <svg style="margin-left: 10px"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                                                 </svg></td>
