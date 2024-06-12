@@ -1,0 +1,28 @@
+# Environment variables
+my_tennis_club/cardCheck/.env
+
+
+
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+# Node.js dependencies
+node_modules/
+
+# Log files
+*.log
+
+# Build files
+/dist/
+/build/
+/out/
+
+
+# Temporary files
+*.tmp
+*.swp
