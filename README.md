@@ -2,7 +2,8 @@
 
 
 
-<img width="100%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/MainPage.png?raw=true">
+<img width="100%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/edit_version2.1.png?raw=true">
+<img width="100%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/edit_version2.2.png?raw=true">
 
 <img width="50%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%A8%E0%B8%B6%E0%B8%81%E0%B8%A9%E0%B8%B2.png?raw=true">
 
@@ -248,5 +249,8 @@ Python | Similarity metrics of strings
 
 using SequenceMatcher.ratio()
 -https://www.geeksforgeeks.org/python-similarity-metrics-of-strings/
+
+alertifyjs
+-https://alertifyjs.com/
 
 ---

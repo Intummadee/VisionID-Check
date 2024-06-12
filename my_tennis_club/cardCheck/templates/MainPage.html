@@ -383,7 +383,7 @@
                                     <label for="excelUpload">1.1</label>
                                     <input type="file" name="excel_file" id="excelFile">
                                     <button type="button" class="btn btn-warning"  id="uploadExcelButton">Upload Excel File</button>
-                                    <a style="margin-left: 7px; color: gray;" data-toggle="tooltip" data-placement="right" title="รูปภาพแพทเทิร์นการทำข้อมูลรายชื่อฉบับ EXCEL" href="https://i.ytimg.com/vi/D_ZV7dU3zvQ/maxresdefault.jpg" target="_blank" rel="noopener noreferrer">
+                                    <a style="margin-left: 7px; color: gray;" data-toggle="tooltip" data-placement="right" title="รูปภาพแพทเทิร์นการทำข้อมูลรายชื่อฉบับ EXCEL" href="https://github.com/Intummadee/CardCheck/blob/main/assets/pattern_excel.png?raw=true" target="_blank" rel="noopener noreferrer">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
                                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                             <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/>
@@ -397,7 +397,7 @@
                                     <label for="pdfUpload">1.2</label>
                                     <input type="file" name="pdf_file" accept=".pdf" id="pdfFileInput">
                                     <button type="button" class="btn btn-warning" id="pdfUploadButton">Upload PDF</button>
-                                    <a style="margin-left: 7px; color: gray;" data-toggle="tooltip" data-placement="right" title="รูปภาพแพทเทิร์นการทำข้อมูลรายชื่อฉบับ PDF" href="https://i.ytimg.com/vi/D_ZV7dU3zvQ/maxresdefault.jpg" target="_blank" rel="noopener noreferrer">
+                                    <a style="margin-left: 7px; color: gray;" data-toggle="tooltip" data-placement="right" title="รูปภาพแพทเทิร์นการทำข้อมูลรายชื่อฉบับ PDF" href="https://github.com/Intummadee/CardCheck/blob/main/assets/pattern_pdf.png?raw=true" target="_blank" rel="noopener noreferrer">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
                                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                             <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/>
@@ -601,6 +601,15 @@
                     type: "GET",
                     dataType: "json",  // Specify that you expect a JSON response
                     success: function(response) {
+                        if (response.errorPDF) {
+                            var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
+                            divElement_loadPDF.css({
+                                "color": "red"
+                            })
+                            $("#video_imageContainer").empty().append(divElement_loadPDF);
+                        }
+
+
                         // Access the base64 string from the JSON response
                         if (response.frame_base64) {
                             console.log(response);
@@ -790,6 +799,13 @@
                     success: function(response) {
                         // Handle the success response
                         $("#imageUploadContainer").empty()
+                        if (response.errorPDF) {
+                            var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
+                            divElement_loadPDF.css({
+                                "color": "red"
+                            })
+                            $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                        }
                         // console.log(response);
                         if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
                             // สร้าง element สำหรับภาพ
@@ -823,13 +839,7 @@
                             })
                             $("#imageUploadContainer").append(divElement_newPhoto);
                         }
-                        if (response.errorPDF) {
-                            var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
-                            divElement_loadPDF.css({
-                                "color": "red"
-                            })
-                            $("#imageUploadContainer").empty().append(divElement_loadPDF);
-                        }
+                        
                     },
                     error: function(error) {
                         // Handle the error response

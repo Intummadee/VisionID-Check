@@ -906,6 +906,23 @@ def click_photograph(event, x, y, flags, param):
 
 def VideoCapture(request):
 # ฟังชันนี้คือ ฟันชันถ่ายวิดิโอ ที่จะมีปุ่มกดถ่ายภาพ อยู่ใน fram video ให้เอาเมาส์ไปคลิ๊ก ส่วนวิธีปิด video คือกด esc
+
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
+    # print(client.list_database_names())
+    record_count = myCollection.count_documents({})
+    # print(record_count)   
+    # record_count = 1;
+
+    # ถ้าเท่ากับ 0 คือ ในฐานข้อมูลยังไม่มีรายชื่อใดๆ ซึ่ง เราต้องอัพโหลดก่อน ถึงจะเข้า การอัพโหลดรูปได้
+    if record_count == 0:
+        return JsonResponse({'errorPDF': True})
+
     global mode_Click  # Declare mode_Click as a global variable
 
     print("VideoCapture click 🌿🌿" )
