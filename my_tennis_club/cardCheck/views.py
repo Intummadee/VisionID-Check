@@ -445,6 +445,9 @@ def upload_and_convert_pdf(request):
                             if '—' in second_part: # แก้ส่วน second ที่บางชื่อจะเป็นแบบนี้ => 64070001 ชื่อ =  HarmonyHub นามสกุล =  — Tranquilwood (ในนามสกุลหรือส่วน second_part มี — ติดอยู่ เลยจำเป็นต้องมีเงื่อนไข เพื่อลบอันนี้ออก)
                                 second_part = second_part.split('—', 1)[1].strip()
                             print(number_part, "ชื่อ = ", first_part, "นามสกุล = ", second_part)
+                    else:
+                        # ถ้าไม่มีข้อมูลในตัวแปร 'number_part' ให้ส่งข้อความแจ้งเตือนกลับ
+                        return JsonResponse({'number_part': True})
                     student_number = {
                         "id_number" : number_part, # รหัสนักศึกษา
                         "student_fistName": first_part,
@@ -489,21 +492,21 @@ def save_image_as_png(source_path, destination_path):
 def upload_image(request):
     # หลังจาก Load Image แล้วจะเข้า path นี้
 
-    # try:
-    #     client = pymongo.MongoClient(conn_str)
-    #     print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
-    # except Exception:
-    #     print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
-    # myDb = client["pymongo_demo"]
-    # myCollection = myDb["demo_collection"]
+    try:
+        client = pymongo.MongoClient(conn_str)
+        print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+    except Exception:
+        print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+    myDb = client["pymongo_demo"]
+    myCollection = myDb["demo_collection"]
     # print(client.list_database_names())
-    # record_count = myCollection.count_documents({})
+    record_count = myCollection.count_documents({})
     # print(record_count)   
-    record_count = 1;
+    # record_count = 1;
 
     # ถ้าเท่ากับ 0 คือ ในฐานข้อมูลยังไม่มีรายชื่อใดๆ ซึ่ง เราต้องอัพโหลดก่อน ถึงจะเข้า การอัพโหลดรูปได้
-    # if record_count == 0:
-    #     return JsonResponse({'errorPDF': True})
+    if record_count == 0:
+        return JsonResponse({'errorPDF': True})
 
     if request.method == 'POST' and request.FILES.get('image_file'):
         uploaded_image = request.FILES['image_file']
