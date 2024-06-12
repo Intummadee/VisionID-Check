@@ -58,12 +58,21 @@ from django.shortcuts import get_object_or_404
 
 
 
+from dotenv import load_dotenv
+
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
 
-# conn_str = "mongodb+srv://kataroja1:<Yourpassword>@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
-conn_str = "mongodb+srv://kataroja1:kataroja7899@cluster0.0yrfv3l.mongodb.net/?retryWrites=true&w=majority"
+
+
+
+# โหลด Environment Variables จากไฟล์ .env
+load_dotenv()
+
+
+# ดึงค่า Environment Variable
+conn_str = os.getenv('MONGO_CONN_STR')
 
 
 
@@ -225,16 +234,19 @@ def createImageTable(request):
         current_directory = os.getcwd()
         new_directory = 'media' # กำหนดโฟลเดอร์ที่ต้องการ
         full_path = os.path.join(current_directory, new_directory) # รวมเส้นทาง
+        # full_path = C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media
         image_filename = f'image_{i}.png' # สร้างชื่อไฟล์รูปภาพ
         new_image_path = os.path.join(full_path, image_filename) # สร้างเส้นทางใหม่
         os.makedirs(full_path, exist_ok=True) # สร้างโฟลเดอร์ถ้ายังไม่มี
 
         # บันทึกไฟล์รูปภาพ
-        cv2.imwrite(new_image_path, scaled_image)
-
+        # cv2.imwrite(new_image_path, scaled_image)
+        cv2.imwrite("./media/"+image_filename, scaled_image)
+    # ./media/
+    # imwrite('../assets/testImage.png', frame)
         # เพิ่มชื่อไฟล์ลงในรายการสำหรับ PDF
         image_toPDF.append(new_image_path)
-
+        # image_toPDF = ['C:\\Users\\User\\Documents\\ปี3\\GIT_CardCheck\\CardCheck\\my_tennis_club\\media\\image_0.png']
 
 
 
@@ -545,7 +557,7 @@ def check_text(image_name):
     
     print("image_name 🍜 : ", image_name)
     image = cv2.imread("./media/" + image_name)
-    print("image in check text ✅ : ", image) # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
+    # print("image in check text ✅ : ", image) # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
 
     # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
     if image is not None:
@@ -931,9 +943,9 @@ def VideoCapture(request):
         if mode_Click == True:
             print("จับภาพ ༼ つ ◕_◕ ༽つ🍰🍔🍕")
             
-            cv2.imwrite('../assets/testImage.png', frame)
+            cv2.imwrite('./media/testImage.png', frame)
             
-            text = check_text("../assets/testImage.png") # เช็กข้อความในภาพตรงนี้
+            text = check_text("testImage.png") # เช็กข้อความในภาพตรงนี้
             text = is_person_name(text)
             response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
             data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
@@ -1051,6 +1063,7 @@ def upload_excel(request):
 
 def checkStatus(request):
     # ฟังชันนี้คือ เช็กสถานะนักศึกษา ว่ามีนศ.ทั้งหมดกี่คน ใครมาแล้วบ้าง ใครยังไม่มา
+
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")

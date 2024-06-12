@@ -29,7 +29,7 @@ pip install pytesseract
 pip install reportlab
 python -m pip install pandas
 python -mpip install openpyxl
-
+python -m pip install python-dotenv
 ```
 
 -Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
