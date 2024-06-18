@@ -280,9 +280,9 @@ def createImageTable(request):
                 #     x = col * cell_width_distance 
                     
                 try:
-                    record = cursor.next() # record {'_id': ObjectId('65f3821a6db989ce8e93d03c'), 'id_number': 64070004, 'student_fistName': 'BlissfulWords', 'student_surName': 'Zenhaven', 'attendance_status': 0}
+                    record = cursor.next() # record {'_id': ObjectId('65f3821a6db989ce8e93d03c'), 'id_number': 64070004, 'student_firstName': 'BlissfulWords', 'student_surName': 'Zenhaven', 'attendance_status': 0}
                     record_id_number = str(record['id_number']) # ใส่ string ให้แน่ใจ เพราะฟังชัน cv2.putText รับแค่ string
-                    record_student_fistName = record['student_fistName']
+                    record_student_firstName = record['student_firstName']
                     record_student_surName = record['student_surName']
                     record_attendance_status = record['attendance_status']
                     print("🌊🌊 " , record_id_number)
@@ -290,7 +290,7 @@ def createImageTable(request):
 
                     # วาดข้อความลงบนภาพ
                     cv2.putText(image_a4, record_id_number, (0+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1, ) #* เริ่มที่ (x,y) = (0, y+15) เพราะ เราไม่เขียนลงแถวแรกเลยเลือก y = y +15 ส่วน x = 0 เพราะอันนี้คือรหัสนักศึกษาซึ่งเป็น คอลัมแรกในตาราง ข้อความนี้เลยต้องชิดซ้ายของภาพ
-                    cv2.putText(image_a4, record_student_fistName, (cell_width_distance+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1,)
+                    cv2.putText(image_a4, record_student_firstName, (cell_width_distance+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1,)
                     cv2.putText(image_a4, record_student_surName, (cell_width_distance*2+10, y+cell_height_distance-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, )
                     #TODO cv2.putText(image_a4, record_attendance_status, (cell_width_distance*3+10, y+cell_height_distance+1), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, )
                     if(record_attendance_status == 0): # 0 = ไม่ได้เข้าสอบ , 1 = เข้าสอบ   #? เครื่องหมายอยากให้ ความกว้าง = 15 , ความสูง = 10
@@ -391,7 +391,7 @@ def MongoConnect(request):
     #⁡⁢⁢⁣ ⁡⁢⁢⁣𝗠𝘆 𝗱𝗮𝘁𝗮𝗯𝗮𝘀𝗲⁡⁡⁡
     # student_number = {
     #     "id_number" : number_part, # รหัสนักศึกษา
-    #     "student_fistName": first_part,
+    #     "student_firstName": first_part,
     #     "student_surName" : second_part,
     #     "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
     # }
@@ -416,14 +416,14 @@ def MongoConnect(request):
     # for record in cursor:
     #     print(record)
 
-    #! Reading but Query by student_fistName
-    # record = myCollection.find_one({"student_fistName": firstName}) 
-    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+    #! Reading but Query by student_firstName
+    # record = myCollection.find_one({"student_firstName": firstName}) 
+    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
     #! Reading one Field
-    # record_firstName = myCollection.find({}, {"student_fistName": 1})
+    # record_firstName = myCollection.find({}, {"student_firstName": 1})
     #     for record in record_firstName:
-    #         print(record.get("student_fistName"))
+    #         print(record.get("student_firstName"))
     
     
     # ⁡⁣⁣⁢#! Count ⁡
@@ -444,8 +444,8 @@ def MongoConnect(request):
     # record = myCollection.find_one()
     # print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
 
-    #? Update but query by student_fistName and set new value especially attendance_status
-    # new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
+    #? Update but query by student_firstName and set new value especially attendance_status
+    # new_record = myCollection.update_one({"student_firstName": firstName}, {"$set": {"attendance_status": 1}})
 
     #? Update in new version by filter username and id_number
     # myCollection.update_one(
@@ -560,7 +560,7 @@ def upload_and_convert_pdf(request):
                         return JsonResponse({'number_part': True})
                     student_number = {
                         "id_number" : number_part, # รหัสนักศึกษา
-                        "student_fistName": first_part,
+                        "student_firstName": first_part,
                         "student_surName" : second_part,
                         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
                     }
@@ -568,7 +568,7 @@ def upload_and_convert_pdf(request):
                 
                     
 
-                    # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
+                    # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_firstName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
                     # print(student_number)
             
             myCollection.update_one({"username": username}, {"$set": {"list_all": list_all}})
@@ -646,7 +646,7 @@ def upload_image(request):
         #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
         if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
             id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True, request) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
-            # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+            # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
 
             return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName"), "id_number" : id_number})
@@ -717,11 +717,10 @@ def check_text_Thai_Language(image_path):
     return text
 
 
-
 def checkStudentCome(text):
     # ฟังชันนี้จะถูกเรียกใช้โดย ฟังชัน check_text
     # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานะใน MongoDB ว่า นศ. คนนี้มาแล้ว
-
+    #! อะไรอะ ไม่เห้นมีใครเรียกใช้เลย
     print(" ---- uploadMongoDB ⛱️⛱️⛱️ ---- ")
     
     lines = text.splitlines()
@@ -745,10 +744,13 @@ def checkStudentCome(text):
 
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
+
+    
+    
     
     #? Updating the record 
-    new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
-    record = myCollection.find_one({"student_fistName": firstName})
+    new_record = myCollection.update_one({"student_firstName": firstName}, {"$set": {"attendance_status": 1}})
+    record = myCollection.find_one({"student_firstName": firstName})
     print("🍏🍏 record ที่อัพเดตแล้ว")
     print(record) # {'_id': ObjectId('65d36d1794d78286f54ccfcb'), 'name': 'Hello', 'message': 'Welcome to coding 101 with Steve'}
 
@@ -760,7 +762,7 @@ def checkStudentCome(text):
 
 
 
-
+# 💊💊
 # ⁡⁣⁢⁣ฟังชันเช็ก ⁡
 def is_person_name(text , request):
     # ฟังนี้ใช้ตรวจหาชื่อคนจาก ข้อความยาวๆ ให้ออกมาเป็น array ที่เก็บคำที่คาดว่าน่าจะเป็นชื่อคน หรือ นามสกุล
@@ -840,28 +842,27 @@ def is_person_name(text , request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
 
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
 
 
-
-    #! Reading but Query by student_fistName
-    # record = myCollection.find_one({"student_fistName": firstName}) 
-    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+    #! Reading but Query by student_firstName
+    # record = myCollection.find_one({"student_firstName": firstName}) 
+    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
     firstName = ""
     surName = ""
     #! Reading the document อ่าน all record
     
     print("---- ༘⋆🌷🫧💭₊˚ෆ ----")
-    username = request.session.get('username')
-    record = myCollection.find_one({"username": username})
     cursor = record.get("list_all")
 
     # cursor = myCollection.find()
     for record in cursor:
         for word in new_spilt_word_toFind_Name: # ['𝗤𝘂𝗮', '𝗦𝗶𝗿𝗹𝗸𝗼𝗿𝗻', '𝗨𝗯𝗼𝗻', '𝗡𝗟𝗔']
-            if word == str(record.get("student_fistName")): # ตรงนี้เอา array ที่ผ่านการกรองมาแล้ว ไปเช็กกับชื่อที่อยู่ในฐานข้อมูล 
+            if word == str(record.get("student_firstName")): # ตรงนี้เอา array ที่ผ่านการกรองมาแล้ว ไปเช็กกับชื่อที่อยู่ในฐานข้อมูล 
                 firstName = word
-                # print("student_fistName  " , word)
+                # print("student_firstName  " , word)
             if word == str(record.get("student_surName")): # ตรงนี้เอา array ที่ผ่านการกรองมาแล้ว ไปเช็กกับ นามสกุล ที่อยู่ในฐานข้อมูล 
                 surName = word
                 # print("student_surName  " , word)
@@ -876,33 +877,35 @@ def is_person_name(text , request):
     #  ['Vesussdidausssisy', 'The', 'Gunso', 'Aes', 'Intummade', 'Maliyam', 'Reiua']
     # 🔥 ชื่อของผมก็คือ :   นามสกุลคือ :  Maliyam
 
-    if record and "list_all" in record:
-        list_all = record["list_all"]
-        # ดึงค่า student_firstName จากแต่ละ object ใน list_all
-        first_names = [student["student_firstName"] for student in list_all]
-        print(first_names)
-    else:
-        print("ไม่มีข้อมูล list_all หรือไม่พบเอกสาร")
+
+    record_firstName = []
+    record_surName = []
+    for items in record.get("list_all"):
+        record_firstName.append(items.get("student_firstName"));
+        record_surName.append(items.get("student_surName"));
+
+    
     
     if firstName == "":
         print("🎙️🎙️", new_spilt_word_toFind_Name)
 
-        record_firstName = list(myCollection.find({}, {"student_fistName": 1})) # แสดงแค่ค่า student_fistName เท่านั้น โดย 1 หมายถึงให้แสดงฟิลด์นี้
+        # record_firstName = list(myCollection.find({}, {"student_firstName": 1})) # แสดงแค่ค่า student_firstName เท่านั้น โดย 1 หมายถึงให้แสดงฟิลด์นี้
         similarity_ratio = []
         for word in new_spilt_word_toFind_Name:
             for record in record_firstName:
-                res = SequenceMatcher(None, word, record.get("student_fistName")).ratio()
+                res = SequenceMatcher(None, word,record).ratio()
                 # print("res =", res)
                 if res >= 0.85:
-                    # print("word:", word, "record_fistName:", record.get("student_fistName"))
-                    similarity_ratio.append(record.get("student_fistName"))
-                    firstName = record.get("student_fistName")
+                    # print("word:", word, "record_fistName:", record.get("student_firstName"))
+                    similarity_ratio.append(record)
+                    firstName = record
                     print(res)
         print("🎙️🎙️ Name : ",similarity_ratio)
         # ถ้าเปรัยบเทียบความต่างแล้ว สรุปก็ไม่ได้สักค่าที่จะใช้ได้ ก็จะไม่ append  
         if len(similarity_ratio) != 0:
             # เราเช็ก FistName มาจากการเทียบด้วย percent แล้ว แต่เรายังไม่มั่นใจ นามสกุล เลยต้องเอานามสกุลไปตรวจสอบอีกที
-            record = myCollection.find_one({"student_fistName": firstName}) # {'_id': ObjectId('65d59171f8d8e5ca03393c15'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+            # record = myCollection.find_one({"student_firstName": firstName}) # {'_id': ObjectId('65d59171f8d8e5ca03393c15'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+            record = myCollection.find_one({"username": username, "list_all.student_firstName": firstName})
             # print(record.get("student_surName"))
             if surName == "":
                 check_again.append(record.get("student_surName"))
@@ -912,25 +915,26 @@ def is_person_name(text , request):
     
     if surName == "":
         print("🩴🩴", new_spilt_word_toFind_Name)
-        record_surName = list(myCollection.find({}, {"student_surName": 1}))
+        # record_surName = list(myCollection.find({}, {"student_surName": 1}))
         similarity_ratio = []
         for word in new_spilt_word_toFind_Name:
             for record in record_surName:
-                res = SequenceMatcher(None, word, record.get("student_surName")).ratio()
+                res = SequenceMatcher(None, word, record).ratio()
                 # print("res =", res)
                 if res >= 0.85:
                     # print("word:", word, "record_surName:", record.get("student_surName"))
-                    similarity_ratio.append(record.get("student_surName"))
-                    surName = record.get("student_surName")
+                    similarity_ratio.append(record)
+                    surName = record
                     print(res)
         print("🩴🩴 surName : ", similarity_ratio)
         # ถ้าเปรัยบเทียบความต่างแล้ว สรุปก็ไม่ได้สักค่าที่จะใช้ได้ ก็จะไม่ append 
         if len(similarity_ratio) != 0:
             # เราเช็ก SurName มาจากการเทียบด้วย percent แล้ว แต่เรายังไม่มั่นใจเรื่อง ชื่อ เลยต้องเอาชื่อไปตรวจสอบอีกที
-            record = myCollection.find_one({"student_surName": surName})
+            # record = myCollection.find_one({"student_surName": surName})
+            record = myCollection.find_one({"username": username, "list_all.student_surName": surName})
             print(record)
             if firstName == "":
-                check_again.append(record.get("student_fistName"))
+                check_again.append(record.get("student_firstName"))
                 check_again.append("firstName")
 
         
@@ -951,8 +955,9 @@ def is_person_name(text , request):
     
     if firstName != "" and surName != "" and len(check_again) == 0:
         # มั่นใจมากๆๆ เพราะได้ทั้งชื่อ และ นามสกุล
-        record = myCollection.find_one({"student_fistName": firstName}) 
-        # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+        # record = myCollection.find_one({"student_firstName": firstName}) 
+        record = myCollection.find_one({"username": username, "list_all.student_firstName": firstName})
+        # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
         return JsonResponse({'notSureIs': "Imsure", 'firstName': firstName , 'surName' : surName})
 
@@ -980,7 +985,7 @@ def chageStatusAttendance(firstName , surName , isCome, request):
     if isCome == True:
         # ได้รับชื่อและนามสกุลมา วิธีคือ ให้หาเรดคอร์ดที่ตรงตามชื่อและนามสกุลแล้วเปลี่ยนสถานะ จากนั้นก้ส่ง idNumberกลับไปด้วย เพราะฝั่งหน้าเว็บเราใช้
         for items in record:
-            if(items.get("student_fistName")==firstName & items.get("student_surName")==surName):
+            if(items.get("student_firstName")==firstName & items.get("student_surName")==surName):
                 myCollection.update_one(
                 {"username": username, "list_all.id_number": items.get("id_number")},
                 {"$set": {"list_all.$.attendance_status": 1}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
@@ -1173,8 +1178,10 @@ def upload_excel(request):
                 print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
             myDb = client["pymongo_demo"]
             myCollection = myDb["demo_collection"]
-            
-            
+            username = request.session.get('username')
+            record = myCollection.find_one({"username": username})
+            list_collect = []
+
             # สร้างลิสต์เพื่อเก็บข้อมูลแต่ละคอลัมน์ แล้วแยกชื่อ รหัส นามสกุลออกจากกัน
             column1 = data.iloc[:, 0].tolist()  # Extracting data from the first column
             column2 = data.iloc[:, 1].tolist()  # Extracting data from the second column
@@ -1184,24 +1191,28 @@ def upload_excel(request):
             for i in range(len(column1)):
                 student_number = {
                     "id_number" : column1[i], # รหัสนักศึกษา
-                    "student_fistName": column2[i],
+                    "student_firstName": column2[i],
                     "student_surName" : column3[i],
                     "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
                 }
-# student_number เช่น {'id_number': 64070257, 'student_fistName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+# student_number เช่น {'id_number': 64070257, 'student_firstName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
                 # TODO Insert the document
-                res = myCollection.insert_one(student_number)                            
+                list_collect.append(student_number)
              
+            try:
+                # Update the document with username matching the logged-in user
+                result = myCollection.update_one(
+                    {"username": username},
+                    {"$push": {"list_all": {"$each": list_collect}}}
+                )
 
-        
-
-
+                if result.modified_count > 0:
+                    return JsonResponse({'message': 'File uploaded successfully'})
+            except Exception as e:
+                print("Failed to update document in MongoDB:", e)
+                return HttpResponse("Failed to update document in MongoDB.", status=500)
+                                    
             
-
-
-
-
-            return JsonResponse({'message': 'File uploaded successfully'})
         else:
             return JsonResponse({'error': 'Invalid file format. Please upload an Excel file.'}, status=400)
     else:
@@ -1235,7 +1246,7 @@ def checkStatus(request):
     for item in record.get("list_all"):
         if(item.get("attendance_status") == 1):
             count_come+=1;
-    # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
+    # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_firstName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
 
 
     return JsonResponse({'allStudent': record_count, 'come': count_come,"notCome": record_count-count_come  })
@@ -1268,7 +1279,7 @@ def search(request):
             print("YEssss °•🪸🪼⁠〰°•  " + student_id)
             response_data = {
                 'id_number': item.get('id_number'),
-                'student_fistName': item.get('student_fistName'),
+                'student_firstName': item.get('student_firstName'),
                 'student_surName': item.get('student_surName'),
                 'attendance_status': item.get('attendance_status')
             }
