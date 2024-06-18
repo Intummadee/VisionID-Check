@@ -85,6 +85,25 @@ def signup(request):
             login(request, user) # ใช้เมธอด login เพื่อเข้าสู่ระบบให้กับผู้ใช้ที่เพิ่งสมัครสมาชิกใหม่
             # ส่งค่า username ใน session
             request.session['username'] = username
+
+
+            # ต่อMONGO
+            try:
+                client = pymongo.MongoClient(conn_str)
+                print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
+            except Exception:
+                print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
+            myDb = client["pymongo_demo"]
+            myCollection = myDb["demo_collection"]
+            
+            myDoc = {
+                "username" : username,
+                "list_all": []
+            }
+            # Insert the document
+            res = myCollection.insert_one(myDoc)
+
+
             return redirect('login')  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการ
     else:
         form = SignUpForm()
@@ -496,8 +515,24 @@ def upload_and_convert_pdf(request):
 
                 #!! นำข้อมูลที่อ่านมา ส่ง เข้าฐานข้อมูล 
                 lines = text.splitlines() #  แยกข้อความ text ออกเป็นลิสต์ของบรรทัด แต่ละบรรทัดจะเป็นสตริงแยกต่างหากในลิสต์ lines
+                
+
+
+
+                #TODO MonGO
+                username = request.session.get('username')
+                record = myCollection.find_one({"username": username}) 
+                # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
+                list_all = record.get('list_all', [])  # ถ้าไม่มีค่า 'list_all' จะกำหนดให้เป็นรายการว่าง
+
+
+
                 for line in lines:
+                    if len(line) == 0:
+                        print("String ว่างเปล่า")
+                        continue
                     parts = line.split(' ', 1)
+                    # print("parts : ",parts)
                     if len(parts) == 2:
                         number_part, text_part = parts
                         text_part = text_part.replace('-', '').replace('=', '').strip() 
@@ -516,19 +551,24 @@ def upload_and_convert_pdf(request):
                         "student_surName" : second_part,
                         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
                     }
+                    list_all.append(student_number);
                 
                     #TODO Insert the document อย่าลืมเอาคอมเมนต์ออกเพื่อ insert ลง ฐานข้อมูลเด้อ!!
-                    res = myCollection.insert_one(student_number)
-                    print(res.inserted_id)
+                    # print(res.inserted_id)
 
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
                     # print(student_number)
             
-            record_count = myCollection.count_documents({})
-            print("record_count : ",record_count)
+            new_record = myCollection.update_one({"username": username}, {"$set": {"list_all": list_all}})
             
 
-            return JsonResponse({'page_png_path_url': page_png_path_url , 'allStudent': record_count, 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
+            # ของเก่า
+            # record_count = myCollection.count_documents({})
+            # print("record_count : ",record_count)
+            
+
+            # return JsonResponse({'page_png_path_url': page_png_path_url , 'allStudent': record_count, 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
+            return JsonResponse({'page_png_path_url': page_png_path_url , 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def convert_pdf_to_images(pdf_path):
