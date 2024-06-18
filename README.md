@@ -19,6 +19,7 @@ activate Environment
 
 -สร้างไฟล์ app.py
 
+
 ## ⚡ **Library** 
 ```
 python -m pip install numpy
@@ -74,6 +75,14 @@ Source : https://www.youtube.com/watch?v=GJCKIGeK3qc
 python -m pip install "pymongo[srv]"
 ```
 
+---
+
+```
+python manage.py createsuperuser
+```
+
+
+---
 
 # Upload file
 ```
