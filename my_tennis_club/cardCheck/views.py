@@ -205,6 +205,7 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     return render(request, 'MainPage.html', {'username': username})
 
 
+# 💊💊
 # ⁡⁣⁢⁣สร้างตาราง⁡
 def createImageTable(request):
     #  ฟังชันนี้จะ อ่าน รายชื่อในฐานข้อมูล แล้วมาแสดงเป็นรูปภาพให้ผู้ใช้โหลดได้
@@ -217,16 +218,19 @@ def createImageTable(request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
     
-
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
     # ในภาพ (image_a4) มี 31 รายชื่อฮ๊าฟฟู๊วววว
-    record_count = myCollection.count_documents({})
+    record_count = len(record.get("list_all"));
     
     if (record_count == 0):
         print("ยังไม่มีรายชื่อ")
         return JsonResponse({'NothaveList': True})
 
     #! Reading all field
-    cursor = myCollection.find()
+    # cursor = myCollection.find()
+    cursor = record.get("list_all");
+    
 
     
     image_toPDF = [] # ตัวแปรนี้ไว้เก็บภาพ เพื่อจะเอามาสร้างเป็น pdf
@@ -465,6 +469,8 @@ def MongoConnect(request):
 
     return ""
 
+
+# 💊💊
 #* 𝗣𝗗𝗙
 def upload_and_convert_pdf(request):
     print("เข้า upload_and_convert_pdf 🌐🌐🌐🌐🌐")
@@ -560,19 +566,14 @@ def upload_and_convert_pdf(request):
                     }
                     list_all.append(student_number);
                 
-                    #TODO Insert the document อย่าลืมเอาคอมเมนต์ออกเพื่อ insert ลง ฐานข้อมูลเด้อ!!
-                    # print(res.inserted_id)
+                    
 
                     # print("ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล => " , student_number) ==> ข้อมูลนศ.ที่จะเก็บลง ฐานข้อมูล =>  {'id_number': '64070254', 'student_fistName': 'Anchisa', 'student_surName': 'Cherdsattayanukul', 'attendance_status': 0}
                     # print(student_number)
             
-            new_record = myCollection.update_one({"username": username}, {"$set": {"list_all": list_all}})
+            myCollection.update_one({"username": username}, {"$set": {"list_all": list_all}})
             
 
-            # ของเก่า
-            # record_count = myCollection.count_documents({})
-            # print("record_count : ",record_count)
-            
 
             # return JsonResponse({'page_png_path_url': page_png_path_url , 'allStudent': record_count, 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
             return JsonResponse({'page_png_path_url': page_png_path_url , 'come':0,"notCome":0 }) # page_png_path_url = [ /media/page_1.png ,  /media/page_2.png ]
@@ -597,6 +598,7 @@ def save_image_as_png(source_path, destination_path):
     img.save(destination_path, 'PNG')
 
 
+# 💊💊
 #* ภาพ 𝗜𝗺𝗮𝗴𝗲
 def upload_image(request):
     # หลังจาก Load Image แล้วจะเข้า path นี้
@@ -609,12 +611,12 @@ def upload_image(request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
     # print(client.list_database_names())
-    record_count = myCollection.count_documents({})
-    # print(record_count)   
-    # record_count = 1;
+    
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
 
     # ถ้าเท่ากับ 0 คือ ในฐานข้อมูลยังไม่มีรายชื่อใดๆ ซึ่ง เราต้องอัพโหลดก่อน ถึงจะเข้า การอัพโหลดรูปได้
-    if record_count == 0:
+    if len(record.get("list_all")) == 0:
         return JsonResponse({'errorPDF': True})
 
     if request.method == 'POST' and request.FILES.get('image_file'):
@@ -634,7 +636,7 @@ def upload_image(request):
         #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ 𝗽𝗱𝗳 ไม่ได้เพราะ 𝗽𝗱𝗳 จะมีโครงสร้าง มาให้เลย แต่ 𝗶𝗺𝗮𝗴𝗲 ไม่มี⁡
         # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
         
-        text = is_person_name(text)
+        text = is_person_name(text , request)
         response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
         data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
         # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
@@ -643,7 +645,7 @@ def upload_image(request):
 
         #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
         if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
-            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True, request) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
             # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
 
 
@@ -651,7 +653,7 @@ def upload_image(request):
         elif data_dict.get("notSureIs") == "takeNewPhoto": # takeNewPhoto จับชื่อกับนามสกุลไม่ได้ ให้ถ่ายภาพใหม่
             return JsonResponse({'saveImage_url': saveImage_url, 'newPhoto' : True})
         else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
-            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+            id_number = chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True, request) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
             return JsonResponse({'saveImage_url': saveImage_url, 'firstName': data_dict.get("firstName"), 'surName': data_dict.get("surName"), "id_number" : id_number})
 
 
@@ -714,6 +716,8 @@ def check_text_Thai_Language(image_path):
 
     return text
 
+
+
 def checkStudentCome(text):
     # ฟังชันนี้จะถูกเรียกใช้โดย ฟังชัน check_text
     # ฟังชันนี้มีไว้เพื่อ ถ้าอ่านตัวอักษรจากภาพที่ user อัพโหลดมาแล้วเสร็จ จะได้ข้อความยาวๆมา เราก็ต้องมา กรอง เอาชื่อเฉพาะชื่อกับนามสกุล ออกมาจากภาพนั้น แล้วไป ค้นหา ชื่อนศ.คนนี้ใน ฐานข้อมูล จากนั้นเปลี่ยนสถานะใน MongoDB ว่า นศ. คนนี้มาแล้ว
@@ -758,7 +762,7 @@ def checkStudentCome(text):
 
 
 # ⁡⁣⁢⁣ฟังชันเช็ก ⁡
-def is_person_name(text):
+def is_person_name(text , request):
     # ฟังนี้ใช้ตรวจหาชื่อคนจาก ข้อความยาวๆ ให้ออกมาเป็น array ที่เก็บคำที่คาดว่าน่าจะเป็นชื่อคน หรือ นามสกุล
     print("🐯 ตรวจหาชื่อคน 🐯")
 
@@ -848,7 +852,11 @@ def is_person_name(text):
     #! Reading the document อ่าน all record
     
     print("---- ༘⋆🌷🫧💭₊˚ෆ ----")
-    cursor = myCollection.find()
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
+    cursor = record.get("list_all")
+
+    # cursor = myCollection.find()
     for record in cursor:
         for word in new_spilt_word_toFind_Name: # ['𝗤𝘂𝗮', '𝗦𝗶𝗿𝗹𝗸𝗼𝗿𝗻', '𝗨𝗯𝗼𝗻', '𝗡𝗟𝗔']
             if word == str(record.get("student_fistName")): # ตรงนี้เอา array ที่ผ่านการกรองมาแล้ว ไปเช็กกับชื่อที่อยู่ในฐานข้อมูล 
@@ -867,10 +875,19 @@ def is_person_name(text):
 
     #  ['Vesussdidausssisy', 'The', 'Gunso', 'Aes', 'Intummade', 'Maliyam', 'Reiua']
     # 🔥 ชื่อของผมก็คือ :   นามสกุลคือ :  Maliyam
+
+    if record and "list_all" in record:
+        list_all = record["list_all"]
+        # ดึงค่า student_firstName จากแต่ละ object ใน list_all
+        first_names = [student["student_firstName"] for student in list_all]
+        print(first_names)
+    else:
+        print("ไม่มีข้อมูล list_all หรือไม่พบเอกสาร")
     
     if firstName == "":
         print("🎙️🎙️", new_spilt_word_toFind_Name)
-        record_firstName = list(myCollection.find({}, {"student_fistName": 1}))
+
+        record_firstName = list(myCollection.find({}, {"student_fistName": 1})) # แสดงแค่ค่า student_fistName เท่านั้น โดย 1 หมายถึงให้แสดงฟิลด์นี้
         similarity_ratio = []
         for word in new_spilt_word_toFind_Name:
             for record in record_firstName:
@@ -943,8 +960,8 @@ def is_person_name(text):
     else: # firstName == "" and surName == "":
         return JsonResponse({'notSureIs': "takeNewPhoto"})
 
-
-def chageStatusAttendance(firstName , surName , isCome):
+# 💊💊
+def chageStatusAttendance(firstName , surName , isCome, request):
     # ฟังชันนี้มีไว้เพื่อ เปลี่ยนสถานะ ของนักศึกษา ว่า มาเข้าสอบไหม
     print("˙✧˖°📷 ⋆｡˚꩜  เข้าฟังชันเปลี่ยนสถานะการเข้าเรียนของ ", firstName , surName , " มาเข้าสอบไหม = " , isCome)
 
@@ -957,13 +974,20 @@ def chageStatusAttendance(firstName , surName , isCome):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
 
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
 
     if isCome == True:
-        myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 1}})
-        record = myCollection.find_one({"student_fistName": firstName, "student_surName": surName}) 
-        return record.get("id_number")
-    # elif isCome == False:
-    #     myCollection.update_one({"student_fistName": firstName, "student_surName": surName}, {"$set": {"attendance_status": 0}})
+        # ได้รับชื่อและนามสกุลมา วิธีคือ ให้หาเรดคอร์ดที่ตรงตามชื่อและนามสกุลแล้วเปลี่ยนสถานะ จากนั้นก้ส่ง idNumberกลับไปด้วย เพราะฝั่งหน้าเว็บเราใช้
+        for items in record:
+            if(items.get("student_fistName")==firstName & items.get("student_surName")==surName):
+                myCollection.update_one(
+                {"username": username, "list_all.id_number": items.get("id_number")},
+                {"$set": {"list_all.$.attendance_status": 1}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
+                )
+                return items.get("id_number")
+
+
 
 
 
@@ -1017,7 +1041,7 @@ def click_photograph(event, x, y, flags, param):
 
 
     
-
+# 💊💊
 def VideoCapture(request):
 # ฟังชันนี้คือ ฟันชันถ่ายวิดิโอ ที่จะมีปุ่มกดถ่ายภาพ อยู่ใน fram video ให้เอาเมาส์ไปคลิ๊ก ส่วนวิธีปิด video คือกด esc
 
@@ -1029,12 +1053,15 @@ def VideoCapture(request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
     # print(client.list_database_names())
-    record_count = myCollection.count_documents({})
-    # print(record_count)   
-    # record_count = 1;
+    
+
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username}) 
+    # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
+
 
     # ถ้าเท่ากับ 0 คือ ในฐานข้อมูลยังไม่มีรายชื่อใดๆ ซึ่ง เราต้องอัพโหลดก่อน ถึงจะเข้า การอัพโหลดรูปได้
-    if record_count == 0:
+    if record.get('list_all', []) == 0:
         return JsonResponse({'errorPDF': True})
 
     global mode_Click  # Declare mode_Click as a global variable
@@ -1080,16 +1107,16 @@ def VideoCapture(request):
             cv2.imwrite('./media/testImage.png', frame)
             
             text = check_text("testImage.png") # เช็กข้อความในภาพตรงนี้
-            text = is_person_name(text)
+            text = is_person_name(text , request)
             response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
             data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
             # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
-            print(data_dict)
+            # print(data_dict)
             
 
             #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
             if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
-                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True , request) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
                 print(" # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ ")
                 firstName = firstName + data_dict.get("firstName")
                 surName = surName + data_dict.get("surName")
@@ -1105,7 +1132,7 @@ def VideoCapture(request):
 
                 
             else: # ไม่มั่นใจ ชื่อ หรือ นามสกุล อย่างใดอย่างนึง 
-                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
+                chageStatusAttendance(data_dict.get("firstName") , data_dict.get("surName") , True , request) # เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ
                 print("# เปลี่ยนสถานะให้นักศึกษา มาเข้าสอบ")
                 firstName = firstName + data_dict.get("firstName")
                 surName = surName + data_dict.get("surName")
@@ -1125,24 +1152,10 @@ def VideoCapture(request):
     cap.release()
     cv2.destroyAllWindows()
 
-    
-
-    #! frame = ภาพสุดท้ายที่ถ่ายกับ Video มาแล้ว  แปลงภาพเป็นภาพขาวดำ
-
-    # save ภาพ 
-    # cv2.imwrite('../assets/testImage.png', frame)
-    # check_text('../assets/testImage.png')
-
-    # Convert the frame to a base64 string
-    # _, buffer = cv2.imencode('.jpg', frame)
-    # frame_base64 = base64.b64encode(buffer).decode('utf-8')
-
-    # Return the base64 string as part of the JSON response
-    # return JsonResponse({'frame_base64': frame_base64})
 
 
 
-
+# 💊💊
 def upload_excel(request):
     # ฟังชันนี้คือ user อัพโหลดไฟล์ excel จากหน้าบ้าน แล้วจะมาเข้าฟังชันนี้เพื่อ เก็บรายชื่อจาก excel เข้า MongoDB
     if request.method == 'POST':
@@ -1286,6 +1299,7 @@ def edit_status(request):
     # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
 
     
+    # ตรวจสอบก่อนว่า ก่อนการเปลี่ยนแปลง นศ.คนนี้มาแล้วหรือยัง หรือ ยังไม่มา
     old_attendance_status = 0
     record = myCollection.find_one({"username": username})
     for items in record.get("list_all"):
