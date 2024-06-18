@@ -443,6 +443,13 @@ def MongoConnect(request):
     #? Update but query by student_fistName and set new value especially attendance_status
     # new_record = myCollection.update_one({"student_fistName": firstName}, {"$set": {"attendance_status": 1}})
 
+    #? Update in new version by filter username and id_number
+    # myCollection.update_one(
+    # {"username": username, "list_all.id_number": student_id},
+    # {"$set": {"list_all.$.attendance_status": 1}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
+    # )
+
+
     #* Step 9: Delete the Record
     # query_del = {
     #     "name": "Hello"
@@ -961,7 +968,7 @@ def chageStatusAttendance(firstName , surName , isCome):
 
 
 
-
+# 💊💊
 def clearRecord(request):
     # ฟังชันนี้มีไว้เพื่อ drop รายชื่อทั้งหมดออกจากฐานข้อมูล
     print("clearRecorddddddddddddddddddddddddd 🏳‍🌈")
@@ -972,7 +979,12 @@ def clearRecord(request):
         print("เทสเชื่อมต่อMongo เกิด Error = " + Exception)
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
-    result = myCollection.delete_many({})
+
+    username = request.session.get('username')
+    # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
+
+    myCollection.update_one({"username": username}, {"$set": {"list_all": []}})
+
 
     return HttpResponse("Hi")
 
@@ -1182,7 +1194,7 @@ def upload_excel(request):
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
-
+# 💊💊
 def checkStatus(request):
     # ฟังชันนี้คือ เช็กสถานะนักศึกษา ว่ามีนศ.ทั้งหมดกี่คน ใครมาแล้วบ้าง ใครยังไม่มา
 
@@ -1199,20 +1211,24 @@ def checkStatus(request):
     myCollection = myDb["demo_collection"]
     
 
-    record_count = myCollection.count_documents({})
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
+    # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
+
+    record_count = len(record.get("list_all"))
     print(record_count)
 
     count_come = 0;
-    cursor = myCollection.find()
-    for record in cursor:
-        if(record.get("attendance_status") == 1):
+    for item in record.get("list_all"):
+        if(item.get("attendance_status") == 1):
             count_come+=1;
-        # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
+    # record ex. {'_id': ObjectId('6666f6c1925f9f1cacff1b2c'), 'id_number': '64070001', 'student_fistName': 'HarmonyHub', 'student_surName': 'Tranquilwood', 'attendance_status': 0}
 
 
     return JsonResponse({'allStudent': record_count, 'come': count_come,"notCome": record_count-count_come  })
 
 
+# 💊💊
 def search(request):
     # ฟังชันนี้มีเพื่อ ดูข้อมูลของนศ.ตามรหัสนักศึกษาที่ป้อนเข้ามาใน request.GET
     student_id = request.GET.get('studentId', None) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
@@ -1224,23 +1240,34 @@ def search(request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
     
+
+    username = request.session.get('username')
+    record = myCollection.find_one({"username": username})
+    # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
+    
     # เช็กตรวจดูว่าในฐานข้อมูลมี รายชื่อ นศ.ให้ค้นหาไหม
-    record_count = myCollection.count_documents({})
-    if(record_count == 0):
+    if(len(record.get("list_all")) == 0):
         return JsonResponse({'error': "countZero"})
 
+    for item in record.get("list_all"):
+        # print(item);
+        if(item.get('id_number') == student_id):
+            print("YEssss °•🪸🪼⁠〰°•  " + student_id)
+            response_data = {
+                'id_number': item.get('id_number'),
+                'student_fistName': item.get('student_fistName'),
+                'student_surName': item.get('student_surName'),
+                'attendance_status': item.get('attendance_status')
+            }
+            return JsonResponse(response_data)
 
-    record = myCollection.find_one({"id_number": student_id}) 
-    if (record != None):
-        response_data = {
-            'id_number': record.get('id_number'),
-            'student_fistName': record.get('student_fistName'),
-            'student_surName': record.get('student_surName'),
-            'attendance_status': record.get('attendance_status')
-        }
-        return JsonResponse(response_data)
+
     return JsonResponse({'error': "notFound"})
 
+
+
+
+# 💊💊
 def edit_status(request):
     # ฟังชันนี้ไว้แก้สถานะให้นักศึกษาคนนี้เป็น มาเข้าสอบ จากการกดไอคอนแก้ไข หลังจาก search หานศ.จากรหัสนศ.
     
@@ -1255,16 +1282,27 @@ def edit_status(request):
     student_id = request.GET.get('studentId', None) # None คือค่าเริ่มต้นถ้าไม่มี studentId , ได้ค่ามาเป้น string ทีมีแต่ตัวเลข
     # print("student_id : " , student_id)
 
-    record = myCollection.find_one({"id_number": student_id}) 
-    # print(record) # => {'_id': ObjectId('65d4ca7f93805c855c82da41'), 'id_number': '64070257', 'student_fistName': 'Intummadee', 'student_surName': 'Carbon', 'attendance_status': 0}
+    username = request.session.get('username')
+    # print(record) -> {'_id': ObjectId('6671b048f77540b98d593b56'), 'username': 'test', 'list_all': []}
 
-    new_attendance_status = 0
-    # print("record_get",record.get("attendance_status"))
-    if(record.get("attendance_status") == 1):
-        new_attendance_status = 0
-    else:
+    
+    old_attendance_status = 0
+    record = myCollection.find_one({"username": username})
+    for items in record.get("list_all"):
+        if(items.get("id_number") == student_id):
+            old_attendance_status = items.get("attendance_status")
+    print("old_attendance_status : 🏡🏡 ", old_attendance_status)
+    
+    if old_attendance_status == 0:
         new_attendance_status = 1
+    else:
+        new_attendance_status = 0
 
+    myCollection.update_one(
+    {"username": username, "list_all.id_number": student_id},
+    {"$set": {"list_all.$.attendance_status": new_attendance_status}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
+    )
+    print("====")
+    print("new_attendance_status : 🏡 " , new_attendance_status)
 
-    myCollection.update_one({"id_number": student_id}, {"$set": {"attendance_status": new_attendance_status}})
     return HttpResponse(new_attendance_status)
