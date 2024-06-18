@@ -559,7 +559,7 @@ def upload_and_convert_pdf(request):
                         # ถ้าไม่มีข้อมูลในตัวแปร 'number_part' ให้ส่งข้อความแจ้งเตือนกลับ
                         return JsonResponse({'number_part': True})
                     student_number = {
-                        "id_number" : number_part, # รหัสนักศึกษา
+                        "id_number" : number_part+"", # รหัสนักศึกษา
                         "student_firstName": first_part,
                         "student_surName" : second_part,
                         "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
@@ -1190,7 +1190,7 @@ def upload_excel(request):
             # แยกข้อมูลในแต่ละบรรทัดและจัดเก็บลงในลิสต์ของแต่ละคอลัมน์
             for i in range(len(column1)):
                 student_number = {
-                    "id_number" : column1[i], # รหัสนักศึกษา
+                    "id_number" : str(column1[i]), # รหัสนักศึกษา
                     "student_firstName": column2[i],
                     "student_surName" : column3[i],
                     "attendance_status" : 0, # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
