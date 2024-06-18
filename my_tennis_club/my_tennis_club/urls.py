@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', include('cardCheck.urls')), # บอกว่า เส้นทางหลักที่จะ include เส้นทางจาก cardcheck/urls.py
+    path('', include('cardCheck.urls')), # บอกว่า เส้นทางหลักที่จะ include เส้นทางจาก cardcheck/urls.py ,  เชื่อมโยงกับ urls.py ของแอป cardCheck
     path('admin/', admin.site.urls),
 ]
 
