@@ -22,6 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^w9xq#re&*pxx7ye-ys85h)ym!+v!0c^0nlx&6te-$_6r-8jai'
 
+# Login
+LOGIN_REDIRECT_URL = 'MainPage'  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการให้ผู้ใช้ไปหลังจากเข้าสู่ระบบสำเร็จ
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

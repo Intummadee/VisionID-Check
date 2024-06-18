@@ -56,12 +56,16 @@ from django.http import JsonResponse
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 
+# login_required decorator ของ Django
+from django.contrib.auth.decorators import login_required
 
-
+# env
 from dotenv import load_dotenv
 
+from django.shortcuts import redirect
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
+
 
 
 
@@ -72,20 +76,52 @@ from .forms import SignUpForm
 
 def signup(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = SignUpForm(request.POST) # SignUpForm เป็นฟอร์มที่คุณสร้างขึ้นสำหรับการสมัครสมาชิกใหม่
         if form.is_valid():
-            user = form.save()
+            user = form.save() # หากฟอร์มถูกต้อง, บันทึกข้อมูลผู้ใช้ใหม่ในฐานข้อมูลโดยเรียกเมธอด save() ของฟอร์ม ซึ่งจะสร้างออบเจ็กต์ผู้ใช้ใหม่และบันทึกในฐานข้อมูล
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('MainPage')  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการ
+            user = authenticate(username=username, password=raw_password) # ใช้เมธอด authenticate ของ Django เพื่อยืนยันตัวตนของผู้ใช้โดยใช้ username และ password. ถ้าข้อมูลถูกต้อง, จะได้ออบเจ็กต์ผู้ใช้ (user) ถ้าไม่ถูกต้อง, จะได้ค่า None
+            login(request, user) # ใช้เมธอด login เพื่อเข้าสู่ระบบให้กับผู้ใช้ที่เพิ่งสมัครสมาชิกใหม่
+            # ส่งค่า username ใน session
+            request.session['username'] = username
+            return redirect('login')  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการ
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
 
+# Login
+# cardCheck/views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST) #  form = AuthenticationForm(request, data=request.POST)
+        # สร้างออบเจ็กต์ฟอร์ม AuthenticationForm จากข้อมูลที่ผู้ใช้ส่งมาใน request.POST. AuthenticationForm เป็นฟอร์มในตัวของ Django ที่ใช้สำหรับตรวจสอบข้อมูลการเข้าสู่ระบบ
+        if form.is_valid():
+            # ดึงค่าของ username และ password จาก cleaned_data ซึ่งเป็นข้อมูลที่ผ่านการตรวจสอบและทำความสะอาดแล้ว
+            username = form.cleaned_data.get('username') 
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            # ใช้เมธอด authenticate ของ Django เพื่อยืนยันตัวตนของผู้ใช้โดยใช้ username และ password. ถ้าข้อมูลถูกต้อง, จะได้ออบเจ็กต์ผู้ใช้ (user) ถ้าไม่ถูกต้อง, จะได้ค่า None
+            if user is not None:
+                login(request, user) # ใช้เมธอด login เพื่อเข้าสู่ระบบให้กับผู้ใช้
+                # ส่งค่า username ใน session
+                request.session['username'] = username
+                return redirect('MainPage')  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการให้ผู้ใช้ไปหลังจากเข้าสู่ระบบสำเร็จ
+    else:
+        # ถ้าคำขอไม่ใช่แบบ POST, สร้างฟอร์ม AuthenticationForm เปล่า ๆ เพื่อให้ผู้ใช้กรอกข้อมูล
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+
+from django.contrib.auth import logout
+def logout_view(request):
+    logout(request)
+    return redirect('MainPage')
 
 
 # โหลด Environment Variables จากไฟล์ .env
@@ -118,11 +154,15 @@ def cardCheck(request):
     return HttpResponse("Hello world! cardCheck")
 
 
-def HomeFirst(request):
-    print("Start HomePage.html 📦📦");
-    return HttpResponse("Hello world!")
+# def HomeFirst(request):
+#     print("Start HomePage.html 📦📦");
+#     return HttpResponse("Hello world!")
 
 
+
+
+
+# @login_required(login_url='/login/')
 # ⁡⁣⁣⁢---- 𝗠𝗮𝗶𝗻 𝗛𝗲𝗿𝗲⁡ ----
 def MainPage(request): # http://127.0.0.1:8000/MainPage/
     print("Start HomePage.html 📦📦")
@@ -141,8 +181,9 @@ def MainPage(request): # http://127.0.0.1:8000/MainPage/
     # check_text("../../assets/test03gray.jpg") # path นี้ไว้เช็ก image ที่ไม่ได้ขึ้น githup , อันนี้แล้วแต่ จะสร้าง หรือไม่สร้างก็ได้ แต่นี่สร้างเพื่อใส่รูปภาพที่เอาขึ้นกิตไม่ได้ เช่น พวก ปชช. 
     # check_text_Thai_Language("../../assets/test03gray.jpg")   # เช็กเวอร์ขั่นภาษาไทย
 
-
-    return render(request, 'MainPage.html', {})
+    username = request.session.get('username', 'GuestTest')  # อ่านค่า username จาก session , ถ้าคีย์ username ไม่มีอยู่ในเซสชัน จะคืนค่า 'Guest' แทน.
+    # session ใน Django คือพื้นที่เก็บข้อมูลชั่วคราวสำหรับผู้ใช้ที่สามารถใช้ข้ามคำขอ HTTP ได้ ซึ่งมีประโยชน์ในการเก็บข้อมูลระหว่างการเยี่ยมชมหน้าเว็บต่างๆ ของผู้ใช้.
+    return render(request, 'MainPage.html', {'username': username})
 
 
 # ⁡⁣⁢⁣สร้างตาราง⁡

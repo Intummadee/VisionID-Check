@@ -21,5 +21,7 @@ urlpatterns = [
     path('edit_status/', views.edit_status, name='edit_status'),
     path('', views.MainPage, name='MainPage'),
     path('signup/', views.signup, name='signup'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 
 ]

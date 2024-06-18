@@ -62,10 +62,10 @@
 
             <a href="{% url 'signup' %}">Sign Up</a>
               
-           
+            <a href="{% url 'login' %}">Log In</a>
+            <p> : {{ username }} </p>
 
-
-            
+            <a href="{% url 'logout' %}"><button id="logoutButton">Log Out</button></a>
 
 
 
@@ -254,90 +254,106 @@
     <script>
         //? $ เป็นการย่อของ jQuery ซึ่งเป็นไลบรารี JavaScript ที่ทำให้การจัดการ DOM
 
+        var isLoggedIn = {{ user.is_authenticated|yesno:"true,false" }};
+
+
         // เมื่อเอกสาร HTML โหลดเสร็จ
         $(document).ready(function() {
             console.log("โหลดหน้า Homepage.html 📦📦");
             // เมื่อปุ่ม VideoCapture ถูกคลิก
             $("#createImageTable").click(function() {
                 // console.log("alert(response);");
-                $("#pdfUploadContainer").html("<p>Processing...</p>");
-                $.ajax({
-                    url: "/createImageTable/",
-                    type: "GET",
-                    success: function(response) {
-                        console.log(response);
-                        $("#pdfUploadContainer").empty()
-
-                        if (response.NothaveList == true) {
-                            $("#pdfUploadContainer").html("<p style='color: #ffae00 '> *ยังไม่มีรายชื่อ กรุณาอัพโหลด ไฟล์ Excel หรือไฟล์ PDF ก่อนค่ะ</p>");
-                        }
-
-                        else {
-                            // Access the PDF link and image links from the JSON response
-                            var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
-                            var imageLinks = response.image_links;
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
+                }
+                else{
+                    $("#pdfUploadContainer").html("<p>Processing...</p>");
+                    $.ajax({
+                        url: "/createImageTable/",
+                        type: "GET",
+                        success: function(response) {
+                            console.log(response);
+                            $("#pdfUploadContainer").empty()
     
-                            // Assuming 'my_tennis_club' is the root directory served by your web server
-                            var pdfRelativePath = '/listStudent/myListStudent.pdf';
-    
-                            // Construct the full URL
-                            var pdfLinkElement = $("<p>").html("Download PDF: <a href='/media/myListStudent.pdf' download>PDF Link</a>");
-                            $("#pdfUploadContainer").empty().append(pdfLinkElement);
-    
-                            // Display the image links
-                            var imageLinksList = $("<ul>");
-                            for (var i = 0; i < imageLinks.length; i++) {
-                                // Extract the filename from the full path
-                                var filename = imageLinks[i].split('\\').pop();
-    
-                                var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
-                                imageLinksList.append(listItem);
+                            if (response.NothaveList == true) {
+                                $("#pdfUploadContainer").html("<p style='color: #ffae00 '> *ยังไม่มีรายชื่อ กรุณาอัพโหลด ไฟล์ Excel หรือไฟล์ PDF ก่อนค่ะ</p>");
                             }
-                            $("#pdfUploadContainer").append(imageLinksList);
-
+    
+                            else {
+                                // Access the PDF link and image links from the JSON response
+                                var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
+                                var imageLinks = response.image_links;
+        
+                                // Assuming 'my_tennis_club' is the root directory served by your web server
+                                var pdfRelativePath = '/listStudent/myListStudent.pdf';
+        
+                                // Construct the full URL
+                                var pdfLinkElement = $("<p>").html("Download PDF: <a href='/media/myListStudent.pdf' download>PDF Link</a>");
+                                $("#pdfUploadContainer").empty().append(pdfLinkElement);
+        
+                                // Display the image links
+                                var imageLinksList = $("<ul>");
+                                for (var i = 0; i < imageLinks.length; i++) {
+                                    // Extract the filename from the full path
+                                    var filename = imageLinks[i].split('\\').pop();
+        
+                                    var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
+                                    imageLinksList.append(listItem);
+                                }
+                                $("#pdfUploadContainer").append(imageLinksList);
+    
+                            }
+    
+    
+                        },
+                        error: function(error) {
+                            console.log("Error:", error);
                         }
+                    });
 
+                }
 
-                    },
-                    error: function(error) {
-                        console.log("Error:", error);
-                    }
-                });
             });
             $("#VideoCapture").click(function() {
-                // ทำ AJAX request ไปยัง URL /VideoCapture/
-                $.ajax({
-                    url: "/VideoCapture/",
-                    type: "GET",
-                    dataType: "json",  // Specify that you expect a JSON response
-                    success: function(response) {
-                        if (response.errorPDF) {
-                            var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
-                            divElement_loadPDF.css({
-                                "color": "red"
-                            })
-                            $("#video_imageContainer").empty().append(divElement_loadPDF);
-                        }
-
-
-                        // Access the base64 string from the JSON response
-                        if (response.frame_base64) {
-                            console.log(response);
-                            var frameBase64 = response.frame_base64;
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
+                }
+                else{
+                    // ทำ AJAX request ไปยัง URL /VideoCapture/
+                    $.ajax({
+                        url: "/VideoCapture/",
+                        type: "GET",
+                        dataType: "json",  // Specify that you expect a JSON response
+                        success: function(response) {
+                            if (response.errorPDF) {
+                                var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
+                                divElement_loadPDF.css({
+                                    "color": "red"
+                                })
+                                $("#video_imageContainer").empty().append(divElement_loadPDF);
+                            }
     
-                            // Create an image element and set its source to the base64 string
-                            var imgElement = $("<img>"); // สร้าง element <img> ใหม่ , ถ้าไม่ใช่ $ จะเป็น jQuery(document.createElement("img"))
-                            imgElement.attr("src", "data:image/jpeg;base64," + frameBase64);
     
-                            // Append the image element to the image container
-                            $("#video_imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
-
+                            // Access the base64 string from the JSON response
+                            if (response.frame_base64) {
+                                console.log(response);
+                                var frameBase64 = response.frame_base64;
+        
+                                // Create an image element and set its source to the base64 string
+                                var imgElement = $("<img>"); // สร้าง element <img> ใหม่ , ถ้าไม่ใช่ $ จะเป็น jQuery(document.createElement("img"))
+                                imgElement.attr("src", "data:image/jpeg;base64," + frameBase64);
+        
+                                // Append the image element to the image container
+                                $("#video_imageContainer").empty().append(imgElement); // ลบข้อมูลทั้งหมดที่อยู่ใน element ที่มี id เท่ากับ "imageContainer" และนำ <img> element ที่สร้างมาใส่.
+    
+                            }
+                        },
+                        error: function(error) {
+                            console.log("Error:", error);
                         }
-                    },
-                    error: function(error) {
-                        console.log("Error:", error);
-                    }
-                });
+                    });
+                }
+
             });
 
             // เมื่อปุ่ม testButton ถูกคลิก
@@ -357,25 +373,29 @@
                 });
             });
             $("#clearRecord").click(function() {
-                // ทำ AJAX request ไปยัง URL /testCardCheck/
-                let text = "ยืนยันที่จะลบข้อมูลรายชื่อทั้งหมดหรือไม่?";
-                if (confirm(text) == true) {
-                    $.ajax({
-                        url: "/clearRecord/",
-                        type: "GET",
-                        success: function(response) {
-                            // แสดงข้อความที่ได้รับจาก server
-                            $('#text_allStudent').text("0");
-                            $('#text_come').text("0");
-                            $('#text_notCome').text("0");
-                            alert("ลบสำเร็จ");
-                        },
-                        error: function(error) {
-                            alert("เกิดข้อผิดพลาดขึ้น : ", error);
-                        }
-                    });
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
                 }
-                
+                else{
+                    // ทำ AJAX request ไปยัง URL /testCardCheck/
+                    let text = "ยืนยันที่จะลบข้อมูลรายชื่อทั้งหมดหรือไม่?";
+                    if (confirm(text) == true) {
+                        $.ajax({
+                            url: "/clearRecord/",
+                            type: "GET",
+                            success: function(response) {
+                                // แสดงข้อความที่ได้รับจาก server
+                                $('#text_allStudent').text("0");
+                                $('#text_come').text("0");
+                                $('#text_notCome').text("0");
+                                alert("ลบสำเร็จ");
+                            },
+                            error: function(error) {
+                                alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                            }
+                        });
+                    }
+                }
             });
 
             $("tbody").on("click", "#edit_status", function() {
@@ -421,273 +441,292 @@
 
             //  ทำการอัปโหลดไฟล์ PDF โดยใช้ pathคือ /upload_and_convert_pdf/ เมื่อกด ปุ่มที่มี id="#pdfUploadButton"
             $("#pdfUploadButton").click(function() {
-                
-                var fileInput = $('#pdfUploadForm input[type="file"]')[0];
-                // console.log("fileInput ", fileInput);
-                var file = fileInput.files[0];
-                // console.log("file : ", file);
-                var fileName = file.name;
-                console.log(fileName , "split : ",fileName.split('.'));
-                // split = ['pdf_รายชื่อ', 'pdf']
-                var fileExtension = fileName.split('.').pop().toLowerCase();
-
-                // ตรวจสอบนามสกุลไฟล์ PDF
-                if (fileExtension !== 'pdf') {
-                    alertify.error('ไฟล์ต้องเป็น PDF เท่านั้น');
-                    return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
                 }
-
-                $("#pdfUploadProcess").html("<p>Processing...</p>");
-                var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
-                $.ajax({
-                    url: "/upload_and_convert_pdf/",
-                    type: "POST",
-                    data: formData, //  ข้อมูลที่จะส่งไปกับ request 
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $("#pdfUploadProcess").empty()
-                        if (response.number_part){
-                            var divElement_loadPDF = $("<div>").text("*รูปแบบหรือแพทเทิร์นการจัดวางรายชื่อในไฟล์ไม่สามารถใช้ได้ กรุณาตรวจสอบใหม่ด้วยค่ะ");
-                            var link = $("<a>", {
-                                href: "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-                                target: "_blank",
-                                text: "คลิ๊กเพื่อดูตัวอย่าง"
-                            });
-                            divElement_loadPDF.css({
-                                "color": "red"
-                            })
-                            $("#pdfUploadProcess").append(divElement_loadPDF);
-                            $("#pdfUploadProcess").append(link);
-                            return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
-                        }
-
-                        // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
-                        // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
-                        if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
-                            // สร้าง element สำหรับภาพ
-
-                            // เคลียร์ container เก่า
-                            $("#pdfUploadContainer").empty();
-
-                            // ลูปผ่านทุก URL ใน array
-                            for (var i = 0; i < response.page_png_path_url.length; i++) {
-                                // สร้าง element <img> สำหรับแต่ละ URL
-                                var imgElement = $("<img>");
-                                imgElement.attr("src", response.page_png_path_url[i]);
-
-                                // แทรกภาพลงใน container
-                                $("#pdfUploadContainer").append(imgElement);
+                else{
+                    var fileInput = $('#pdfUploadForm input[type="file"]')[0];
+                    // console.log("fileInput ", fileInput);
+                    var file = fileInput.files[0];
+                    // console.log("file : ", file);
+                    var fileName = file.name;
+                    console.log(fileName , "split : ",fileName.split('.'));
+                    // split = ['pdf_รายชื่อ', 'pdf']
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+    
+                    // ตรวจสอบนามสกุลไฟล์ PDF
+                    if (fileExtension !== 'pdf') {
+                        alertify.error('ไฟล์ต้องเป็น PDF เท่านั้น');
+                        return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
+                    }
+    
+                    $("#pdfUploadProcess").html("<p>Processing...</p>");
+                    var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
+                    $.ajax({
+                        url: "/upload_and_convert_pdf/",
+                        type: "POST",
+                        data: formData, //  ข้อมูลที่จะส่งไปกับ request 
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            $("#pdfUploadProcess").empty()
+                            if (response.number_part){
+                                var divElement_loadPDF = $("<div>").text("*รูปแบบหรือแพทเทิร์นการจัดวางรายชื่อในไฟล์ไม่สามารถใช้ได้ กรุณาตรวจสอบใหม่ด้วยค่ะ");
+                                var link = $("<a>", {
+                                    href: "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+                                    target: "_blank",
+                                    text: "คลิ๊กเพื่อดูตัวอย่าง"
+                                });
+                                divElement_loadPDF.css({
+                                    "color": "red"
+                                })
+                                $("#pdfUploadProcess").append(divElement_loadPDF);
+                                $("#pdfUploadProcess").append(link);
+                                return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
+                            }
+    
+                            // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
+                            // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
+                            if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
+                                // สร้าง element สำหรับภาพ
+    
+                                // เคลียร์ container เก่า
+                                $("#pdfUploadContainer").empty();
+    
+                                // ลูปผ่านทุก URL ใน array
+                                for (var i = 0; i < response.page_png_path_url.length; i++) {
+                                    // สร้าง element <img> สำหรับแต่ละ URL
+                                    var imgElement = $("<img>");
+                                    imgElement.attr("src", response.page_png_path_url[i]);
+    
+                                    // แทรกภาพลงใน container
+                                    $("#pdfUploadContainer").append(imgElement);
+                                }
+                                
+    
+                                // แสดง alert ว่าเสร็จสิ้น
+                                alert("อัพโหลดรายชื่อสำเร็จ");
+                            } else {
+                                // กรณี error
+                                alert("เกิดข้อผิดพลาดเกี่ยวกับการอัพโหลด PDF : " + response.error);
                             }
                             
-
-                            // แสดง alert ว่าเสร็จสิ้น
-                            alert("อัพโหลดรายชื่อสำเร็จ");
-                        } else {
-                            // กรณี error
-                            alert("เกิดข้อผิดพลาดเกี่ยวกับการอัพโหลด PDF : " + response.error);
+                        },
+                        error: function(error) {
+                            $("#pdfUploadProcess").empty()
+                            console.log("Error:", error);
                         }
-                        
-                    },
-                    error: function(error) {
-                        $("#pdfUploadProcess").empty()
-                        console.log("Error:", error);
-                    }
-                });
+                    });
+                }
             });
             
 
             $("#imageUploadButton").click(function() {
-                $("#imageUploadContainer").html("<p>Processing...</p>");
-                var formData = new FormData($("#imageUploadForm")[0]);
-                $.ajax({
-                    url: "/upload_image/",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        // Handle the success response
-                        $("#imageUploadContainer").empty()
-                        if (response.errorPDF) {
-                            var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
-                            divElement_loadPDF.css({
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
+                }
+                else{
+                    $("#imageUploadContainer").html("<p>Processing...</p>");
+                    var formData = new FormData($("#imageUploadForm")[0]);
+                    $.ajax({
+                        url: "/upload_image/",
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            // Handle the success response
+                            $("#imageUploadContainer").empty()
+                            if (response.errorPDF) {
+                                var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
+                                divElement_loadPDF.css({
+                                    "color": "red"
+                                })
+                                $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                            }
+                            // console.log(response);
+                            if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
+                                // สร้าง element สำหรับภาพ
+                                var imgElement = $("<img>");
+                                imgElement.attr("src", response.saveImage_url);
+                                imgElement.css({
+                                    'width': '300px',
+                                    'height': '200px'
+                                });
+    
+                                // แทรกภาพลงใน container
+                                $("#imageUploadContainer").empty().append(imgElement);
+    
+                                // แสดง alert ว่าเสร็จสิ้น
+                                // alert("successfully! Image ");
+                            } 
+                            //  else {
+                            //     กรณี error
+                            //     alert("อัพโหลดรูปไม่สำเร็จ");
+                            //     alertify.error("อัพโหลดรูปไม่สำเร็จ")
+                            //  }
+                            if (response.firstName) {
+                                let yourname = "รหัส : " + response.id_number  +" ชื่อ : " + response.firstName + " นามสกุล : " + response.surName ;
+                                var divElement = $("<div>").text(yourname);
+                                $("#imageUploadContainer").append(divElement);
+                            }
+                            if (response.newPhoto) {
+                                var divElement_newPhoto = $("<div>").text("*ไม่สามารถตรวจจับชื่อจากภาพได้ ช่วยถ่ายรูปใหม่ด้วยค่ะ");
+                                divElement_newPhoto.css({
+                                    "color": "red"
+                                })
+                                $("#imageUploadContainer").append(divElement_newPhoto);
+                            }
+                            
+                        },
+                        error: function(error) {
+                            // Handle the error response
+                            console.log("Error:", error);
+                            // กรณี error ที่เกิดขึ้นในการทำ AJAX request
+                            var pdfLinkElement = $("<p>").html("*มีข้อผิดพลาดเกินขึ้น");
+                            pdfLinkElement.css({
                                 "color": "red"
                             })
-                            $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                            $("#imageUploadContainer").empty().append(pdfLinkElement);
                         }
-                        // console.log(response);
-                        if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
-                            // สร้าง element สำหรับภาพ
-                            var imgElement = $("<img>");
-                            imgElement.attr("src", response.saveImage_url);
-                            imgElement.css({
-                                'width': '300px',
-                                'height': '200px'
-                            });
-
-                            // แทรกภาพลงใน container
-                            $("#imageUploadContainer").empty().append(imgElement);
-
-                            // แสดง alert ว่าเสร็จสิ้น
-                            // alert("successfully! Image ");
-                        } 
-                        //  else {
-                        //     กรณี error
-                        //     alert("อัพโหลดรูปไม่สำเร็จ");
-                        //     alertify.error("อัพโหลดรูปไม่สำเร็จ")
-                        //  }
-                        if (response.firstName) {
-                            let yourname = "รหัส : " + response.id_number  +" ชื่อ : " + response.firstName + " นามสกุล : " + response.surName ;
-                            var divElement = $("<div>").text(yourname);
-                            $("#imageUploadContainer").append(divElement);
-                        }
-                        if (response.newPhoto) {
-                            var divElement_newPhoto = $("<div>").text("*ไม่สามารถตรวจจับชื่อจากภาพได้ ช่วยถ่ายรูปใหม่ด้วยค่ะ");
-                            divElement_newPhoto.css({
-                                "color": "red"
-                            })
-                            $("#imageUploadContainer").append(divElement_newPhoto);
-                        }
-                        
-                    },
-                    error: function(error) {
-                        // Handle the error response
-                        console.log("Error:", error);
-                        // กรณี error ที่เกิดขึ้นในการทำ AJAX request
-                        var pdfLinkElement = $("<p>").html("*มีข้อผิดพลาดเกินขึ้น");
-                        pdfLinkElement.css({
-                            "color": "red"
-                        })
-                        $("#imageUploadContainer").empty().append(pdfLinkElement);
-                    }
-                });
+                    });
+                }
             });
             
             $('#uploadExcelButton').click(function() {
-                
-                var file = $('#excelFile')[0].files[0];
-                var fileName = file.name;
-                var fileExtension = fileName.split('.').pop().toLowerCase();
-                // fileExtension :  pdf
-                if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
-                    // window.alert('กรุณาเลือกไฟล์ Excel (.xlsx หรือ .xls)');
-                    alertify.error('ไฟล์ต้องเป็น Excel เท่านั้น');
-                    return;
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
                 }
-
-                var formData = new FormData($('#uploadForm')[0]);
-                
-                $.ajax({
-                    url: '{% url "upload_excel" %}',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        // Handle success response
-                        console.log(response);
-                        // alert('อัพโหลดรายชื่อ Success')
-                        alertify.success('Success อัพโหลดรายชื่อ');
-                    },
-                    error: function(error) {
-                        // Handle error response
-                        console.log(error);
+                else{
+                    var file = $('#excelFile')[0].files[0];
+                    var fileName = file.name;
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+                    // fileExtension :  pdf
+                    if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
+                        // window.alert('กรุณาเลือกไฟล์ Excel (.xlsx หรือ .xls)');
+                        alertify.error('ไฟล์ต้องเป็น Excel เท่านั้น');
+                        return;
                     }
-                });
+    
+                    var formData = new FormData($('#uploadForm')[0]);
+                    
+                    $.ajax({
+                        url: '{% url "upload_excel" %}',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            // Handle success response
+                            console.log(response);
+                            // alert('อัพโหลดรายชื่อ Success')
+                            alertify.success('Success อัพโหลดรายชื่อ');
+                        },
+                        error: function(error) {
+                            // Handle error response
+                            console.log(error);
+                        }
+                    });
+                }
             });
 
         
             $('#checkStatus').click(function(){
-                // console.log("checkStatus");
-                $.ajax({
-                    url: "/checkStatus/",
-                    type: "GET",
-                    success: function(response) {
-                        // แสดงข้อความที่ได้รับจาก server
-                        // console.log(response); # {allStudent: 22, come: 0, notCome: 22}
-                        allStudent = response.allStudent+"";
-                        come = response.come+"";
-                        notCome = response.notCome+"";
-                        // document.getElementById("text_checkStatus").innerHTML = "จำนวนนักศึกษาทั้งหมด "+ allStudent +" คน มาแล้ว "+ come +" คน ยังไม่มา "+ notCome +" คน";
-                        $('#text_allStudent').text(allStudent);
-                        $('#text_come').text(come);
-                        $('#text_notCome').text(notCome);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                        alert("เกิดข้อผิดพลาดขึ้น :", error);
-                    }
-                });
-            });
-            $("#search").click(function() {
-                
-                var studentId = $("#studentIdInput").val();
-                
-                if (/^\d+$/.test(studentId) && studentId != "") {
-                    // console.log("Searching for student ID:", studentId); // studentId เป็นค่า string
-                    $("#message_search").empty()
-                    
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
+                }
+                else{
+                    // console.log("checkStatus");
                     $.ajax({
-                        url: "/search/",
+                        url: "/checkStatus/",
                         type: "GET",
-                        data: { studentId: studentId },
                         success: function(response) {
-                            if (response.error == "notFound") {
-                                $("tbody").empty()
-                                var divElement_message_search = $("<div>").text("*ไม่เจอรหัสนักศึกษาดังกล่าว");
-                                    divElement_message_search.css({
-                                    "color": "#ffae00"
-                                })
-                                $("#message_search").empty().append(divElement_message_search);
-                            } 
-                            else if (response.error == "countZero"){
-                                $("tbody").empty()
-                                var divElement_message_search = $("<div>").text("*กรุณาเพิ่มรายชื่อนักศึกษาก่อน (จากวิธีใช้งานในขั้นตอนที่ 1)");
-                                    divElement_message_search.css({
-                                    "color": "red"
-                                })
-                                $("#message_search").empty().append(divElement_message_search);
-                            }
-                            else {
-                                $("#message_search").empty()
-                                $("tbody").empty()
-                                var attendance_status;
-                                if(response.attendance_status == 1){
-                                    attendance_status = "มา" 
-                                    }
-                                else{
-                                    attendance_status = "ไม่มา" 
-                                }
-                                $("tbody").append(`
-                                    <tr>
-                                        <td>${response.id_number}</td>
-                                        <td>${response.student_fistName}</td>
-                                        <td>${response.student_surName}</td>
-                                        <td id="edit_status"  style="cursor: pointer;">${attendance_status} <svg style="margin-left: 10px"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                                </svg></td>
-                                    </tr>
-                                `);
-                            }
+                            // แสดงข้อความที่ได้รับจาก server
+                            // console.log(response); # {allStudent: 22, come: 0, notCome: 22}
+                            allStudent = response.allStudent+"";
+                            come = response.come+"";
+                            notCome = response.notCome+"";
+                            // document.getElementById("text_checkStatus").innerHTML = "จำนวนนักศึกษาทั้งหมด "+ allStudent +" คน มาแล้ว "+ come +" คน ยังไม่มา "+ notCome +" คน";
+                            $('#text_allStudent').text(allStudent);
+                            $('#text_come').text(come);
+                            $('#text_notCome').text(notCome);
                         },
                         error: function(error) {
-                            alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                            console.log(error);
+                            alert("เกิดข้อผิดพลาดขึ้น :", error);
                         }
                     });
                 }
-                else{
-                    $("tbody").empty()
-                    var divElement_message_search = $("<div>").text("*กรุณากรอกรหัสนักศึกษาเท่านั้น");
-                        divElement_message_search.css({
-                        "color": "red"
-                    })
-                    $("#message_search").empty().append(divElement_message_search);
+            });
+            $("#search").click(function() {
+                if (!isLoggedIn) {
+                    alertify.warning('กรุณา Log in ก่อน');
                 }
-                // ไม่พบรหัสนักศึกษาหมายเลขนี้
-
-                
+                else{
+                    var studentId = $("#studentIdInput").val();
+                    if (/^\d+$/.test(studentId) && studentId != "") {
+                        // console.log("Searching for student ID:", studentId); // studentId เป็นค่า string
+                        $("#message_search").empty()
+                        
+                        $.ajax({
+                            url: "/search/",
+                            type: "GET",
+                            data: { studentId: studentId },
+                            success: function(response) {
+                                if (response.error == "notFound") {
+                                    $("tbody").empty()
+                                    var divElement_message_search = $("<div>").text("*ไม่เจอรหัสนักศึกษาดังกล่าว");
+                                        divElement_message_search.css({
+                                        "color": "#ffae00"
+                                    })
+                                    $("#message_search").empty().append(divElement_message_search);
+                                } 
+                                else if (response.error == "countZero"){
+                                    $("tbody").empty()
+                                    var divElement_message_search = $("<div>").text("*กรุณาเพิ่มรายชื่อนักศึกษาก่อน (จากวิธีใช้งานในขั้นตอนที่ 1)");
+                                        divElement_message_search.css({
+                                        "color": "red"
+                                    })
+                                    $("#message_search").empty().append(divElement_message_search);
+                                }
+                                else {
+                                    $("#message_search").empty()
+                                    $("tbody").empty()
+                                    var attendance_status;
+                                    if(response.attendance_status == 1){
+                                        attendance_status = "มา" 
+                                        }
+                                    else{
+                                        attendance_status = "ไม่มา" 
+                                    }
+                                    $("tbody").append(`
+                                        <tr>
+                                            <td>${response.id_number}</td>
+                                            <td>${response.student_fistName}</td>
+                                            <td>${response.student_surName}</td>
+                                            <td id="edit_status"  style="cursor: pointer;">${attendance_status} <svg style="margin-left: 10px"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                                    </svg></td>
+                                        </tr>
+                                    `);
+                                }
+                            },
+                            error: function(error) {
+                                alert("เกิดข้อผิดพลาดขึ้น : ", error);
+                            }
+                        });
+                    }
+                    else{
+                        $("tbody").empty()
+                        var divElement_message_search = $("<div>").text("*กรุณากรอกรหัสนักศึกษาเท่านั้น");
+                            divElement_message_search.css({
+                            "color": "red"
+                        })
+                        $("#message_search").empty().append(divElement_message_search);
+                    }
+                    // ไม่พบรหัสนักศึกษาหมายเลขนี้
+                }
             });
 
         });
