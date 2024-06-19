@@ -26,3 +26,9 @@ node_modules/
 # Temporary files
 *.tmp
 *.swp
+
+
+
+
+# Media folder
+media/

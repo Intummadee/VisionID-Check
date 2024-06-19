@@ -67,6 +67,7 @@ from django.shortcuts import redirect
 
 # ใช้วันที่และเวลาสุ่มชือในการ save รุปภาพ 
 from datetime import datetime
+import uuid
 
 
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
@@ -365,11 +366,15 @@ def createImageTable(request):
 
         
 
-
-        # สร้างลิงก์ไปยังไฟล์ PDF และรายการลิงก์สำหรับไฟล์รูปภาพ
+    
+        #TODO สร้างลิงก์ไปยังไฟล์ PDF และรายการลิงก์สำหรับไฟล์รูปภาพไปหน้าบ้าน 
         pdf_link = directory_PDF_ListStudent  # ไฟล์ PDF ที่สร้าง ==>  C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
         image_links = image_toPDF  # รายการลิงก์สำหรับไฟล์รูปภาพ ==> ['C:\\Users\\User\\Documents\\Git_ComVi\\CardCheck\\my_tennis_club\\media\\image_0.png', 'C:\\Users\\User\\Documents\\Git_ComVi\\CardCheck\\my_tennis_club\\media\\image_1.png']
         print("🧸🧸 " , pdf_link)
+
+
+        #TODO จะส่ง excel ไปหน้าบ้านด้วย
+        excel_link = createExcelFromDB(username, record.get("list_all"));
 
 
     # สร้าง JSON response ที่มีข้อมูลเพื่อแสดงผลที่ frontend
@@ -379,6 +384,23 @@ def createImageTable(request):
     }
 
     return JsonResponse(response_data)
+
+
+
+def createExcelFromDB(username, list_all):
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    file_name = f'{username}_{current_time}.xlsx'
+    # name = "North.xlsx"
+    
+    # data = {}
+    # for items in list_all:
+
+    print("file_name : ", file_name)
+
+    df = pd.DataFrame(list_all)
+    df.to_excel(file_name, index=False)
+
+    
 
 
 
