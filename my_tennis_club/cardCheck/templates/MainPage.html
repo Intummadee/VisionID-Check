@@ -31,13 +31,356 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/themes/default.min.css" />
 
 
-    <!-- tailwind -->
-    <link href="./output.css" rel="stylesheet">
+    
+   
 
     <!-- CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static '/styles.css' %}">
+    <!-- {% load static %} -->
+    <!-- <link rel="stylesheet" href="{% static '/styles.css' %}"> -->
+    <style>
+        
 
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Rubik", sans-serif;
+    list-style: none;
+    text-decoration: none;
+}
+
+:root{
+    --bg-color: #1f1f21;
+    --text-color: #fff;
+    --main-color: #ffae00;
+    --big-font: 7rem;
+    --p-font: 1.1rem;
+    --width-img-text: 100%;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 15%;
+    background: transparent;
+    transition: all ease .45s;
+}
+
+.logo{
+    color: var(--text-color);
+    font-size: 41px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.logo span{
+    color: var(--main-color);
+}
+
+.navbar{
+    display: flex;
+}
+.navbar a {
+    font-size: var(--p-font);
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0 25px;
+    transition: all ease .50s;
+}
+
+.navbar.open{
+    left: 0;
+}
+
+#button_login, #button_logout {
+    padding: 10px 18px;
+    /* border: 1px solid yellowgreen; */
+    border-radius: 12px;
+    z-index: 0;
+    position: relative;
+}
+
+#button_login::after, #button_logout::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+#button_login::before, #button_logout::before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #FF0000, #FF7300, #FFFB00, #48FF00,
+    #00FFD5, #002BFF, #FF00C8, #FF0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 600%;
+  z-index: -1;
+  width: calc(100% + 4px);
+  height:  calc(100% + 4px);
+  filter: blur(8px);
+  animation: glowing 20s linear infinite;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+  opacity: 0;
+}
+@keyframes glowing {
+  0% {background-position: 0 0;}
+  50% {background-position: 400% 0;}
+  100% {background-position: 0 0;}
+}
+/* hover */
+#button_login:hover::before , #button_logout:hover::before {
+  opacity: 1;
+}
+#button_login:active:after , #button_logout:active:after {
+  background: transparent;
+}
+
+#button_login:active ,#button_logout:active  {
+  color: #000;
+  font-weight: bold;
+}
+
+
+.navbar a:hover,
+#button_login:hover,
+#button_logout:hover {
+    color: var(--main-color) ;
+    transform: none;
+}
+
+
+.menu-btn{
+    background: linear-gradient(130.08deg , #383528, 0%, #191919 , 100%);
+    box-shadow: 0px 20px 40px #00000070;
+    border: 1px solid #3b3b3b;
+    padding: 10px 20px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+#menu-btn{
+    font-size: 28px;
+    margin-left: 10px;
+    z-index: 6;
+
+}
+
+section{
+    padding: 0 15%;
+}
+.home{
+    /* position: absolute; */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    
+}
+
+
+
+.home-img{
+    width: 100%;
+    height: 100%;
+}
+
+.home-img img {
+    /* position: absolute;
+    z-index: 1000; */
+    /* right: 10px; */
+    /* top:60%; */
+    margin-top: 30%;
+    width: var(--width-img-text);
+    /* height: 750px; */
+    object-fit: contain;
+}
+
+.home-img .textSom {
+    /* position: relative; */
+    display: flex;
+    justify-content:center; 
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    /* background-color: red; */
+    width: var(--width-img-text);
+}
+
+.home-img img{
+    /* width: 100%;
+    height: 100%; */
+}
+.home-text span{
+    padding: 5px 25px;
+    background: linear-gradient(130.08deg , #383528, 0%, #191919 , 100%);
+    box-shadow: 0px 20px 40px #00000070;
+    border: 1px solid #3b3b3b;
+    border-radius: 100px;
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+
+.home-text h1{
+    font-size: var(--big-font);
+    margin: 23px 0;
+}
+
+.home-text p{
+    font-size: var(--p-font);
+    font-weight: 400;
+    color: #c3c3c3;
+    line-height: 30px;
+    mask-border: 50px;
+    margin-bottom: 30px;
+}
+.btn{
+    display: inline-block;
+    padding: 10px 34px;
+    /* background: var(--main-color);
+    color: 2px solid var(--main-color); */
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.6s ease-in-out;
+}
+
+.btn:hover{
+    transform: translateY(-5px);
+    background: transparent;
+    color: white;
+}
+
+
+.two {
+    background: #141414;
+    border: 2px solid #141414;
+    color: var(--text-color);
+    margin-left: 25px;
+}
+.two:hover{
+    color: #141414;
+    background: var(--text-color);
+    border: 2px solid var(--text-color);
+}
+
+
+
+.share p {
+    font-size: 17px;
+    color: var(--text-color);
+    margin-right: 25px;
+
+}
+
+
+
+
+
+/* .social i{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    width: 45px;
+    background: linear-gradient(130.08deg , #383528, 0%, #191919 , 100%);
+    box-shadow: 0px 20px 40px #00000070;
+    border: 1px solid #3b3b3b;
+    border-radius: 50%;
+    color: var(--text-color);
+    font-size: 20px;
+    margin: 0 7px;
+    transition: all 0.6s ease-in-out;
+}
+
+.social i:hover{
+    transform: translateY(-10px);
+} */
+
+@media (max-width : 1850px) {
+    header{
+        padding: 15px 8%;
+        transition: .2s;
+    }
+    section{
+        padding: 0 8%;
+        transition: .2s;
+    }
+    .share{
+        left: 8%;
+        transition: .2s;
+    }
+}
+.home-img img{
+    /* animation: imgg 2s ease-in-out infinite;
+    animation-delay: 2s; */
+}
+
+@keyframes imgg {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-22px);
+    }
+    100%{
+        transform: translateY(0);
+    }
+
+}
+
+label {
+    padding-right: 10px; /* กำหนดระยะห่างทางซ้ายของข้อความ */
+    /* display: inline-block; เพื่อให้ padding-left ทำงาน */
+}
+
+#search{
+    cursor: pointer;
+    /* border: 1px solid var(--main-color); */
+    background-color: var(--main-color);
+    color: black;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px;
+}
+
+
+#text_allStudent , #text_come , #text_notCome {
+    border: none;
+    box-shadow: none;
+    color: var(--main-color);
+}
+
+
+
+    </style>
 
 </head>
 
@@ -54,18 +397,31 @@
             <li><a href="#">Contact</a></li> -->
         </ul>
 
-        <div style="padding-right: 3%;">
+        <div style="padding-right: 3%;" class="d-flex flex-row align-items-center flex-wrap" style="padding:  0px 500px;">
             <!-- <span>INTRO</span> -->
             
+            <div>
+                <a href="https://github.com/Intummadee/" target="_blank" type="button" class="btn">My GitHub</a>
+            </div>
 
-            <a href="https://github.com/Intummadee/" target="_blank" type="button" class="btn">GitHub</a>
-
-            <a href="{% url 'signup' %}">Sign Up</a>
+            <!-- <a href="{% url 'signup' %}">Sign Up</a> -->
               
-            <a href="{% url 'login' %}">Log In</a>
-            <p> : {{ username }} </p>
+            <div style="padding: 10px 0px; margin: 0; width: 300px; font-weight: 500;" class="d-flex flex-row flex-wrap align-items-center text-center justify-content-around">
+                {% if username == 'GuestTest' %}
+                    <h5 style="margin: 0 25px;" class="align-items-center text-center">Guest</h5>
+                    <a id="button_login" style="text-decoration: none;" href="{% url 'login' %}">Log In</a>
+                {% else %}
+                    <p style="margin: 0 25px;">{{ username }}</p>
+                    <a id="button_logout" style="text-decoration: none;" href="{% url 'logout' %}">Log Out</a>
+                {% endif %}
+            </div>
+            
+            
 
-            <a href="{% url 'logout' %}"><button id="logoutButton">Log Out</button></a>
+            
+
+            
+            
 
 
 
@@ -261,6 +617,7 @@
         // เมื่อเอกสาร HTML โหลดเสร็จ
         $(document).ready(function() {
             console.log("โหลดหน้า Homepage.html 📦📦");
+            
             // เมื่อปุ่ม VideoCapture ถูกคลิก
             $("#createImageTable").click(function() {
                 // console.log("alert(response);");
