@@ -64,6 +64,11 @@ from dotenv import load_dotenv
 
 from django.shortcuts import redirect
 
+
+# ใช้วันที่และเวลาสุ่มชือในการ save รุปภาพ 
+from datetime import datetime
+
+
 # 🌺 ข้อควรระวัง ถ้าจะ return ไรไปหน้าเว็บ ต้องใช้ HttpResponse
 
 
@@ -603,7 +608,6 @@ def save_image_as_png(source_path, destination_path):
 def upload_image(request):
     # หลังจาก Load Image แล้วจะเข้า path นี้
 
-    print(request)
     
     try:
         client = pymongo.MongoClient(conn_str)
@@ -626,24 +630,27 @@ def upload_image(request):
         fs = FileSystemStorage()
         
         
-
+        # สร้างชื่อภาพให้ไม่เหมือนกัน เพราะลองเหมือนแล้ว หน้าhtmlดันไม่อัพเดตภาพตาม
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_name = f'outputImage_{current_time}.png'
         
-        saveImage_path = os.path.join(fs.location, 'outputImage.png') 
+        saveImage_path = os.path.join(fs.location, file_name) 
         save_image_as_png(uploaded_image, saveImage_path)
         # print("saveImage_path = " + saveImage_path)
         # print(cv2.imread(saveImage_path))
-        text = check_text("outputImage.png") # เช็กข้อความในภาพตรงนี้
-        saveImage_url = fs.url('outputImage.png')  # เซฟภาพลงใน outputImage.png
+        text = check_text(file_name) # เช็กข้อความในภาพตรงนี้
+        saveImage_url = fs.url(file_name)  # เซฟภาพลงใน outputImage.png
 
         #⁡⁣⁢⁣TODO ค้นหาแค่ชื่อและนามสกุล จากในภาพตรงนี้ ใช้ทับกับของ 𝗽𝗱𝗳 ไม่ได้เพราะ 𝗽𝗱𝗳 จะมีโครงสร้าง มาให้เลย แต่ 𝗶𝗺𝗮𝗴𝗲 ไม่มี⁡
         # -คิดว่าจะแก้ VideoCapture ให้อัพโหลดภาพลงเครื่อง แล้วมาเข้าฟังชันนี้เลย 
         
         text = is_person_name(text , request)
         response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
+        # => response_data  {"notSureIs": "Imsure", "firstName": "Anchisa", "surName": "Cherdsattayanukul"}
         data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
         # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
 
-        
+        print("🐚🥥🦀🌊 ", data_dict)
 
         #  ༘⋆🌷🫧🐱🐾💗 ⋆˙ 
         if data_dict.get("notSureIs") == "Imsure": # มั่นใจชื่อกับนามสกุลมาก
@@ -768,6 +775,8 @@ def checkStudentCome(text):
 # ⁡⁣⁢⁣ฟังชันเช็ก ⁡
 def is_person_name(text , request):
     # ฟังนี้ใช้ตรวจหาชื่อคนจาก ข้อความยาวๆ ให้ออกมาเป็น array ที่เก็บคำที่คาดว่าน่าจะเป็นชื่อคน หรือ นามสกุล
+    # ถูก image และ viedoCapture เรียกใช้ 
+
     # print("text : ",text)
     print("🐯 ตรวจหาชื่อคน 🐯")
     # print("request ",request) => request  <WSGIRequest: POST '/upload_image/'>
@@ -884,11 +893,11 @@ def is_person_name(text , request):
 
     record_firstName = []
     record_surName = []
-    print("======== 🥇🥇🥇")
-    for items in cursor:
-        print("ชื่อ => ", items.get("student_firstName") , " นามสกุล => " , items.get("student_surName"))
-        record_firstName.append(items.get("student_firstName"));
-        record_surName.append(items.get("student_surName"));
+    # print("======== 🥇🥇🥇")
+    # for items in cursor:
+    #     print("ชื่อ => ", items.get("student_firstName") , " นามสกุล => " , items.get("student_surName"))
+    #     record_firstName.append(items.get("student_firstName"));
+    #     record_surName.append(items.get("student_surName"));
 
     
     
@@ -990,15 +999,18 @@ def chageStatusAttendance(firstName , surName , isCome, request):
 
     if isCome == True:
         # ได้รับชื่อและนามสกุลมา วิธีคือ ให้หาเรดคอร์ดที่ตรงตามชื่อและนามสกุลแล้วเปลี่ยนสถานะ จากนั้นก้ส่ง idNumberกลับไปด้วย เพราะฝั่งหน้าเว็บเราใช้
-        for items in record:
-            if(items.get("student_firstName")==firstName & items.get("student_surName")==surName):
-                myCollection.update_one(
-                {"username": username, "list_all.id_number": items.get("id_number")},
-                {"$set": {"list_all.$.attendance_status": 1}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
-                )
-                return items.get("id_number")
-
-
+        for items in record.get("list_all"):
+            if((items.get("student_firstName")==firstName) and (items.get("student_surName")==surName)):
+                try:
+                    myCollection.update_one(
+                    {"username": username, "list_all.id_number": items.get("id_number")},
+                    {"$set": {"list_all.$.attendance_status": 1}} # $ ใช้ในการอ้างถึง element ใน list_all ที่ตรงกับเงื่อนไขค้นหา ซึ่งคือ list_all.id_number เท่ากับ student_id.
+                    )
+                    return items.get("id_number")
+                except Exception as e:
+                    print(f"An error occurred: {e}") # f , f-string , formatted string literals = ช่วยให้การใส่ค่าตัวแปรลงในสตริง
+                    return JsonResponse({'error': f'มีเหตุขัดข้องในการอัพเดตข้อมูลลงฐานข้อมูล ' + {e}}, status=500)
+ 
 
 
 

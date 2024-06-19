@@ -471,6 +471,7 @@
                             processData: false,
                             contentType: false,
                             success: function(response) {
+                                $("#excelUploadProcess").empty()
                                 $("#pdfUploadProcess").empty()
                                 if (response.number_part){
                                     var divElement_loadPDF = $("<div>").text("*รูปแบบหรือแพทเทิร์นการจัดวางรายชื่อในไฟล์ไม่สามารถใช้ได้ กรุณาตรวจสอบใหม่ด้วยค่ะ");
@@ -540,7 +541,10 @@
                 else{
                     $("#imageUploadContainer").html("<p>Processing...</p>");
                     var formData = new FormData($("#imageUploadForm")[0]);
-                    if (formData.size > 0){
+                    
+                    let fileInput = $("#imageFileInput")[0];
+                    if (fileInput.files.length > 0){  // ตรวจสอบว่ามีไฟล์ถูกเลือกหรือไม่
+                        console.log("มี");
                         // ตรวจสอบว่า formData มีข้อมูลหรือไม่ ถ้าไม่มีก้ไม่ต้องส่งไป หลังบ้าน
                         $.ajax({
                             url: "/upload_image/",
@@ -606,6 +610,7 @@
                         });
                     }
                     else{
+                        console.log("ไม่มี");
                         var divElement_loadPDF = $("<div>").text("*กรุณาเลือกไฟล์รูปภาพก่อนค่ะ");
                         divElement_loadPDF.css({
                             "color": "red"
@@ -642,7 +647,9 @@
                             contentType: false,
                             success: function(response) {
                                 // Handle success response
-                                console.log(response);
+                                $("#pdfUploadProcess").empty()
+                                $("#excelUploadProcess").empty()
+                                // console.log(response); => message: "File uploaded successfully"
                                 // alert('อัพโหลดรายชื่อ Success')
                                 alertify.success('Success อัพโหลดรายชื่อ');
                             },
