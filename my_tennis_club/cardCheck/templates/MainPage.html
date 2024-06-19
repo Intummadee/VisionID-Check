@@ -284,24 +284,32 @@
                                 // Access the PDF link and image links from the JSON response
                                 var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
                                 var imageLinks = response.image_links;
-        
-                                // Assuming 'my_tennis_club' is the root directory served by your web server
-                                var pdfRelativePath = '/listStudent/myListStudent.pdf';
+                                var excel_file_name = response.excel_file_name;
+                                console.log("excelLinks " ,excel_file_name); // 
+                                console.log("pdfLink " ,pdfLink); // C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\myListStudent.pdf
+                                console.log("imageLinks " ,imageLinks); //  ['C:\\Users\\User\\Documents\\ปี3\\GIT_CardCheck\\CardCheck\\my_tennis_club\\media\\image_0.png']
+                                
         
                                 // Construct the full URL
                                 var pdfLinkElement = $("<p>").html("Download PDF: <a href='/media/myListStudent.pdf' download>PDF Link</a>");
+                                // PDF Link
                                 $("#pdfUploadContainer").empty().append(pdfLinkElement);
         
-                                // Display the image links
+                                // Image links
+                                var imageElement = $("<p>").html(`Download Images: </a>`);
                                 var imageLinksList = $("<ul>");
                                 for (var i = 0; i < imageLinks.length; i++) {
                                     // Extract the filename from the full path
                                     var filename = imageLinks[i].split('\\').pop();
         
-                                    var listItem = $("<li>").html("Download Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
+                                    var listItem = $("<li>").html("Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
                                     imageLinksList.append(listItem);
                                 }
-                                $("#pdfUploadContainer").append(imageLinksList);
+                                $("#pdfUploadContainer").append(imageElement).append(imageLinksList);
+
+                                // Excel Link
+                                var excelElement = $("<p>").html(`Download Excel: <a href='/media/${excel_file_name}.xlsx' download>Excel Link</a>`);
+                                $("#pdfUploadContainer").append(excelElement);
     
                             }
     

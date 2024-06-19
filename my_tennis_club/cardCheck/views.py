@@ -374,13 +374,16 @@ def createImageTable(request):
 
 
         #TODO จะส่ง excel ไปหน้าบ้านด้วย
-        excel_link = createExcelFromDB(username, record.get("list_all"));
+        excel_file_name = createExcelFromDB(username, cursor);
+        # full_path = os.path.join(current_directory, "media")
+        # excel_link = os.path.join(full_path, excel_file_name)
 
 
     # สร้าง JSON response ที่มีข้อมูลเพื่อแสดงผลที่ frontend
     response_data = {
         'pdf_link': pdf_link,
         'image_links': image_links, 
+        'excel_file_name': excel_file_name
     }
 
     return JsonResponse(response_data)
@@ -388,19 +391,30 @@ def createImageTable(request):
 
 
 def createExcelFromDB(username, list_all):
+    # ฟังชันนี้ไว้สร้าง ไฟล์ excel จาก DB เพื่อส่งกลับไปหาผู้ใช้ที่หน้าบ้าน
+    # ถูกเรียกใช้โดย def createImageTable
+    print("🛒💸💰 createExcelFromDB")
     current_time = datetime.now().strftime("%Y%m%d%H%M%S")
     file_name = f'{username}_{current_time}.xlsx'
     # name = "North.xlsx"
     
-    # data = {}
-    # for items in list_all:
+    print(list_all)
 
-    print("file_name : ", file_name)
-
+    # สร้าง DataFrame จากข้อมูล data
     df = pd.DataFrame(list_all)
-    df.to_excel(file_name, index=False)
 
-    
+    # กำหนดชื่อคอลัมน์
+    df.columns = ['id_number', 'student_firstName', 'student_surName', 'attendance_status']
+
+    # เรียงลำดับคอลัมน์ใหม่
+    df = df[['id_number', 'student_firstName', 'student_surName', 'attendance_status']]
+
+
+    # เชื่อมไฟล์เข้ากับ media folder
+    output_excel_path = os.path.join('media', file_name)
+    # บันทึกเป็นไฟล์ Excel
+    df.to_excel(output_excel_path, index=False)
+    return file_name;
 
 
 
