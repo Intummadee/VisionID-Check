@@ -108,6 +108,7 @@
                                         </svg>
                                     </a>
                                 </form>
+                                <div id="excelUploadProcess" style="margin-left: 20px;"></div>
                                 <br>
                                 
                                 <form id="pdfUploadForm" enctype="multipart/form-data">
@@ -144,7 +145,7 @@
                                         <button type="button" class="btn btn-success" id="imageUploadButton">Upload Image</button>
                                     </form>
                                     <!-- แสดงภาพ ที่ upload เข้ามา -->
-                                    <div id="imageUploadContainer"></div>
+                                    <div id="imageUploadContainer" style="margin-left: 20px;"></div>
                             </div>
 
 
@@ -446,77 +447,88 @@
                 }
                 else{
                     var fileInput = $('#pdfUploadForm input[type="file"]')[0];
-                    // console.log("fileInput ", fileInput);
-                    var file = fileInput.files[0];
-                    // console.log("file : ", file);
-                    var fileName = file.name;
-                    console.log(fileName , "split : ",fileName.split('.'));
-                    // split = ['pdf_รายชื่อ', 'pdf']
-                    var fileExtension = fileName.split('.').pop().toLowerCase();
-    
-                    // ตรวจสอบนามสกุลไฟล์ PDF
-                    if (fileExtension !== 'pdf') {
-                        alertify.error('ไฟล์ต้องเป็น PDF เท่านั้น');
-                        return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
-                    }
-    
-                    $("#pdfUploadProcess").html("<p>Processing...</p>");
-                    var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
-                    $.ajax({
-                        url: "/upload_and_convert_pdf/",
-                        type: "POST",
-                        data: formData, //  ข้อมูลที่จะส่งไปกับ request 
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            $("#pdfUploadProcess").empty()
-                            if (response.number_part){
-                                var divElement_loadPDF = $("<div>").text("*รูปแบบหรือแพทเทิร์นการจัดวางรายชื่อในไฟล์ไม่สามารถใช้ได้ กรุณาตรวจสอบใหม่ด้วยค่ะ");
-                                var link = $("<a>", {
-                                    href: "https://github.com/Intummadee/CardCheck/blob/main/assets/pattern_pdf.png?raw=true",
-                                    target: "_blank",
-                                    text: "คลิ๊กเพื่อดูตัวอย่าง"
-                                });
-                                divElement_loadPDF.css({
-                                    "color": "red"
-                                })
-                                $("#pdfUploadProcess").append(divElement_loadPDF);
-                                $("#pdfUploadProcess").append(link);
-                                return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
-                            }
-    
-                            // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
-                            // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
-                            if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
-                                // สร้าง element สำหรับภาพ
-    
-                                // เคลียร์ container เก่า
-                                $("#pdfUploadContainer").empty();
-    
-                                // ลูปผ่านทุก URL ใน array
-                                for (var i = 0; i < response.page_png_path_url.length; i++) {
-                                    // สร้าง element <img> สำหรับแต่ละ URL
-                                    var imgElement = $("<img>");
-                                    imgElement.attr("src", response.page_png_path_url[i]);
-    
-                                    // แทรกภาพลงใน container
-                                    $("#pdfUploadContainer").append(imgElement);
+                    if (fileInput.value) {
+                        // console.log("fileInput ", fileInput);
+                        var file = fileInput.files[0];
+                        // console.log("file : ", file);
+                        var fileName = file.name;
+                        console.log(fileName , "split : ",fileName.split('.'));
+                        // split = ['pdf_รายชื่อ', 'pdf']
+                        var fileExtension = fileName.split('.').pop().toLowerCase();
+        
+                        // ตรวจสอบนามสกุลไฟล์ PDF
+                        if (fileExtension !== 'pdf') {
+                            alertify.error('ไฟล์ต้องเป็น PDF เท่านั้น');
+                            return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
+                        }
+        
+                        $("#pdfUploadProcess").html("<p>Processing...</p>");
+                        var formData = new FormData($("#pdfUploadForm")[0]); //  มาจาก id="pdfUploadForm"
+                        $.ajax({
+                            url: "/upload_and_convert_pdf/",
+                            type: "POST",
+                            data: formData, //  ข้อมูลที่จะส่งไปกับ request 
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                $("#pdfUploadProcess").empty()
+                                if (response.number_part){
+                                    var divElement_loadPDF = $("<div>").text("*รูปแบบหรือแพทเทิร์นการจัดวางรายชื่อในไฟล์ไม่สามารถใช้ได้ กรุณาตรวจสอบใหม่ด้วยค่ะ");
+                                    var link = $("<a>", {
+                                        href: "https://github.com/Intummadee/CardCheck/blob/main/assets/pattern_pdf.png?raw=true",
+                                        target: "_blank",
+                                        text: "คลิ๊กเพื่อดูตัวอย่าง"
+                                    });
+                                    divElement_loadPDF.css({
+                                        "color": "red"
+                                    })
+                                    $("#pdfUploadProcess").append(divElement_loadPDF);
+                                    $("#pdfUploadProcess").append(link);
+                                    return; // หยุดการทำงานถ้าไฟล์ไม่ถูกต้อง
+                                }
+        
+                                // ฝั่งหลังบ้าน ส่งมาแบบนี้ --> return JsonResponse({'png_path': fs.url('output.png')})
+                                // alert("PDF uploaded and converted successfully! PNG saved at " + response.png_path);
+                                if (response.page_png_path_url) { // ได้  png_url: "/media/output.png"
+                                    // สร้าง element สำหรับภาพ
+        
+                                    // เคลียร์ container เก่า
+                                    $("#pdfUploadContainer").empty();
+        
+                                    // ลูปผ่านทุก URL ใน array
+                                    for (var i = 0; i < response.page_png_path_url.length; i++) {
+                                        // สร้าง element <img> สำหรับแต่ละ URL
+                                        var imgElement = $("<img>");
+                                        imgElement.attr("src", response.page_png_path_url[i]);
+        
+                                        // แทรกภาพลงใน container
+                                        $("#pdfUploadContainer").append(imgElement);
+                                    }
+                                    
+        
+                                    // แสดง alert ว่าเสร็จสิ้น
+                                    alertify.success("อัพโหลดรายชื่อสำเร็จ");
+                                } else {
+                                    // กรณี error
+                                    alert("เกิดข้อผิดพลาดเกี่ยวกับการอัพโหลด PDF : " + response.error);
                                 }
                                 
-    
-                                // แสดง alert ว่าเสร็จสิ้น
-                                alertify.success("อัพโหลดรายชื่อสำเร็จ");
-                            } else {
-                                // กรณี error
-                                alert("เกิดข้อผิดพลาดเกี่ยวกับการอัพโหลด PDF : " + response.error);
+                            },
+                            error: function(error) {
+                                $("#pdfUploadProcess").empty()
+                                console.log("Error:", error);
                             }
-                            
-                        },
-                        error: function(error) {
-                            $("#pdfUploadProcess").empty()
-                            console.log("Error:", error);
-                        }
-                    });
+                        });
+
+                    }
+                    else{
+                        console.log("not have");
+                        var divElement_loadPDF = $("<div>").text("*กรุณาเลือกไฟล์PDFก่อนค่ะ");
+                        divElement_loadPDF.css({
+                            "color": "red"
+                        })
+                        $("#pdfUploadProcess").empty().append(divElement_loadPDF);
+                    }
                 }
             });
             
@@ -528,68 +540,78 @@
                 else{
                     $("#imageUploadContainer").html("<p>Processing...</p>");
                     var formData = new FormData($("#imageUploadForm")[0]);
-                    $.ajax({
-                        url: "/upload_image/",
-                        type: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            // Handle the success response
-                            $("#imageUploadContainer").empty()
-                            if (response.errorPDF) {
-                                var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
-                                divElement_loadPDF.css({
+                    if (formData.size > 0){
+                        // ตรวจสอบว่า formData มีข้อมูลหรือไม่ ถ้าไม่มีก้ไม่ต้องส่งไป หลังบ้าน
+                        $.ajax({
+                            url: "/upload_image/",
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                // Handle the success response
+                                $("#imageUploadContainer").empty()
+                                if (response.errorPDF) {
+                                    var divElement_loadPDF = $("<div>").text("*กรุณาทำขั้นตอนที่ 1 ก่อนจะอัพโหลดรูปด้วยค่ะ");
+                                    divElement_loadPDF.css({
+                                        "color": "red"
+                                    })
+                                    $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                                }
+                                // console.log(response);
+                                if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
+                                    // สร้าง element สำหรับภาพ
+                                    var imgElement = $("<img>");
+                                    imgElement.attr("src", response.saveImage_url);
+                                    imgElement.css({
+                                        'width': '300px',
+                                        'height': '200px'
+                                    });
+        
+                                    // แทรกภาพลงใน container
+                                    $("#imageUploadContainer").empty().append(imgElement);
+        
+                                    // แสดง alert ว่าเสร็จสิ้น
+                                    // alert("successfully! Image ");
+                                } 
+                                //  else {
+                                //     กรณี error
+                                //     alert("อัพโหลดรูปไม่สำเร็จ");
+                                //     alertify.error("อัพโหลดรูปไม่สำเร็จ")
+                                //  }
+                                if (response.firstName) {
+                                    let yourname = "รหัส : " + response.id_number  +" ชื่อ : " + response.firstName + " นามสกุล : " + response.surName ;
+                                    var divElement = $("<div>").text(yourname);
+                                    $("#imageUploadContainer").append(divElement);
+                                }
+                                if (response.newPhoto) {
+                                    var divElement_newPhoto = $("<div>").text("*ไม่สามารถตรวจจับชื่อจากภาพได้ ช่วยถ่ายรูปใหม่ด้วยค่ะ");
+                                    divElement_newPhoto.css({
+                                        "color": "red"
+                                    })
+                                    $("#imageUploadContainer").append(divElement_newPhoto);
+                                }
+                                
+                            },
+                            error: function(error) {
+                                // Handle the error response
+                                console.log("Error:", error);
+                                // กรณี error ที่เกิดขึ้นในการทำ AJAX request
+                                var pdfLinkElement = $("<p>").html("*มีข้อผิดพลาดเกินขึ้น");
+                                pdfLinkElement.css({
                                     "color": "red"
                                 })
-                                $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                                $("#imageUploadContainer").empty().append(pdfLinkElement);
                             }
-                            // console.log(response);
-                            if (response.saveImage_url) { // ได้  png_url: "/media/output.png"
-                                // สร้าง element สำหรับภาพ
-                                var imgElement = $("<img>");
-                                imgElement.attr("src", response.saveImage_url);
-                                imgElement.css({
-                                    'width': '300px',
-                                    'height': '200px'
-                                });
-    
-                                // แทรกภาพลงใน container
-                                $("#imageUploadContainer").empty().append(imgElement);
-    
-                                // แสดง alert ว่าเสร็จสิ้น
-                                // alert("successfully! Image ");
-                            } 
-                            //  else {
-                            //     กรณี error
-                            //     alert("อัพโหลดรูปไม่สำเร็จ");
-                            //     alertify.error("อัพโหลดรูปไม่สำเร็จ")
-                            //  }
-                            if (response.firstName) {
-                                let yourname = "รหัส : " + response.id_number  +" ชื่อ : " + response.firstName + " นามสกุล : " + response.surName ;
-                                var divElement = $("<div>").text(yourname);
-                                $("#imageUploadContainer").append(divElement);
-                            }
-                            if (response.newPhoto) {
-                                var divElement_newPhoto = $("<div>").text("*ไม่สามารถตรวจจับชื่อจากภาพได้ ช่วยถ่ายรูปใหม่ด้วยค่ะ");
-                                divElement_newPhoto.css({
-                                    "color": "red"
-                                })
-                                $("#imageUploadContainer").append(divElement_newPhoto);
-                            }
-                            
-                        },
-                        error: function(error) {
-                            // Handle the error response
-                            console.log("Error:", error);
-                            // กรณี error ที่เกิดขึ้นในการทำ AJAX request
-                            var pdfLinkElement = $("<p>").html("*มีข้อผิดพลาดเกินขึ้น");
-                            pdfLinkElement.css({
-                                "color": "red"
-                            })
-                            $("#imageUploadContainer").empty().append(pdfLinkElement);
-                        }
-                    });
+                        });
+                    }
+                    else{
+                        var divElement_loadPDF = $("<div>").text("*กรุณาเลือกไฟล์รูปภาพก่อนค่ะ");
+                        divElement_loadPDF.css({
+                            "color": "red"
+                        })
+                        $("#imageUploadContainer").empty().append(divElement_loadPDF);
+                    }
                 }
             });
             
@@ -599,34 +621,46 @@
                 }
                 else{
                     var file = $('#excelFile')[0].files[0];
-                    var fileName = file.name;
-                    var fileExtension = fileName.split('.').pop().toLowerCase();
-                    // fileExtension :  pdf
-                    if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
-                        // window.alert('กรุณาเลือกไฟล์ Excel (.xlsx หรือ .xls)');
-                        alertify.error('ไฟล์ต้องเป็น Excel เท่านั้น');
-                        return;
-                    }
-    
-                    var formData = new FormData($('#uploadForm')[0]);
-                    
-                    $.ajax({
-                        url: '{% url "upload_excel" %}',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            // Handle success response
-                            console.log(response);
-                            // alert('อัพโหลดรายชื่อ Success')
-                            alertify.success('Success อัพโหลดรายชื่อ');
-                        },
-                        error: function(error) {
-                            // Handle error response
-                            console.log(error);
+                    if (file !== null && file !== undefined) {
+                        console.log("have");
+                        var fileName = file.name;
+                        var fileExtension = fileName.split('.').pop().toLowerCase();
+                        // fileExtension :  pdf
+                        if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
+                            // window.alert('กรุณาเลือกไฟล์ Excel (.xlsx หรือ .xls)');
+                            alertify.error('ไฟล์ต้องเป็น Excel เท่านั้น');
+                            return;
                         }
-                    });
+        
+                        var formData = new FormData($('#uploadForm')[0]);
+                        
+                        $.ajax({
+                            url: '{% url "upload_excel" %}',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                // Handle success response
+                                console.log(response);
+                                // alert('อัพโหลดรายชื่อ Success')
+                                alertify.success('Success อัพโหลดรายชื่อ');
+                            },
+                            error: function(error) {
+                                // Handle error response
+                                console.log(error);
+                            }
+                        });
+                    }
+                    else{
+                        console.log("Not have");
+                        // excelUploadProcess
+                        var divElement_loadPDF = $("<div>").text("*กรุณาเลือกไฟล์EXCELก่อนค่ะ");
+                        divElement_loadPDF.css({
+                            "color": "red"
+                        })
+                        $("#excelUploadProcess").empty().append(divElement_loadPDF);
+                    }
                 }
             });
 
@@ -702,7 +736,7 @@
                                     $("tbody").append(`
                                         <tr>
                                             <td>${response.id_number}</td>
-                                            <td>${response.student_fistName}</td>
+                                            <td>${response.student_firstName}</td>
                                             <td>${response.student_surName}</td>
                                             <td id="edit_status"  style="cursor: pointer;">${attendance_status} <svg style="margin-left: 10px"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>

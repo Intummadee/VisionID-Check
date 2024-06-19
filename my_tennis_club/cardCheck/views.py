@@ -603,6 +603,8 @@ def save_image_as_png(source_path, destination_path):
 def upload_image(request):
     # หลังจาก Load Image แล้วจะเข้า path นี้
 
+    print(request)
+    
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -766,8 +768,9 @@ def checkStudentCome(text):
 # ⁡⁣⁢⁣ฟังชันเช็ก ⁡
 def is_person_name(text , request):
     # ฟังนี้ใช้ตรวจหาชื่อคนจาก ข้อความยาวๆ ให้ออกมาเป็น array ที่เก็บคำที่คาดว่าน่าจะเป็นชื่อคน หรือ นามสกุล
+    # print("text : ",text)
     print("🐯 ตรวจหาชื่อคน 🐯")
-
+    # print("request ",request) => request  <WSGIRequest: POST '/upload_image/'>
     
     # ใช้ Regular Expression เพื่อแบ่งข้อความเป็นคำ จาก text ที่เป็น  <class 'str'> จะกลายเป็น <class 'list'>
     words = re.findall(r'\b\w+\b', text)
@@ -842,8 +845,9 @@ def is_person_name(text , request):
     myDb = client["pymongo_demo"]
     myCollection = myDb["demo_collection"]
 
-    username = request.session.get('username')
+    username = request.session.get('username') # => test 
     record = myCollection.find_one({"username": username})
+
 
 
     #! Reading but Query by student_firstName
@@ -855,7 +859,7 @@ def is_person_name(text , request):
     #! Reading the document อ่าน all record
     
     print("---- ༘⋆🌷🫧💭₊˚ෆ ----")
-    cursor = record.get("list_all")
+    cursor = record.get("list_all") # => ได้array 1 ตัวที่ข้างในมีรายชื่อนศ.ที่เป็น object เก็บไว้อยู่ [{'id_number': '64070002', 'student_firstName': 'TranquilLingua', 'student_surName': 'Harmonycrest', 'attendance_status': 0}]
 
     # cursor = myCollection.find()
     for record in cursor:
@@ -880,7 +884,9 @@ def is_person_name(text , request):
 
     record_firstName = []
     record_surName = []
-    for items in record.get("list_all"):
+    print("======== 🥇🥇🥇")
+    for items in cursor:
+        print("ชื่อ => ", items.get("student_firstName") , " นามสกุล => " , items.get("student_surName"))
         record_firstName.append(items.get("student_firstName"));
         record_surName.append(items.get("student_surName"));
 
