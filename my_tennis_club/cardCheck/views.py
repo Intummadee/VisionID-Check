@@ -271,6 +271,11 @@ def createImageTable(request):
             
             #? คำที่ใช้ในแถวแรกอยู่ตรงนี้
             cv2.putText(image_a4, title[col], (x + 5, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+        
+        # สร้าง iterator จาก list
+        cursor_iter = iter(cursor)
+
+
         for row in range(num_rows + 1):
             y = row * cell_height_distance # เรามีความห่างของแต่ละแถว เท่ากับ cell_height_distance ทำให้ถ้าอยากได้แถวที่ สาม ก็เอาเลข 3 ไปคูณ กับระยะห่างระหว่างแถว ก็จะได้ แถวสามออกมา
             # print("row : ", row , "cell_height_distance : ", cell_height_distance , "y 🪁🪁: " , y)
@@ -285,7 +290,8 @@ def createImageTable(request):
                 #     x = col * cell_width_distance 
                     
                 try:
-                    record = cursor.next() # record {'_id': ObjectId('65f3821a6db989ce8e93d03c'), 'id_number': 64070004, 'student_firstName': 'BlissfulWords', 'student_surName': 'Zenhaven', 'attendance_status': 0}
+                    # record = cursor.next() # record {'_id': ObjectId('65f3821a6db989ce8e93d03c'), 'id_number': 64070004, 'student_firstName': 'BlissfulWords', 'student_surName': 'Zenhaven', 'attendance_status': 0}
+                    record = next(cursor_iter)
                     record_id_number = str(record['id_number']) # ใส่ string ให้แน่ใจ เพราะฟังชัน cv2.putText รับแค่ string
                     record_student_firstName = record['student_firstName']
                     record_student_surName = record['student_surName']
@@ -315,9 +321,9 @@ def createImageTable(request):
         scaled_image = cv2.resize(image_a4, (a4_width, a4_height))  # 800 x 1131 คือขนาดที่เหมาะสมต่อการแสดงผล
         
         # แสดงภาพ
-        cv2.imshow('A4 Size Image', scaled_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow('A4 Size Image', scaled_image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
         
         # ดึงเส้นทางปัจจุบัน
