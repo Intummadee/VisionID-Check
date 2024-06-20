@@ -78,11 +78,13 @@ import uuid
 # cardCheck/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from .forms import SignUpForm
+from .forms import CustomUserCreationForm
+
+
 
 def signup(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST) # SignUpForm เป็นฟอร์มที่คุณสร้างขึ้นสำหรับการสมัครสมาชิกใหม่
+        form = CustomUserCreationForm(request.POST) # SignUpForm เป็นฟอร์มที่คุณสร้างขึ้นสำหรับการสมัครสมาชิกใหม่
         if form.is_valid():
             user = form.save() # หากฟอร์มถูกต้อง, บันทึกข้อมูลผู้ใช้ใหม่ในฐานข้อมูลโดยเรียกเมธอด save() ของฟอร์ม ซึ่งจะสร้างออบเจ็กต์ผู้ใช้ใหม่และบันทึกในฐานข้อมูล
             username = form.cleaned_data.get('username')
@@ -112,7 +114,7 @@ def signup(request):
 
             return redirect('login')  # เปลี่ยน 'home' เป็น URL ที่คุณต้องการ
     else:
-        form = SignUpForm()
+        form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
 

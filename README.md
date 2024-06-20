@@ -55,6 +55,13 @@ cd my_tennis_club (อย่าลืมว่าต้องอยู่ใน 
 python manage.py runserver
 ```
 
+---
+
+## หน้า Admin
+- ไว้ดูข้อมูล user ของ Django
+http://127.0.0.1:8000/admin
+
+---
 
 ```
 เปิด Path นี้ --> http://127.0.0.1:8000/MainPage/

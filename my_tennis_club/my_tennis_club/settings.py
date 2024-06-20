@@ -29,6 +29,11 @@ LOGIN_REDIRECT_URL = 'MainPage'  # เปลี่ยน 'home' เป็น URL
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+
+
+
+
 ALLOWED_HOSTS = []
 
 MEDIA_URL = '/media/'
