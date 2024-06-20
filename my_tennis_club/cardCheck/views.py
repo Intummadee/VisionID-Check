@@ -1112,6 +1112,9 @@ def click_photograph(event, x, y, flags, param):
 def VideoCapture(request):
 # ฟังชันนี้คือ ฟันชันถ่ายวิดิโอ ที่จะมีปุ่มกดถ่ายภาพ อยู่ใน fram video ให้เอาเมาส์ไปคลิ๊ก ส่วนวิธีปิด video คือกด esc
 
+    print("VideoCapture 🏰🏰₊˚⊹♡🎠✨")
+    
+
     try:
         client = pymongo.MongoClient(conn_str)
         print("เทสเชื่อมต่อMongo ผ่านจ้าา ⚛️⚛️⚛️⚛️⚛️")
@@ -1135,6 +1138,17 @@ def VideoCapture(request):
 
     print("VideoCapture click 🌿🌿" )
     cap = cv2.VideoCapture(0)
+
+    # ดึงค่าความละเอียดสูงสุดของกล้อง
+    max_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    max_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # ตั้งค่าความละเอียดของวิดีโอให้เป็นค่าสูงสุด
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, max_width)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, max_height)
+    print(f"Resolution set to: {max_width}x{max_height}")
+
+    
     cv2.namedWindow("CardCheck")
     cv2.setMouseCallback("CardCheck", click_photograph)
     # กำหนดขนาดหน้าต่าง video
@@ -1146,7 +1160,10 @@ def VideoCapture(request):
 
     while(True):
         # Take each frame
-        _, frame = cap.read()
+        ret, frame = cap.read()
+
+        if not ret:
+            return HttpResponse("Failed to capture image", status=500)
 
         # Flip the frame (ซ้ายขวา) ไม่เอาแล้วเพราะถ้า flip ภาพปชช.ก็จะกลับซ้ายขวาตาม ทำให้ จับ text ไม่ได้
         # frame = cv2.flip(frame, 1)
@@ -1218,6 +1235,7 @@ def VideoCapture(request):
     # When everything done, release the capture
     cap.release()
     cv2.destroyAllWindows()
+    return HttpResponse("ปิดกล้องเรียบร้อย", status=200)
 
 
 

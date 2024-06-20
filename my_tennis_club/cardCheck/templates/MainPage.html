@@ -686,6 +686,7 @@ label {
                 }
                 else{
                     // ทำ AJAX request ไปยัง URL /VideoCapture/
+                    $("#video_imageContainer").empty().html("<p>Processing...</p>");
                     $.ajax({
                         url: "/VideoCapture/",
                         type: "GET",
