@@ -400,10 +400,29 @@ def createExcelFromDB(username, list_all):
     file_name = f'{username}_{current_time}.xlsx'
     # name = "North.xlsx"
     
-    print(list_all)
+
+    new_list_all = []
+    for items in list_all:
+        if items.get("attendance_status")  == 1:
+            student_number = {
+                "id_number" : items.get("id_number")+"", # รหัสนักศึกษา
+                "student_firstName": items.get("student_firstName"),
+                "student_surName" : items.get("student_surName"),
+                "attendance_status" : "มา", # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+            }
+            new_list_all.append(student_number);
+        else:
+            student_number = {
+                "id_number" : items.get("id_number")+"", # รหัสนักศึกษา
+                "student_firstName": items.get("student_firstName"),
+                "student_surName" : items.get("student_surName"),
+                "attendance_status" : "ขาด", # 0 คือ ไม่ได้เข้าสอบ , 1 = นักศึกษาเข้าสอบแล้ว
+            }
+            new_list_all.append(student_number);
+
 
     # สร้าง DataFrame จากข้อมูล data
-    df = pd.DataFrame(list_all)
+    df = pd.DataFrame(new_list_all)
 
     # กำหนดชื่อคอลัมน์
     df.columns = ['id_number', 'student_firstName', 'student_surName', 'attendance_status']
@@ -753,6 +772,7 @@ def check_text(image_name):
     return data
 
 def check_text_Thai_Language(image_path):
+    # เช็กภาษาไทย ไม่ได้ใช้ในเจคนี้แล้ว แต่ทำเสร็จไปแล้ว เลยอยากเก็บไว้
     print("Check ตัวอักษร Thailand 🇹🇭 🇹🇭 ⋆｡˚ ✈︎ ✈️ ⋆")
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     image = cv2.imread(image_path)

@@ -642,7 +642,7 @@ label {
                                 var pdfLink = response.pdf_link; // C:\Users\User\Documents\Git_ComVi\CardCheck\my_tennis_club\listStudent\myListStudent.pdf
                                 var imageLinks = response.image_links;
                                 var excel_file_name = response.excel_file_name;
-                                console.log("excelLinks " ,excel_file_name); // 
+                                console.log("excelLinks " ,excel_file_name); // asda_20240620204057.xlsx
                                 console.log("pdfLink " ,pdfLink); // C:\Users\User\Documents\ปี3\GIT_CardCheck\CardCheck\my_tennis_club\media\myListStudent.pdf
                                 console.log("imageLinks " ,imageLinks); //  ['C:\\Users\\User\\Documents\\ปี3\\GIT_CardCheck\\CardCheck\\my_tennis_club\\media\\image_0.png']
                                 
@@ -660,12 +660,13 @@ label {
                                     var filename = imageLinks[i].split('\\').pop();
         
                                     var listItem = $("<li>").html("Image " + (i + 1) + ": <a href='/media/" + filename + "' download>Image " + (i + 1) + " Link</a>");
+                                    console.log("listItem : ",listItem);
                                     imageLinksList.append(listItem);
                                 }
                                 $("#pdfUploadContainer").append(imageElement).append(imageLinksList);
 
                                 // Excel Link
-                                var excelElement = $("<p>").html(`Download Excel: <a href='/media/${excel_file_name}.xlsx' download>Excel Link</a>`);
+                                var excelElement = $("<p>").html(`Download Excel: <a href='/media/${excel_file_name}' download>Excel Link</a>`);
                                 $("#pdfUploadContainer").append(excelElement);
     
                             }
