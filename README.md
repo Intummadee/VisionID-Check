@@ -8,7 +8,7 @@
 <img width="50%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%A8%E0%B8%B6%E0%B8%81%E0%B8%A9%E0%B8%B2.png?raw=true">
 
 
-## 📚 **Initialize** 
+## 🕊️ **Initialize** 
 
 สร้าง Environment 
 ```python -m venv env```
@@ -20,7 +20,7 @@ activate Environment
 -สร้างไฟล์ app.py
 
 
-## ⚡ **Library** 
+## 🛥️ **Library** 
 ```
 python -m pip install numpy
 python -m pip install scipy
@@ -39,7 +39,7 @@ pip install pymupdf Pillow  (ไว้อัพโหลดไฟล์)
 ```python -m pip install --upgrade pip```
 
 
-⚡ Install Django
+🍫 Install Django
 ```python -m pip install Django```
 
 -Option คำสั่ง check ว่าลง django หรือยัง
@@ -49,7 +49,7 @@ pip install pymupdf Pillow  (ไว้อัพโหลดไฟล์)
 create Project
 ```django-admin startproject my_tennis_club```
 
-## คำสั่งรัน !!!
+## 🪼 คำสั่งรัน !!!
 ```js
 env\Scripts\activate
 cd my_tennis_club  (อย่าลืมว่าต้องอยู่ใน my_tennis_club)
