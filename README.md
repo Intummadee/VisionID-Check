@@ -1,5 +1,11 @@
-<h1 align="center">Card Check <img src="https://64.media.tumblr.com/65a34a47a25662c619588f434def7221/127eb2e64f13cf30-67/s1280x1920/d66f676fd01adaae32172d4e76278803ec4c5430.gif" width="70px"></h1>
-
+<div align="center">
+ <h1>Card Check <img src="https://64.media.tumblr.com/65a34a47a25662c619588f434def7221/127eb2e64f13cf30-67/s1280x1920/d66f676fd01adaae32172d4e76278803ec4c5430.gif" width="70px"></h1>
+<a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/opencv-%23white.svg?style=for-the-badge&logo=opencv&logoColor=white" /></a>
+<a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white" /></a>
+<a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white" /></a>
+<a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white" /></a>
+<a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" /></a>
+</div>
 
 
 <img width="100%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/edit_version2.3.png?raw=true">
