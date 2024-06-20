@@ -734,6 +734,18 @@ def upload_image(request):
             
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
+
+
+
+
+
+
+
+
+
+
+
 def check_text(image_name):
     # ได้แก้ให้ image_name คือต้องเป็นชื่อไฟล์ที่อยู่ใน media 
     # ฟังชันนี้ใช้หาตัวอักษรในภาพออกมา โดยตัวอักษรเป็นอังกฤษเท่านั้น ถ้าเป็นภาษาไทยจะอยู่ด้านล่าง("check_text_Thai_Language") ทำไว้เผื่อ แต่ไม่ได้ใช้
@@ -750,26 +762,181 @@ def check_text(image_name):
         # path ไฟล์ภาพนี้จะเอาไว้ ทดลอง
         #! cv2.imwrite('../assets/testImage_Here.png', img)
 
+        # list_dataToDetect = []
+        #⁡⁣⁢⁣ แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.⁡ เราใช้อันนี้ ก่อนปรับปรุง
+        # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # blur = cv2.GaussianBlur(gray, (3,3), 0)
+        # thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+        # data_version1 = pytesseract.image_to_string(thresh, lang='eng')
+        # print("🚀🚀🚀 thresh แบบเก่าาาาาาาา" , data_version1)
+        # list_dataToDetect.append(data_version1)
+
+
+        # อันใหม่ลองปรับปรุง
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # ทำภาพเป้นขาวดำ
+        # สร้างออบเจ็กต์ CLAHE => ใช้เทคนิค Contrast Limited Adaptive Histogram Equalization (CLAHE) เพื่อปรับแสงในภาพให้ดียิ่งขึ้น
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        cl1 = clahe.apply(gray)
+
         
-        # แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.
+        # แปลงภาพเป็นสีเทา
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # ทำการ Threshold เพื่อแยกตัวอักษรออกจากพื้นหลัง
+        _, binary = cv2.threshold(cl1, 128, 255, cv2.THRESH_BINARY_INV)
+
+        # ใช้ Connected Component Analysis เพื่อหาส่วนของตัวอักษร
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(binary, connectivity=8)
+
+        # สร้าง mask สำหรับตัวอักษร
+        mask = np.zeros_like(cl1)
+
+        # ข้าม label 0 ที่เป็น background
+        for i in range(1, num_labels):
+            x, y, w, h, area = stats[i]
+            if area > 50:  # กำหนดขนาดขั้นต่ำเพื่อกรอง noise
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # วาดกรอบสี่เหลี่ยมรอบตัวอักษร
+                mask[y:y+h, x:x+w] = 255
+
+        # ใช้ mask เพื่อแยกตัวอักษรออกจากภาพต้นฉบับ
+        characters = cv2.bitwise_and(cl1, cl1, mask=mask)
+        
+        # hstack รวมภาพต้นฉบับและภาพหลังจากการปรับแสงเพื่อนำมาแสดงเทียบกัน
+        # result = np.hstack((thresh, cl1))
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+
+
+        print("")
+        print("")
+        print("")
+        # Perform text extraction
+        data_version2 = pytesseract.image_to_string(cl1, lang='eng')
+        print("🌴🌴🌴" , data_version2)
+        # list_dataToDetect.append(data_version2)
+
+
+
+        data_version3 = pytesseract.image_to_string(characters, lang='eng')
+        print("🤔🤔🤔" , data_version3)
+        # list_dataToDetect.append(data_version3)
+
+
+        print("")
+        
+
+
+
+
+
+
+        print("------------ จบการเช็ก ------------")    
+    return data_version3
+
+
+
+
+
+
+def check_text_For_VideoCapture(image_name):
+    # ได้แก้ให้ image_name คือต้องเป็นชื่อไฟล์ที่อยู่ใน media 
+    # ฟังชันนี้ใช้หาตัวอักษรในภาพออกมา โดยตัวอักษรเป็นอังกฤษเท่านั้น ถ้าเป็นภาษาไทยจะอยู่ด้านล่าง("check_text_Thai_Language") ทำไว้เผื่อ แต่ไม่ได้ใช้
+
+    print("Check ตัวอักษร English 🌏🌏🌏🌏")
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    
+    print("image_name 🍜 : ", image_name)
+    image = cv2.imread("./media/" + image_name)
+    # print("image in check text ✅ : ", image) # If output is matrix then image read is successful.  if output is 'None' then either path or name of the image is wrong.
+
+    # ทำการดำเนินการต่อไปที่ต้องการ เช่น ใช้ pytesseract สำหรับการ OCR
+    if image is not None:
+        # path ไฟล์ภาพนี้จะเอาไว้ ทดลอง
+        #! cv2.imwrite('../assets/testImage_Here.png', img)
+
+        list_dataToDetect = []
+        #⁡⁣⁢⁣ แปลงภาพเป็น Grayscale ก่อนที่จะใช้ pytesseract.⁡ เราใช้อันนี้ ก่อนปรับปรุง
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (3,3), 0)
         thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+        data_version1 = pytesseract.image_to_string(thresh, lang='eng')
+        print("🚀🚀🚀 thresh แบบเก่าาาาาาาา" , data_version1)
+        if data_version1.strip(): # สตริงเปล่าหรือมีแต่ช่องว่าง
+            list_dataToDetect.append(data_version1)
 
-        # cv2.imshow('book_in_scene_homography', blur)
+
+        # อันใหม่ลองปรับปรุง
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # ทำภาพเป้นขาวดำ
+        # สร้างออบเจ็กต์ CLAHE => ใช้เทคนิค Contrast Limited Adaptive Histogram Equalization (CLAHE) เพื่อปรับแสงในภาพให้ดียิ่งขึ้น
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        cl1 = clahe.apply(gray)
+
+        
+        # แปลงภาพเป็นสีเทา
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # ทำการ Threshold เพื่อแยกตัวอักษรออกจากพื้นหลัง
+        _, binary = cv2.threshold(cl1, 128, 255, cv2.THRESH_BINARY_INV)
+
+        # ใช้ Connected Component Analysis เพื่อหาส่วนของตัวอักษร
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(binary, connectivity=8)
+
+        # สร้าง mask สำหรับตัวอักษร
+        mask = np.zeros_like(cl1)
+
+        # ข้าม label 0 ที่เป็น background
+        for i in range(1, num_labels):
+            x, y, w, h, area = stats[i]
+            if area > 50:  # กำหนดขนาดขั้นต่ำเพื่อกรอง noise
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # วาดกรอบสี่เหลี่ยมรอบตัวอักษร
+                mask[y:y+h, x:x+w] = 255
+
+        # ใช้ mask เพื่อแยกตัวอักษรออกจากภาพต้นฉบับ
+        characters = cv2.bitwise_and(cl1, cl1, mask=mask)
+        
+        # hstack รวมภาพต้นฉบับและภาพหลังจากการปรับแสงเพื่อนำมาแสดงเทียบกัน
+        # result = np.hstack((thresh, cl1))
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
-        # cv2.imshow('book_in_scene_homography', thresh)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
 
+
+        print("")
+        print("")
+        print("")
         # Perform text extraction
-        # print(pytesseract.image_to_string(thresh, lang='eng'))
-        data = pytesseract.image_to_string(thresh, lang='eng')
-        print("🚀🚀🚀" , data)
+        data_version2 = pytesseract.image_to_string(cl1, lang='eng')
+        print("🌴🌴🌴" , data_version2)
+        if data_version2.strip(): # สตริงเปล่าหรือมีแต่ช่องว่าง
+            list_dataToDetect.append(data_version2)
+            
+
+
+
+        data_version3 = pytesseract.image_to_string(characters, lang='eng')
+        print("🤔🤔🤔" , data_version3)
+        if data_version3.strip(): # สตริงเปล่าหรือมีแต่ช่องว่าง
+            list_dataToDetect.append(data_version3)
+
+
+        print("")
+        
+
+
+
+
+
+
         print("------------ จบการเช็ก ------------")    
-    return data
+    return list_dataToDetect
+
+
+
+
+
+
+
 
 def check_text_Thai_Language(image_path):
     # เช็กภาษาไทย ไม่ได้ใช้ในเจคนี้แล้ว แต่ทำเสร็จไปแล้ว เลยอยากเก็บไว้
@@ -1044,6 +1211,59 @@ def is_person_name(text , request):
     else: # firstName == "" and surName == "":
         return JsonResponse({'notSureIs': "takeNewPhoto"})
 
+
+
+def is_person_name_Video(textList, username, record):
+    print("🌈 is_person_name_Video 🌈")
+
+    cursor = record.get("list_all")
+    firstName = ""
+    surName = ""
+
+    similarity_ratio=[]
+    # หา ชื่อก่อน เพราะ ต้องเปรียบเทียบแต่ละคำใน db คือมันทำพร้อมกันไม่ได้
+    for text in textList:
+        words = re.findall(r'\b\w+\b', text) # words ได้ลิสมา จากตอนแรกเป็นสตริงยาวๆของ text
+        for data in cursor: # data = {'_id': ObjectId('65d59171f8d8e5ca03393c15'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+            # SequenceMatcher = เปรียบเทียบความคล้ายคลึงกันระหว่างสองสตริง (string)
+            for word in words:
+                res = SequenceMatcher(None, word, data.get("student_firstName")).ratio()
+                # print("res =", res)
+                if res >= 0.85:
+                    # print("word:", word, "record_surName:", record.get("student_surName"))
+                    similarity_ratio.append(data.get("student_firstName"))
+                    firstName = data.get("student_firstName")
+                    print("res ค่าเปรียบเทียบได้เท่ากับ = " , res)
+
+
+    # อันนี้เช็กนามสกุลฮ๊าฟฟฟ
+    for text in textList:
+        words = re.findall(r'\b\w+\b', text) # words ได้ลิสมา จากตอนแรกเป็นสตริงยาวๆของ text
+        for data in cursor: # data = {'_id': ObjectId('65d59171f8d8e5ca03393c15'), 'id_number': '64070257', 'student_firstName': 'Intummadee', 'student_surName': 'Maliyam', 'attendance_status': 0}
+            # SequenceMatcher = เปรียบเทียบความคล้ายคลึงกันระหว่างสองสตริง (string)
+            for word in words:
+                res = SequenceMatcher(None, word, data.get("student_surName")).ratio()
+                # print("res =", res)
+                if res >= 0.85:
+                    # print("word:", word, "record_surName:", record.get("student_surName"))
+                    similarity_ratio.append(data.get("student_surName"))
+                    surName = data.get("student_surName")
+                    print("res ค่าเปรียบเทียบได้เท่ากับ = " , res)
+    
+
+    
+    print("🩴🩴 firstName : ", firstName)
+    print("🩴🩴 surName : ", surName)
+
+    if firstName != "" and surName != "":
+        return JsonResponse({'notSureIs': "Imsure", 'firstName': firstName , 'surName' : surName})
+    else:
+        return JsonResponse({'notSureIs': "takeNewPhoto"})
+
+
+
+
+
 # 💊💊
 def chageStatusAttendance(firstName , surName , isCome, request):
     # ฟังชันนี้มีไว้เพื่อ เปลี่ยนสถานะ ของนักศึกษา ว่า มาเข้าสอบไหม
@@ -1210,8 +1430,8 @@ def VideoCapture(request):
             
             cv2.imwrite('./media/testImage.png', frame)
             
-            text = check_text("testImage.png") # เช็กข้อความในภาพตรงนี้
-            text = is_person_name(text , request)
+            text = check_text_For_VideoCapture("testImage.png") # เช็กข้อความในภาพตรงนี้
+            text = is_person_name_Video(text , username , record)
             response_data = text.content.decode('utf-8')  # แปลง bytes เป็น string
             data_dict = json.loads(response_data)  # แปลง JSON string เป็น Python dictionary
             # JsonResponse({'notSureIs': check_again[1], 'firstName': firstName , 'surName' : surname})
