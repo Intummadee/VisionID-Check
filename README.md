@@ -48,7 +48,7 @@ python -m pip install python-dotenv
 create Project
 ```django-admin startproject my_tennis_club```
 
-คำสั่งรัน !!!
+## คำสั่งรัน !!!
 ```js
 env\Scripts\activate
 cd my_tennis_club (อย่าลืมว่าต้องอยู่ใน my_tennis_club)
@@ -58,7 +58,7 @@ python manage.py runserver
 ---
 
 ## หน้า Admin
-- ไว้ดูข้อมูล user ของ Django
+- ไว้ดูข้อมูล user ของ Django รหัสผ่านและชื่อบัญชีอยูในไฟล์ .env
 http://127.0.0.1:8000/admin
 
 ---
