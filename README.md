@@ -134,7 +134,7 @@ python manage.py createsuperuser
 
 ---
 
-# MongoDB
+## MongoDB
 https://account.mongodb.com/account/login?n=https%3A%2F%2Fcloud.mongodb.com%2Fv2%2F65d359c147d94142e1d9fb54&nextHash=%23metrics%2FreplicaSet%2F65d35a0f89492b3df0336104%2Fexplorer%2Fpymongo_demo%2Fdemo_collection%2Ffind&signedOut=true
 
 Source : https://www.youtube.com/watch?v=GJCKIGeK3qc
@@ -144,14 +144,15 @@ python -m pip install "pymongo[srv]"
 
 ---
 
-# Tesseract , How to read Thai text
+## Tesseract , How to read Thai text
 
 Howto -> https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
+<br>
 Download the raw file of this website. -> ```https://github.com/tesseract-ocr/tessdata_best/blob/main/tha.traineddata``` into storage ```\Tesseract-OCR\tessdata folder```
 
 ---
 
-# FrontEnd site
+## FrontEnd site
 &emsp; https://github.com/atisawd/boxicons
 
 &emsp; https://boxicons.com/
@@ -174,7 +175,7 @@ Download the raw file of this website. -> ```https://github.com/tesseract-ocr/te
 
 ---
 
-# Ref
+## Ref
 &emsp; For using computer vision OCR to detect text in images.
 https://github.com/UB-Mannheim/tesseract/wiki
 
