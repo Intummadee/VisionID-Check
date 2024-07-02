@@ -123,7 +123,7 @@ http://127.0.0.1:8000/  (Open this path)
 
 ---
 
-## หน้า Admin
+## Admin Page
 - To view Django's user information, password and account name are in the .env file.
 ```
 http://127.0.0.1:8000/admin
