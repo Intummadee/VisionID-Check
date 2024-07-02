@@ -5,6 +5,7 @@
 <a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white" /></a>
 <a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white" /></a>
 <a href="https://github.com/Ileriayo/markdown-badges"><img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" /></a>
+ <h5> COMPUTER VISION | 3rd Year Term 2/2023 </h5>
 </div>
 
 
@@ -21,7 +22,7 @@ To get started, follow these steps:
 
 ## Tech Stack :
 - **Frontend:** HTML, CSS, Bootstrap,  
-- **Backend:** Python Django,  
+- **Backend:** Python, Django 
 - **Framework:** Django
 - **Library:** Opencv, Pandas, JQuery
 - **Database:** MongoDB Atlas, Django Database
