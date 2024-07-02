@@ -13,35 +13,83 @@
 
 <img width="50%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%A8%E0%B8%B6%E0%B8%81%E0%B8%A9%E0%B8%B2.png?raw=true">
 
+## Getting Started
+To get started, follow these steps:
+1. Clone this repository using `git clone https://github.com/Intummadee/CardCheck.git`
+2. Install dependencies using `npm install`
+3. Run the app using `npm start`
+
+## Tech Stack :
+- **Frontend:** HTML, CSS, Bootstrap,  
+- **Backend:** Python Django,  
+- **Framework:** Django
+- **Library:** Opencv, Pandas, JQuery
+- **Database:** MongoDB Atlas, Django Database
+- **Version Control:** Git and GitHub
+- **Code Editor and tools**: VS Code
+
 
 ## 🕊️ **Initialize** 
 
-สร้าง Environment 
+- create Environment 
 ```python -m venv env```
 
-activate Environment 
+- activate Environment 
 --> 👉 ```env\Scripts\activate```
-ถ้ารันได้จะมีคำว่า (env) ต่อหน้า PS ใน terminal
+If you can run it, there will be the word (env) in front of PS in the terminal.
 
--สร้างไฟล์ app.py
+- create **app.py**
+
+<details> 
+  <summary><h2> 🛥️ Dependency </h2></summary>
+
+ 
+  <h3>Scientific Computing and Mathematics</h3>
+  <ul>
+   <li> <b><i> python -m pip install numpy </i></b></li>
+   <li> <b><i> python -m pip install scipy </i></b></li>
+  </ul>
+
+  <h3>Data Visualization</h3>
+  <ul>
+   <li> <b><i> python -m pip install matplotlib </i></b></li>
+  </ul>
+
+  <h3>Computer Vision</h3>
+  <ul>
+   <li> <b><i> python -m pip install opencv-python </i></b></li>
+   <li> <b><i> python -m pip install opencv-contrib-python </i></b></li>
+  </ul>
+  
+  <h3>Optical Character Recognition (OCR)</h3>
+  <ul>
+   <li> <b><i> pip install pytesseract </i></b> : a Python wrapper for Google's Tesseract-OCR Engine, used for optical character recognition (OCR).</li>
+  </ul>
+  
+  <h3>Document Generation</h3>
+  <ul>
+   <li> <b><i> pip install reportlab </i></b> : a library for generating PDF documents.</li>
+  </ul>
+
+  <h3>Excel Data Handling</h3>
+  <ul>
+   <li> <b><i> python -m pip install pandas </i></b> : a powerful data manipulation and analysis library (useful for working with Excel files as well)</li>
+   <li> <b><i> python -mpip install openpyxl </i></b> : a library specifically for reading and writing Excel 2010 xlsx/xlsm/xltx/xltm files</li>
+  </ul>
+  
+  <h3>Environment Management</h3>
+  <ul>
+   <li> <b><i> python -m pip install python-dotenv </i></b> : allows you to load environment variables from a .env file into the environment</li>
+  </ul>
+  
+  <h3>File Handling and PDF Manipulation</h3>
+  <ul>
+   <li> <b><i> pip install pymupdf Pillow </i></b> : Installs PyMuPDF (for working with PDF files) and Pillow (for image processing tasks)</li>
+  </ul>
+</details>
 
 
-## 🛥️ **Library** 
-```
-python -m pip install numpy
-python -m pip install scipy
-python -m pip install matplotlib
-python -m pip install opencv-python
-python -m pip install opencv-contrib-python
-pip install pytesseract
-pip install reportlab
-python -m pip install pandas  (เกี่ยวกับ excel)
-python -mpip install openpyxl  (เกี่ยวกับจัดการข้อมูลของ excel)
-python -m pip install python-dotenv  (ไว้สร้าง .env)
-pip install pymupdf Pillow  (ไว้อัพโหลดไฟล์)
-```
-
--Option กรณีถูก WARNING ให้อัพเดตเวอร์ชั่น
+- ⚠️ Option, if WARNING is given, update the version.
 ```python -m pip install --upgrade pip```
 
 
