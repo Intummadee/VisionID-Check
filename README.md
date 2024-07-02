@@ -86,46 +86,55 @@ If you can run it, there will be the word (env) in front of PS in the terminal.
   <ul>
    <li> <b><i> pip install pymupdf Pillow </i></b> : Installs PyMuPDF (for working with PDF files) and Pillow (for image processing tasks)</li>
   </ul>
+  
+  <h3>MongoDB Database</h3>
+  <ul>
+   <li> <b><i> python -m pip install "pymongo[srv]" </i></b> </li>
+  </ul>
+  
 </details>
 
 
 - ⚠️ Option, if WARNING is given, update the version.
 ```python -m pip install --upgrade pip```
 
+---
 
 🍫 Install Django
 ```python -m pip install Django```
 
--Option คำสั่ง check ว่าลง django หรือยัง
+- Option command to check whether django is installed or not.
 ```django-admin --version```
---> รันแล้วได้ 4.2.10
+--> Run it and get 4.2.10
 
-create Project
+- Create a project name my_tennis_club
 ```django-admin startproject my_tennis_club```
 
-## 🪼 คำสั่งรัน !!!
+---
+
+## 🪼 How to Run !!!
 ```js
 env\Scripts\activate
-cd my_tennis_club  (อย่าลืมว่าต้องอยู่ใน my_tennis_club)
+cd my_tennis_club  (Don't forget that you must be in my_tennis_club)
 python manage.py runserver
-http://127.0.0.1:8000/  (เปิด path นี้)
+http://127.0.0.1:8000/  (Open this path)
 ```
 
 ---
 
 ## หน้า Admin
-- ไว้ดูข้อมูล user ของ Django รหัสผ่านและชื่อบัญชีอยูในไฟล์ .env
+- To view Django's user information, password and account name are in the .env file.
 ```
 http://127.0.0.1:8000/admin
 ```
-- คำสั่งสร้างบัญชี admin เพื่อดูข้อมูล user โดยพวก password ต้องตรงเงื่อนไขที่ Django ต้องการเท่านั้น ไม่งั้นจะสร้างแล้วใช้งานไม่ได้
+- Command to create an admin account to view user information. The password must meet the conditions that Django requires only. Otherwise, it won't be able to be used when created.
 ```
 python manage.py createsuperuser
 ```
 
 ---
 
-# ใช้งาน MongoDB
+# MongoDB
 https://account.mongodb.com/account/login?n=https%3A%2F%2Fcloud.mongodb.com%2Fv2%2F65d359c147d94142e1d9fb54&nextHash=%23metrics%2FreplicaSet%2F65d35a0f89492b3df0336104%2Fexplorer%2Fpymongo_demo%2Fdemo_collection%2Ffind&signedOut=true
 
 Source : https://www.youtube.com/watch?v=GJCKIGeK3qc
@@ -135,14 +144,14 @@ python -m pip install "pymongo[srv]"
 
 ---
 
-# Tesseract วิธีทำให้อ่านข้อความภาษาไทย
+# Tesseract , How to read Thai text
 
-https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
-ดาวน์โหลด raw file ของเว็บนี้ https://github.com/tesseract-ocr/tessdata_best/blob/main/tha.traineddata ลงในที่ที่เก็บ ```\Tesseract-OCR\tessdata folder```
+Howto -> https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
+Download the raw file of this website. -> ```https://github.com/tesseract-ocr/tessdata_best/blob/main/tha.traineddata``` into storage ```\Tesseract-OCR\tessdata folder```
 
 ---
 
-# ฝั่งFrontEnd
+# FrontEnd site
 &emsp; https://github.com/atisawd/boxicons
 
 &emsp; https://boxicons.com/
@@ -151,22 +160,22 @@ https://gist.github.com/dogterbox/7c0ed7387a388f5e13afd00f0cb8cd50
 
 ---
 
-## Extension แนะนำให้โหลดใน Vs code สำหรับอ่าน comment 
+## Extension recommended to be downloaded in Vs code for reading comments.
 - Better-comments
 - Comment Styler
 
 ---
 
-## ข้อจำกัด
-1. ไฟล์ที่อัพโหลด ต้องเป็น pdf เท่านั้น และ ขนาดตัวอักษรในไฟล์ควรมากกว่า 18
-2. ตารางใน excel ควรจะชิดกันให้มากที่สุด เพื่อที่จะได้จับข้อความเป็นประโยคเดียวกัน เช่น  64070257 Hydro Carbon ถ้าแต่ละ column ในตารางห่างกันมากเกินไป ชื่อสามอย่างนี่ก็จะแยกออกจากกันไม่รวมในแถวเดียวกันได้ สามารถดูตัวอย่างภาพได้ใน example_image
-3. ภาพที่ได้ต้องมีความชัด มีแสงสว่างเพียงพอ ระยะห่างจากกล่องไม่มากเกินไป หรือ น้อยเกินไป
-4. บัตรที่ความเงา อย่าง บัตรประชาชน ไม่ควรถ่ายให้ติดเงามากเกินไป เพราะโปรแกรมจะไม่จับข้อความตรงที่มีเงา (สามารถแก้ได้แล้วโดยใช้เทคนิค Contrast Limited Adaptive Histogram Equalization (CLAHE) เพื่อปรับแสงในภาพให้ดียิ่งขึ้น)
+## Limitations
+1. If the uploaded contacts file is an image, the font size in the file should be greater than 18.
+2. If the name is drawn from the card The resulting image must be clear. There is enough light. The distance from the camera is not too much or too little.
+3. Shiny cards, such as ID cards, should not be photographed with too much shadow. Because the program will not capture text that has shadows. (Corrected with the Contrast Limited Adaptive Histogram Equalization (CLAHE) technique to adjust the light in the image better)
+4. The quality of the camera also affects the capture of names.
 
 ---
 
-# อ้างอิง
-&emsp; สำหรับ ใช้ computer vision OCR ในการตรวจหาข้อความในภาพ
+# Ref
+&emsp; For using computer vision OCR to detect text in images.
 https://github.com/UB-Mannheim/tesseract/wiki
 
 &emsp; MongoDB and Python
@@ -198,6 +207,6 @@ https://alertifyjs.com/
 <div> 
  <a href="https://www.linkedin.com/in/intummadee-maliyam-800856226/" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"></a>
  <a href = "mailto:intummadee@gmail.com"><img src="https://img.shields.io/badge/-Gmail-%23333?style=for-the-badge&logo=gmail&logoColor=white" target="_blank"></a>
-<a href="https://github.com/Intummadee?tab=repositories" target="_blank"><img alt="All Repositories" title="All Repositories" src="https://img.shields.io/badge/-All%20Repos-2962FF?style=for-the-badge&logo=koding&logoColor=white"/></a>
+ <a href="https://github.com/Intummadee?tab=repositories" target="_blank"><img alt="All Repositories" title="All Repositories" src="https://img.shields.io/badge/-All%20Repos-2962FF?style=for-the-badge&logo=koding&logoColor=white"/></a>
+ <a href = "https://discordapp.com/users/802492085419769856" target="_blank"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" target="_blank"></a>
 </div>
-
